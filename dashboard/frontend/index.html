@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiroTrade - God View</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0c0f;color:#e8ecf0;font-family:'Space Mono',monospace;font-size:12px;line-height:1.5;overflow-x:hidden}
+:root{--bg:#0a0c0f;--bg2:#111318;--bg3:#181c22;--border:#1e2330;--accent:#00e5a0;--red:#e03040;--green:#00c87a;--warn:#e0a000;--muted:#5a6478;--text:#e8ecf0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Header */
+.header{background:#0a0c0f;border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;letter-spacing:3px;color:var(--accent)}
+.badge{font-size:9px;letter-spacing:2px;color:var(--muted);border:1px solid var(--border);padding:2px 8px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+
+/* Ticker */
+.ticker{background:#0a0c0f;padding:6px 16px;display:flex;gap:24px;font-size:11px;border-bottom:1px solid var(--border);overflow:hidden}
+.tick-sep{color:var(--border)}
+
+/* Main grid */
+.grid{display:grid;grid-template-columns:200px 1fr 190px;gap:1px;background:var(--border);min-height:calc(100vh - 80px)}
+
+/* Left panel */
+.left{background:var(--bg2);padding:14px;overflow-y:auto}
+.section-title{font-size:9px;letter-spacing:2px;color:var(--muted);padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:12px;margin-top:16px;text-transform:uppercase}
+.section-title:first-child{margin-top:0}
+.metric{margin-bottom:12px}
+.mlabel{font-size:10px;color:var(--muted);margin-bottom:3px}
+.mval{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+.bar-bg{height:3px;background:var(--bg3);border-radius:2px;margin-top:5px}
+.bar-fill{height:3px;border-radius:2px;transition:width .5s}
+.state-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.state-cell{background:var(--bg3);border:1px solid var(--border);padding:8px;border-radius:3px;text-align:center}
+.state-cell .sl{font-size:9px;color:var(--muted)}
+.state-cell .sv{font-weight:700;font-size:11px;margin-top:2px}
+
+/* Center panel */
+.center{background:var(--bg2);display:flex;flex-direction:column;gap:1px}
+.stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border)}
+.stat-box{background:var(--bg2);padding:10px 14px;text-align:center}
+.stat-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.stat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-top:3px}
+.chart-wrap{background:var(--bg2);padding:14px;flex:1}
+.chart-title{font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:12px;text-transform:uppercase}
+.trades-wrap{background:var(--bg2);padding:14px}
+.trades-head{display:grid;grid-template-columns:45px 65px 65px 50px 55px 65px;gap:4px;font-size:9px;color:var(--muted);letter-spacing:1px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:6px;text-transform:uppercase}
+.trade-row{display:grid;grid-template-columns:45px 65px 65px 50px 55px 65px;gap:4px;font-size:10px;padding:4px 0;border-bottom:1px solid var(--border);align-items:center}
+.trade-row:last-child{border-bottom:none}
+.tag{padding:1px 6px;border-radius:2px;font-size:9px;font-weight:700}
+.tag-buy{background:rgba(0,200,122,.2);color:var(--green)}
+.tag-sell{background:rgba(224,48,64,.2);color:var(--red)}
+
+/* Right panel */
+.right{background:var(--bg2);display:flex;flex-direction:column;gap:1px}
+.rp{background:var(--bg2);padding:14px}
+.score-factors{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.factor-row{display:flex;justify-content:space-between;align-items:center;font-size:10px}
+.dots{display:flex;gap:2px}
+.dot{width:8px;height:8px;border-radius:1px}
+.dot-on{background:var(--green)}
+.dot-off{background:var(--border)}
+.act-item{font-size:10px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:6px}
+.act-item:last-child{border-bottom:none}
+.act-time{font-size:9px;background:var(--bg3);padding:1px 5px;border-radius:2px;color:var(--muted);white-space:nowrap}
+.analyze-btn{width:100%;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);color:var(--accent);padding:10px;font-size:10px;letter-spacing:1px;cursor:pointer;border-radius:3px;font-family:'Space Mono',monospace;transition:background .2s}
+.analyze-btn:hover{background:rgba(0,229,160,.15)}
+
+/* Signal box */
+.sig-box{background:var(--bg3);border:1px solid var(--border);padding:10px;border-radius:3px;margin-bottom:12px}
+.sig-tag{display:inline-block;padding:2px 10px;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:1px}
+.sig-none{background:rgba(90,100,120,.2);color:var(--muted);border:1px solid var(--border)}
+.sig-buy{background:rgba(0,200,122,.15);color:var(--green);border:1px solid rgba(0,200,122,.3)}
+.sig-sell{background:rgba(224,48,64,.15);color:var(--red);border:1px solid rgba(224,48,64,.3)}
+
+/* Open trades */
+.open-trade{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--green);padding:8px;border-radius:3px;margin-bottom:6px;font-size:10px}
+.open-trade.sell{border-left-color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="logo">MIROTRADE</span>
+    <span class="badge">GOD VIEW</span>
+    <span class="badge" id="phase-badge">PAPER TRADING</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:20px;font-size:11px">
+    <span><span class="live-dot"></span><span style="color:var(--accent)">LIVE</span></span>
+    <span style="color:var(--muted)" id="clock">--:--:--</span>
+    <span style="color:var(--muted)" id="date-display">--</span>
+    <span style="color:var(--muted)">XAUUSD H1</span>
+  </div>
+</div>
+
+<!-- Ticker -->
+<div class="ticker">
+  <span style="color:var(--muted)">GOLD</span>
+  <span id="gold-price" style="font-weight:700">4765.88</span>
+  <span id="gold-chg" style="color:var(--green)">+12.40</span>
+  <span class="tick-sep">|</span>
+  <span style="color:var(--muted)">BTC</span>
+  <span style="font-weight:700">83,412</span>
+  <span style="color:var(--green)">+1.2%</span>
+  <span class="tick-sep">|</span>
+  <span style="color:var(--muted)">EUR/USD</span>
+  <span style="font-weight:700">1.0921</span>
+  <span style="color:var(--red)">-0.3%</span>
+  <span class="tick-sep">|</span>
+  <span style="color:var(--muted)">SESSION</span>
+  <span id="session-ticker" style="color:var(--accent);font-weight:700">LONDON</span>
+  <span class="tick-sep">|</span>
+  <span style="color:var(--muted)">SPREAD</span>
+  <span style="color:var(--warn)">0.33</span>
+</div>
+
+<!-- Main Grid -->
+<div class="grid">
+
+  <!-- LEFT PANEL -->
+  <div class="left">
+
+    <div class="section-title">account balance</div>
+    <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--accent)" id="balance-display">$10,000</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:2px" id="today-pnl">+$0.00 today</div>
+
+    <div class="section-title">performance</div>
+    <div class="metric">
+      <div class="mlabel">WIN RATE</div>
+      <div class="mval" style="color:var(--green)" id="wr-display">54.95%</div>
+      <div class="bar-bg"><div class="bar-fill" id="wr-bar" style="background:var(--green);width:55%"></div></div>
+    </div>
+    <div class="metric">
+      <div class="mlabel">PROFIT FACTOR</div>
+      <div class="mval" style="color:var(--accent)">3.13</div>
+    </div>
+    <div class="metric">
+      <div class="mlabel">MAX DRAWDOWN</div>
+      <div class="mval" style="color:var(--green)" id="dd-display">0.0%</div>
+      <div class="bar-bg"><div class="bar-fill" id="dd-bar" style="background:var(--warn);width:0%"></div></div>
+    </div>
+    <div class="metric">
+      <div class="mlabel">TOTAL RETURN</div>
+      <div class="mval" style="color:var(--accent)">+246%</div>
+    </div>
+
+    <div class="section-title">current signal</div>
+    <div class="sig-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span class="sig-tag sig-none" id="signal-tag">NONE</span>
+        <span style="font-size:10px;color:var(--muted)">XAUUSD</span>
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:4px">BULL SCORE</div>
+      <div class="bar-bg"><div class="bar-fill" id="bull-bar" style="background:var(--green);width:45%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:4px">
+        <span id="score-display" style="color:var(--muted)">9/20</span>
+        <span style="color:var(--muted)">min: 12</span>
+      </div>
+    </div>
+
+    <div class="section-title">market state</div>
+    <div class="state-grid">
+      <div class="state-cell">
+        <div class="sl">TREND</div>
+        <div class="sv" style="color:var(--green)">BULL</div>
+      </div>
+      <div class="state-cell">
+        <div class="sl">EMA</div>
+        <div class="sv" style="color:var(--green)">ALIGN</div>
+      </div>
+      <div class="state-cell">
+        <div class="sl">SESSION</div>
+        <div class="sv" style="color:var(--accent)" id="session-cell">--</div>
+      </div>
+      <div class="state-cell">
+        <div class="sl">ACTIVE OBs</div>
+        <div class="sv" style="color:var(--text)">128</div>
+      </div>
+      <div class="state-cell">
+        <div class="sl">FVGs</div>
+        <div class="sv" style="color:var(--text)">693</div>
+      </div>
+      <div class="state-cell">
+        <div class="sl">BOS</div>
+        <div class="sv" style="color:var(--text)">2160</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER PANEL -->
+  <div class="center">
+
+    <div class="stats-bar">
+      <div class="stat-box">
+        <div class="stat-label">Total Trades</div>
+        <div class="stat-val" style="color:var(--text)">222</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Wins</div>
+        <div class="stat-val" style="color:var(--green)">122</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Losses</div>
+        <div class="stat-val" style="color:var(--red)">100</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Net P&L</div>
+        <div class="stat-val" style="color:var(--green)">+$24K</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Open Now</div>
+        <div class="stat-val" style="color:var(--warn)" id="open-count">0</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-title">equity curve — backtest 2 years xauusd h1</div>
+      <div style="position:relative;width:100%;height:240px">
+        <canvas id="equityChart"></canvas>
+      </div>
+    </div>
+
+    <div class="trades-wrap">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase">recent trades</div>
+      <div class="trades-head">
+        <span>type</span><span>entry</span><span>exit</span><span>result</span><span>p&l</span><span>balance</span>
+      </div>
+      <div id="trade-rows"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right">
+
+    <div class="rp">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:12px;text-transform:uppercase">confluence score</div>
+      <div style="display:flex;align-items:center;justify-content:center;margin-bottom:10px">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="none" stroke="#181c22" stroke-width="9"/>
+          <circle id="score-ring" cx="55" cy="55" r="46" fill="none" stroke="#00c87a" stroke-width="9"
+            stroke-dasharray="289" stroke-dashoffset="159"
+            stroke-linecap="round" transform="rotate(-90 55 55)" style="transition:stroke-dashoffset .5s"/>
+          <text x="55" y="51" text-anchor="middle" fill="#e8ecf0" font-size="22" font-weight="700" font-family="Syne,sans-serif" id="ring-num">9</text>
+          <text x="55" y="66" text-anchor="middle" fill="#5a6478" font-size="10" font-family="Space Mono,monospace">/20</text>
+        </svg>
+      </div>
+      <div class="score-factors">
+        <div class="factor-row">
+          <span style="color:var(--muted)">Order Block</span>
+          <div class="dots" id="dots-ob">
+            <div class="dot dot-off"></div><div class="dot dot-off"></div><div class="dot dot-off"></div><div class="dot dot-off"></div><div class="dot dot-off"></div>
+          </div>
+        </div>
+        <div class="factor-row">
+          <span style="color:var(--muted)">Fair Value Gap</span>
+          <div class="dots" id="dots-fvg">
+            <div class="dot dot-off"></div><div class="dot dot-off"></div><div class="dot dot-off"></div><div class="dot dot-off"></div>
+          </div>
+        </div>
+        <div class="factor-row">
+          <span style="color:var(--muted)">BOS / CHoCH</span>
+          <div class="dots" id="dots-bos">
+            <div class="dot dot-on"></div><div class="dot dot-on"></div><div class="dot dot-on"></div>
+          </div>
+        </div>
+        <div class="factor-row">
+          <span style="color:var(--muted)">EMA Align</span>
+          <div class="dots" id="dots-ema">
+            <div class="dot dot-on"></div><div class="dot dot-on"></div><div class="dot dot-on"></div>
+          </div>
+        </div>
+        <div class="factor-row">
+          <span style="color:var(--muted)">Kill Zone</span>
+          <div class="dots" id="dots-kz">
+            <div class="dot dot-on"></div><div class="dot dot-on"></div><div class="dot dot-on"></div>
+          </div>
+        </div>
+        <div class="factor-row">
+          <span style="color:var(--muted)">S/R Level</span>
+          <div class="dots" id="dots-sr">
+            <div class="dot dot-off"></div><div class="dot dot-off"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rp" style="flex:1">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase">activity log</div>
+      <div id="activity-log">
+        <div class="act-item"><span class="act-time" id="t1">--</span><span>Engine started</span></div>
+        <div class="act-item"><span class="act-time" id="t2">--</span><span>MT5 connected</span></div>
+        <div class="act-item"><span class="act-time" id="t3">--</span><span style="color:var(--text)">11821 candles loaded</span></div>
+        <div class="act-item"><span class="act-time" id="t4">--</span><span>Watching for signals...</span></div>
+      </div>
+    </div>
+
+    <div class="rp" style="border-top:1px solid var(--border)">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase">open trades</div>
+      <div id="open-trades-list">
+        <div style="font-size:10px;color:var(--muted);text-align:center;padding:12px 0">No open trades</div>
+      </div>
+    </div>
+
+    <div style="padding:12px 14px;background:var(--bg2);border-top:1px solid var(--border)">
+      <a href="http://localhost:8000" target="_blank" style="display:block;width:100%;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);color:var(--accent);padding:10px;font-size:10px;letter-spacing:1px;cursor:pointer;border-radius:3px;font-family:'Space Mono',monospace;text-decoration:none;text-align:center">CONNECT LIVE DATA</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const trades=[
+  {sig:"SELL",ep:5092.53,xp:4602.81,res:"win",pnl:632.55,bal:32263.55},
+  {sig:"BUY", ep:5145.61,xp:4184.54,res:"loss",pnl:-322.71,bal:31940.84},
+  {sig:"SELL",ep:5115.28,xp:5089.28,res:"win",pnl:637.07,bal:32577.91},
+  {sig:"SELL",ep:5034.89,xp:5008.89,res:"win",pnl:649.81,bal:33227.72},
+  {sig:"SELL",ep:5006.32,xp:4980.32,res:"win",pnl:662.73,bal:33890.45},
+  {sig:"SELL",ep:4675.46,xp:4224.20,res:"win",pnl:677.67,bal:34568.12},
+  {sig:"BUY", ep:4364.56,xp:4672.26,res:"loss",pnl:-307.77,bal:34260.35},
+  {sig:"SELL",ep:4435.08,xp:4650.47,res:"loss",pnl:-215.46,bal:34044.89},
+  {sig:"BUY", ep:4785.50,xp:4765.88,res:"loss",pnl:-59.07,bal:33985.82},
+  {sig:"BUY", ep:4747.53,xp:4773.53,res:"win",pnl:677.90,bal:34663.72}
+];
+
+const rows=document.getElementById('trade-rows');
+trades.forEach(t=>{
+  const d=document.createElement('div');
+  d.className='trade-row';
+  const tc=t.sig==='BUY'?'tag-buy':'tag-sell';
+  const rc=t.res==='win'?'color:var(--green)':'color:var(--red)';
+  const pc=t.pnl>0?'color:var(--green)':'color:var(--red)';
+  d.innerHTML=`<span class="tag ${tc}">${t.sig}</span><span style="color:var(--muted)">${t.ep.toFixed(0)}</span><span style="color:var(--muted)">${t.xp.toFixed(0)}</span><span style="${rc}">${t.res.toUpperCase()}</span><span style="${pc}">${t.pnl>0?'+':''}$${Math.abs(t.pnl).toFixed(0)}</span><span style="color:var(--text)">$${(t.bal/1000).toFixed(1)}K</span>`;
+  rows.appendChild(d);
+});
+
+const eq=[10000];
+for(let i=1;i<=221;i++){
+  const t=trades[i%trades.length];
+  eq.push(Math.max(8000,eq[eq.length-1]+(t.pnl*(i<80?0.25:i<160?0.65:1))));
+}
+const lbs=eq.map((_,i)=>i%44===0?'T'+i:'');
+lbs[0]='Start';lbs[221]='Now';
+
+new Chart(document.getElementById('equityChart'),{
+  type:'line',
+  data:{labels:lbs,datasets:[{data:eq,borderColor:'#00e5a0',backgroundColor:'rgba(0,229,160,0.05)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.4}]},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#181c22',borderColor:'#1e2330',borderWidth:1,titleColor:'#5a6478',bodyColor:'#e8ecf0',callbacks:{label:c=>'$'+c.parsed.y.toFixed(0)}}},
+    scales:{
+      x:{grid:{color:'rgba(30,35,48,.5)'},ticks:{color:'#5a6478',font:{size:9},maxRotation:0}},
+      y:{grid:{color:'rgba(30,35,48,.5)'},ticks:{color:'#5a6478',font:{size:9},callback:v=>'$'+Math.round(v/1000)+'K'}}
+    }
+  }
+});
+
+function getSession(){
+  const h=new Date().getUTCHours();
+  if(h>=7&&h<10)return'LONDON';
+  if(h>=13&&h<16)return'NEW YORK';
+  if(h>=0&&h<3)return'TOKYO';
+  return'CLOSED';
+}
+
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toTimeString().slice(0,8);
+  document.getElementById('date-display').textContent=n.toDateString();
+  const sess=getSession();
+  document.getElementById('session-ticker').textContent=sess;
+  document.getElementById('session-cell').textContent=sess;
+  const sc=sess==='CLOSED'?'var(--muted)':'var(--accent)';
+  document.getElementById('session-ticker').style.color=sc;
+  document.getElementById('session-cell').style.color=sc;
+  const t=n.toTimeString().slice(0,5);
+  document.getElementById('t1').textContent=t;
+  document.getElementById('t2').textContent=t;
+  document.getElementById('t3').textContent=t;
+  document.getElementById('t4').textContent=t;
+}
+
+let basePrice=4765.88;
+function updatePrice(){
+  basePrice+=(Math.random()-.48)*1.5;
+  document.getElementById('gold-price').textContent=basePrice.toFixed(2);
+  const chg=basePrice-4765.88;
+  const el=document.getElementById('gold-chg');
+  el.textContent=(chg>=0?'+':'')+chg.toFixed(2);
+  el.style.color=chg>=0?'var(--green)':'var(--red)';
+}
+
+updateClock();
+setInterval(updateClock,1000);
+setInterval(updatePrice,3000);
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem('mirotrade_state');
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    if(s.balance)document.getElementById('balance-display').textContent='$'+s.balance.toFixed(2);
+    const closed=s.closed_trades||[];
+    const open=s.open_trades||[];
+    const wins=closed.filter(t=>t.pnl>0).length;
+    const total=closed.length;
+    if(total>0){
+      const wr=((wins/total)*100).toFixed(1);
+      document.getElementById('wr-display').textContent=wr+'%';
+      document.getElementById('wr-bar').style.width=wr+'%';
+    }
+    document.getElementById('open-count').textContent=open.length;
+    const ol=document.getElementById('open-trades-list');
+    if(open.length>0){
+      ol.innerHTML='';
+      open.forEach(t=>{
+        const d=document.createElement('div');
+        d.className='open-trade'+(t.signal==='SELL'?' sell':'');
+        d.innerHTML=`<div style="display:flex;justify-content:space-between"><span class="tag ${t.signal==='BUY'?'tag-buy':'tag-sell'}">${t.signal}</span><span style="color:var(--muted)">#${t.id}</span></div><div style="margin-top:5px;color:var(--muted)">Entry: <span style="color:var(--text)">${t.entry_price}</span></div><div style="color:var(--muted)">SL: <span style="color:var(--red)">${t.sl}</span> TP: <span style="color:var(--green)">${t.tp}</span></div>`;
+        ol.appendChild(d);
+      });
+    }
+  }catch(e){}
+}
+
+loadState();
+setInterval(loadState,5000);
+</script>
+</body>
+</html>
