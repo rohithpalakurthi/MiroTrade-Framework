@@ -1,0 +1,49 @@
+# MiroTrade-Framework Python Dependencies
+
+# MT5 Connection
+MetaTrader5>=5.0.45
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+python-dateutil>=2.8.2
+
+# Backtesting
+backtrader>=1.9.78
+
+# Crypto Data
+ccxt>=4.0.0
+
+# Technical Analysis
+ta-lib>=0.4.28
+pandas-ta>=0.3.14b
+
+# AI / LLM Agents
+openai>=1.0.0
+langchain>=0.1.0
+langchain-openai>=0.0.5
+
+# News / Sentiment
+requests>=2.31.0
+newsapi-python>=0.2.7
+beautifulsoup4>=4.12.0
+
+# Database
+psycopg2-binary>=2.9.7
+redis>=5.0.0
+sqlalchemy>=2.0.0
+
+# API / WebSocket
+fastapi>=0.104.0
+uvicorn>=0.24.0
+websockets>=12.0
+
+# Utilities
+python-dotenv>=1.0.0
+loguru>=0.7.2
+schedule>=1.2.0
+pytz>=2023.3
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0

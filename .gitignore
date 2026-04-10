@@ -1,0 +1,36 @@
+# Environment & Secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Data files (too large for git)
+backtesting/data/*.csv
+backtesting/data/*.parquet
+logs/*.log
+logs/*.json
+
+# Reports (generated files)
+backtesting/reports/*.html
+backtesting/reports/*.pdf
+paper_trading/logs/*.json
+
+# Node
+node_modules/
+dashboard/frontend/build/
+
+# IDE
+.vscode/
+.idea/
+*.DS_Store
+
+# MQL5 compiled
+live_execution/mql5/*.ex5
