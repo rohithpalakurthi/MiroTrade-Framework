@@ -1,0 +1,162 @@
+[
+  {
+    "timestamp": "2026-04-11T02:34:24.901930",
+    "cycle": 1,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Alert expired"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 10000.0,
+        "passed": true
+      }
+    },
+    "signal": "none",
+    "confidence": 92
+  },
+  {
+    "timestamp": "2026-04-11T02:35:24.975106",
+    "cycle": 2,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Alert expired"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 10000.0,
+        "passed": true
+      }
+    },
+    "signal": "none",
+    "confidence": 92
+  },
+  {
+    "timestamp": "2026-04-11T02:36:25.009094",
+    "cycle": 3,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Alert expired"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 10000.0,
+        "passed": true
+      }
+    },
+    "signal": "none",
+    "confidence": 92
+  },
+  {
+    "timestamp": "2026-04-11T02:37:25.060301",
+    "cycle": 4,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Alert expired"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 10000.0,
+        "passed": true
+      }
+    },
+    "signal": "none",
+    "confidence": 92
+  },
+  {
+    "timestamp": "2026-04-11T02:38:25.105342",
+    "cycle": 5,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Alert expired"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 10000.0,
+        "passed": true
+      }
+    },
+    "signal": "none",
+    "confidence": 92
+  }
+]
