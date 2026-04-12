@@ -3209,5 +3209,43 @@
     },
     "signal": "none",
     "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:14:41.637531",
+    "cycle": 19,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
   }
 ]
