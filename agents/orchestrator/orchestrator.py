@@ -160,7 +160,6 @@ class OrchestratorAgent:
             open_trades  = state.get("open_trades", [])
             closed_trades = state.get("closed_trades", [])
 
-            # Get last signal from recent activity
             if len(closed_trades) > 0:
                 last_trade = closed_trades[-1]
                 decision["signal"] = last_trade.get("signal", "none")
@@ -174,11 +173,31 @@ class OrchestratorAgent:
             if len(open_trades) >= 3:
                 decision["reasons"].append("CAPACITY: Max open trades reached")
 
+        # --- Check 5: MTF Bias ---
+        mtf_aligned = True
+        try:
+            if os.path.exists("agents/market_analyst/mtf_bias.json"):
+                with open("agents/market_analyst/mtf_bias.json") as f:
+                    mtf = json.load(f)
+                direction = mtf.get("direction", "neutral")
+                aligned   = mtf.get("aligned", False)
+                mtf_aligned = direction != "neutral"
+                decision["checks"]["mtf"] = {
+                    "direction" : direction,
+                    "aligned"   : aligned,
+                    "passed"    : mtf_aligned
+                }
+                if not mtf_aligned:
+                    decision["reasons"].append("MTF: Neutral - timeframes not aligned")
+        except:
+            decision["checks"]["mtf"] = {"passed": True, "reason": "MTF not available"}
+
         # --- Final Verdict ---
         all_checks_passed = (
             (news_safe or NEWS_BLOCK_OVERRIDE) and
             health >= 5 and
             risk_approved and
+            mtf_aligned and
             (not state or len(state.get("open_trades", [])) < 3)
         )
 

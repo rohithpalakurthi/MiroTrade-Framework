@@ -84,6 +84,31 @@ def run_crypto_extension():
     except Exception as e:
         print("[CRYPTO] Fatal: {}".format(e))
 
+def run_market_analyst():
+    try:
+        from agents.market_analyst.market_analyst import MarketAnalystAgent
+        agent = MarketAnalystAgent()
+        agent.connect()
+        agent.run_loop(interval=3600)
+    except Exception as e:
+        print("[MARKET ANALYST] Fatal: {}".format(e))
+
+def run_mtf_loop():
+    """Refresh MTF bias every hour."""
+    try:
+        while True:
+            try:
+                from strategies.moving_averages.mtf_analysis import MultiTimeframeAnalysis, save_mtf_bias
+                mtf    = MultiTimeframeAnalysis()
+                result = mtf.offline_analysis()
+                save_mtf_bias(result)
+                print("[MTF] Bias updated: {}".format(result.get("direction","?").upper()))
+            except Exception as e:
+                print("[MTF] Error: {}".format(e))
+            time.sleep(3600)  # Every hour
+    except Exception as e:
+        print("[MTF LOOP] Fatal: {}".format(e))
+
 def run_mt5_bridge():
     try:
         from live_execution.bridge.mt5_bridge import MT5Bridge
@@ -223,6 +248,8 @@ if __name__ == "__main__":
         threading.Thread(target=run_risk_manager_loop,  daemon=True, name="RiskManager"),
         threading.Thread(target=run_orchestrator_loop,  daemon=True, name="Orchestrator"),
         threading.Thread(target=run_performance_report, daemon=True, name="Reporter"),
+        threading.Thread(target=run_market_analyst,     daemon=True, name="MarketAnalyst"),
+        threading.Thread(target=run_mtf_loop,          daemon=True, name="MTFAnalysis"),
         threading.Thread(target=run_mt5_bridge,         daemon=True, name="MT5Bridge"),
         threading.Thread(target=run_crypto_extension,   daemon=True, name="Crypto"),
         threading.Thread(target=run_scheduler,          daemon=True, name="Scheduler"),
@@ -246,6 +273,8 @@ if __name__ == "__main__":
     print("  Risk Manager   : Updating risk every 5min")
     print("  Orchestrator   : GO/NO-GO every 60s")
     print("  MT5 Bridge     : Syncing positions every 30s")
+    print("  Market Analyst : Narrative every 1hr")
+    print("  MTF Analysis   : Refreshing bias every 1hr")
     print("  Crypto         : BTC/ETH scanning every 5min")
     print("  Scheduler      : 9am briefing | 10pm summary | midnight optimizer")
     if tg_ok:

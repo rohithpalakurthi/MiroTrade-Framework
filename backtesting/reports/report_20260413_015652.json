@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-04-13T01:56:52.765029",
+  "period": "Since inception",
+  "summary": {
+    "total_trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "open_trades": 0,
+    "win_rate": 0,
+    "profit_factor": 999,
+    "net_pnl": 0,
+    "gross_profit": 0,
+    "gross_loss": 0,
+    "balance": 94706.6,
+    "peak_balance": 94706.6,
+    "drawdown_pct": 0.0,
+    "return_pct": 847.07,
+    "avg_win": 0,
+    "avg_loss": 0,
+    "max_consec_wins": 0,
+    "max_consec_losses": 0,
+    "today_pnl": 0
+  },
+  "best_trade": null,
+  "worst_trade": null,
+  "daily_pnl": {},
+  "open_trades": []
+}
