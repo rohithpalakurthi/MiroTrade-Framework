@@ -77,6 +77,13 @@ def run_telegram_agent():
     except Exception as e:
         print("[TELEGRAM] Fatal: {}".format(e))
 
+def run_crypto_extension():
+    try:
+        from data_feeds.crypto_feed.crypto_extension import CryptoExtension
+        CryptoExtension().run(interval=300)
+    except Exception as e:
+        print("[CRYPTO] Fatal: {}".format(e))
+
 def run_mt5_bridge():
     try:
         from live_execution.bridge.mt5_bridge import MT5Bridge
@@ -217,6 +224,7 @@ if __name__ == "__main__":
         threading.Thread(target=run_orchestrator_loop,  daemon=True, name="Orchestrator"),
         threading.Thread(target=run_performance_report, daemon=True, name="Reporter"),
         threading.Thread(target=run_mt5_bridge,         daemon=True, name="MT5Bridge"),
+        threading.Thread(target=run_crypto_extension,   daemon=True, name="Crypto"),
         threading.Thread(target=run_scheduler,          daemon=True, name="Scheduler"),
     ]
     if tg_ok:
@@ -238,6 +246,7 @@ if __name__ == "__main__":
     print("  Risk Manager   : Updating risk every 5min")
     print("  Orchestrator   : GO/NO-GO every 60s")
     print("  MT5 Bridge     : Syncing positions every 30s")
+    print("  Crypto         : BTC/ETH scanning every 5min")
     print("  Scheduler      : 9am briefing | 10pm summary | midnight optimizer")
     if tg_ok:
         print("  Telegram       : Trade alerts every 30s")

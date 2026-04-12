@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-04-13T00:38:47.289880",
-  "cycle": 37,
+  "timestamp": "2026-04-13T01:02:25.888980",
+  "cycle": 15,
   "verdict": "NO-GO",
   "reasons": [
     "NEWS BLOCK: Multiple high-impact events detected (11)"
@@ -23,7 +23,7 @@
     "paper_trader": {
       "open_trades": 0,
       "closed_trades": 0,
-      "balance": 10000.0,
+      "balance": 94706.6,
       "passed": true
     }
   },
