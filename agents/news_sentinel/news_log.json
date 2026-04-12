@@ -1,7 +1,7 @@
 {
-  "scan_time": "2026-04-10T22:19:59.579415",
+  "scan_time": "2026-04-13T00:02:46.538310",
   "total_articles": 16,
-  "high_impact_count": 14,
+  "high_impact_count": 11,
   "high_impact_events": [
     {
       "title": "Bitcoin clings to monthly gains, historic losing streak still in play",
@@ -10,28 +10,34 @@
       "published": "2026-03-23T10:46:59Z"
     },
     {
-      "title": "Is Covid to blame for high housing costs and taxes?",
-      "source": "Ncspin.com",
-      "sentiment": "neutral",
-      "published": "2026-04-09T14:17:38Z"
-    },
-    {
-      "title": "US weekly jobless claims rise, but remain at low levels",
-      "source": "The Times of India",
-      "sentiment": "neutral",
-      "published": "2026-04-09T12:46:38Z"
-    },
-    {
-      "title": "What are today's mortgage interest rates: April 9, 2026?",
-      "source": "CBS News",
-      "sentiment": "neutral",
-      "published": "2026-04-09T12:34:01Z"
-    },
-    {
-      "title": "Why are gold and silver prices falling today \u2014 are they no longer safe haven assets? Here\u2019s the current gold and silver price and whether bullion could slide below $4,700 again",
+      "title": "Can $300 monthly investing really reach $1 million? Warren Buffett proven compounding strategy and the S&P 500 fast-track to financial freedom in 2026",
       "source": "The Times of India",
       "sentiment": "bullish",
-      "published": "2026-04-09T12:15:25Z"
+      "published": "2026-04-11T18:29:50Z"
+    },
+    {
+      "title": "Wall Street ignores rising inflation, falling consumer confidence",
+      "source": "TheStreet",
+      "sentiment": "bullish",
+      "published": "2026-04-10T22:23:49Z"
+    },
+    {
+      "title": "Joseph Wang: Geopolitical tensions could trigger a global recession, high energy prices pose significant risks, and the US labor market shows signs of weakening | Forward Guidance",
+      "source": "Crypto Briefing",
+      "sentiment": "bullish",
+      "published": "2026-04-10T22:03:17Z"
+    },
+    {
+      "title": "Stocks drift lower and oil prices ease ahead of planned US-Iran talks",
+      "source": "CNA",
+      "sentiment": "bullish",
+      "published": "2026-04-10T21:30:00Z"
+    },
+    {
+      "title": "BofA\u2019s Hartnett Sees the Surge in Commodities Lasting for Years",
+      "source": "Financial Post",
+      "sentiment": "bullish",
+      "published": "2026-04-10T10:47:05Z"
     },
     {
       "title": "Tokenized perpetual swaps hit $31 billion weekly volume on commodities volatility",
@@ -52,46 +58,22 @@
       "published": "2026-04-09T06:00:00Z"
     },
     {
-      "title": "Bitcoin rebounds as oil cools but Trump impeachment odds show markets still on edge",
-      "source": "CryptoSlate",
-      "sentiment": "neutral",
-      "published": "2026-04-08T19:05:47Z"
-    },
-    {
-      "title": "Bitcoin holds near $71,000 as markets weigh geopolitics and macro signals",
-      "source": "BusinessLine",
-      "sentiment": "neutral",
-      "published": "2026-04-09T15:15:35Z"
-    },
-    {
-      "title": "RBI plumps for caution amidst uncertainty",
-      "source": "BusinessLine",
+      "title": "US inflation surges to 3.3% as impact of Iran war bites",
+      "source": "New Zealand Herald",
       "sentiment": "bullish",
-      "published": "2026-04-09T15:13:42Z"
+      "published": "2026-04-11T01:57:37Z"
     },
     {
-      "title": "Bitcoin price surfs US PCE inflation as trader keeps $80K BTC price target",
-      "source": "Cointelegraph",
+      "title": "BTC USD price shocks markets: Bitcoin rises over $73,000 despite US CPI spike to near 2-year high - here's what crypto traders need to know",
+      "source": "The Times of India",
       "sentiment": "bullish",
-      "published": "2026-04-09T13:57:14Z"
-    },
-    {
-      "title": "Morning Brief: Where things stand with Iran",
-      "source": "Yahoo Entertainment",
-      "sentiment": "neutral",
-      "published": "2026-04-09T10:00:07Z"
-    },
-    {
-      "title": "Everyone\u2019s awaiting U.S. inflation figures, but bitcoin traders couldn\u2019t care less",
-      "source": "CoinDesk",
-      "sentiment": "neutral",
-      "published": "2026-04-09T08:22:28Z"
+      "published": "2026-04-10T20:17:27Z"
     }
   ],
   "sentiment": {
-    "bullish": 7,
+    "bullish": 10,
     "bearish": 0,
-    "neutral": 9
+    "neutral": 6
   },
   "trading_blocked": true
 }

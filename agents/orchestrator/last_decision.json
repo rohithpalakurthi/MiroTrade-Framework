@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-04-11T02:38:25.105342",
-  "cycle": 5,
-  "verdict": "GO",
+  "timestamp": "2026-04-13T00:09:46.375485",
+  "cycle": 8,
+  "verdict": "NO-GO",
   "reasons": [
-    "All systems green - ready to trade"
+    "NEWS BLOCK: Multiple high-impact events detected (11)"
   ],
   "checks": {
     "news": {
-      "passed": true,
-      "reason": "Alert expired"
+      "passed": false,
+      "reason": "Multiple high-impact events detected (11)"
     },
     "portfolio_health": {
       "score": 9,
@@ -28,5 +28,5 @@
     }
   },
   "signal": "none",
-  "confidence": 92
+  "confidence": 0
 }
