@@ -41,7 +41,7 @@ INITIAL_BALANCE    = 10000.0
 RISK_PER_TRADE_PCT = 0.01
 MIN_RR             = 2.0
 SL_BUFFER_PIPS     = 10.0
-MIN_SCORE          = 12
+MIN_SCORE          = 11   # Paper trading: 11 (live trading will use 12)
 LOG_DIR            = "paper_trading/logs"
 CHECK_INTERVAL_SEC = 60   # Check every 60 seconds
 

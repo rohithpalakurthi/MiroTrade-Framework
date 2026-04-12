@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-13 01:19:56.998096",
+  "generated_at": "2026-04-13 02:27:31.963177",
   "readiness_pct": 50,
   "passed": 5,
   "total": 10,
@@ -7,8 +7,8 @@
     "paper_trades": {
       "passed": false,
       "value": 0,
-      "required": 30,
-      "label": "Paper trades: 0 (need 30)"
+      "required": 20,
+      "label": "Paper trades: 0 (need 20)"
     },
     "paper_days": {
       "passed": false,

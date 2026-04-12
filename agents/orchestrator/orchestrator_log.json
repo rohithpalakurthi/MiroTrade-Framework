@@ -1,677 +1,5 @@
 [
   {
-    "timestamp": "2026-04-11T02:34:24.901930",
-    "cycle": 1,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T02:35:24.975106",
-    "cycle": 2,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T02:36:25.009094",
-    "cycle": 3,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T02:37:25.060301",
-    "cycle": 4,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T02:38:25.105342",
-    "cycle": 5,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T02:55:43.644553",
-    "cycle": 1,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T14:25:29.548746",
-    "cycle": 3,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T20:25:23.120282",
-    "cycle": 4,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T21:27:06.609800",
-    "cycle": 5,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T22:24:59.725665",
-    "cycle": 6,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-11T23:26:10.629157",
-    "cycle": 7,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-12T14:25:00.999096",
-    "cycle": 8,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-12T14:26:02.147724",
-    "cycle": 9,
-    "verdict": "NO-GO",
-    "reasons": [
-      "NEWS BLOCK: Multiple high-impact events detected (10)"
-    ],
-    "checks": {
-      "news": {
-        "passed": false,
-        "reason": "Multiple high-impact events detected (10)"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 0
-  },
-  {
-    "timestamp": "2026-04-12T14:27:02.181490",
-    "cycle": 10,
-    "verdict": "NO-GO",
-    "reasons": [
-      "NEWS BLOCK: Multiple high-impact events detected (10)"
-    ],
-    "checks": {
-      "news": {
-        "passed": false,
-        "reason": "Multiple high-impact events detected (10)"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 0
-  },
-  {
-    "timestamp": "2026-04-12T14:28:02.237838",
-    "cycle": 11,
-    "verdict": "NO-GO",
-    "reasons": [
-      "NEWS BLOCK: Multiple high-impact events detected (10)"
-    ],
-    "checks": {
-      "news": {
-        "passed": false,
-        "reason": "Multiple high-impact events detected (10)"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 0
-  },
-  {
-    "timestamp": "2026-04-12T14:29:02.278637",
-    "cycle": 12,
-    "verdict": "NO-GO",
-    "reasons": [
-      "NEWS BLOCK: Multiple high-impact events detected (10)"
-    ],
-    "checks": {
-      "news": {
-        "passed": false,
-        "reason": "Multiple high-impact events detected (10)"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 0
-  },
-  {
-    "timestamp": "2026-04-12T14:30:02.313500",
-    "cycle": 13,
-    "verdict": "NO-GO",
-    "reasons": [
-      "NEWS BLOCK: Multiple high-impact events detected (10)"
-    ],
-    "checks": {
-      "news": {
-        "passed": false,
-        "reason": "Multiple high-impact events detected (10)"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 0
-  },
-  {
-    "timestamp": "2026-04-12T21:40:31.738560",
-    "cycle": 15,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-12T21:41:31.807468",
-    "cycle": 16,
-    "verdict": "NO-GO",
-    "reasons": [
-      "NEWS BLOCK: Multiple high-impact events detected (8)"
-    ],
-    "checks": {
-      "news": {
-        "passed": false,
-        "reason": "Multiple high-impact events detected (8)"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 0
-  },
-  {
-    "timestamp": "2026-04-12T23:36:41.522659",
-    "cycle": 17,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Alert expired"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 92
-  },
-  {
-    "timestamp": "2026-04-12T23:37:41.798241",
-    "cycle": 18,
-    "verdict": "NO-GO",
-    "reasons": [
-      "NEWS BLOCK: Multiple high-impact events detected (10)"
-    ],
-    "checks": {
-      "news": {
-        "passed": false,
-        "reason": "Multiple high-impact events detected (10)"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 10,
-        "reason": "Drawdown OK: 0.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 0
-  },
-  {
     "timestamp": "2026-04-12T23:38:41.850523",
     "cycle": 19,
     "verdict": "NO-GO",
@@ -3213,6 +2541,880 @@
   {
     "timestamp": "2026-04-13T02:14:41.637531",
     "cycle": 19,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:15:41.690254",
+    "cycle": 20,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:16:41.738222",
+    "cycle": 21,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:18:01.851647",
+    "cycle": 1,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:19:01.936289",
+    "cycle": 2,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:20:01.987176",
+    "cycle": 3,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:21:02.021149",
+    "cycle": 4,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:22:02.051429",
+    "cycle": 5,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:23:02.093803",
+    "cycle": 6,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:24:02.154310",
+    "cycle": 7,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:25:02.208091",
+    "cycle": 8,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:26:02.248866",
+    "cycle": 9,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:27:02.290355",
+    "cycle": 10,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:28:02.323651",
+    "cycle": 11,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:29:02.393357",
+    "cycle": 12,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:30:02.456032",
+    "cycle": 13,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:31:02.489154",
+    "cycle": 14,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:32:02.525955",
+    "cycle": 15,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:33:02.567591",
+    "cycle": 16,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:34:02.624990",
+    "cycle": 17,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:35:02.681744",
+    "cycle": 18,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:36:02.717365",
+    "cycle": 19,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:37:02.757487",
+    "cycle": 20,
+    "verdict": "NO-GO",
+    "reasons": [
+      "NEWS BLOCK: Multiple high-impact events detected (11)",
+      "MTF: Neutral - timeframes not aligned"
+    ],
+    "checks": {
+      "news": {
+        "passed": false,
+        "reason": "Multiple high-impact events detected (11)"
+      },
+      "portfolio_health": {
+        "score": 9,
+        "reason": "DD:0.0% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 10,
+        "reason": "Drawdown OK: 0.0%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 0,
+        "balance": 94706.6,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "aligned": false,
+        "passed": false
+      }
+    },
+    "signal": "none",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-13T02:38:02.791257",
+    "cycle": 21,
     "verdict": "NO-GO",
     "reasons": [
       "NEWS BLOCK: Multiple high-impact events detected (11)",

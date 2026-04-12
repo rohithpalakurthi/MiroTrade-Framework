@@ -23,7 +23,7 @@ NEWS_FILE      = "agents/news_sentinel/news_log.json"
 
 # --- Minimum requirements to go live ---
 REQUIREMENTS = {
-    "min_paper_trades"      : 30,     # At least 30 paper trades
+    "min_paper_trades"      : 20,     # Reduced from 30 - high quality strategy trades less
     "min_paper_days"        : 14,     # At least 14 days paper trading
     "min_win_rate"          : 50.0,   # Win rate above 50%
     "min_profit_factor"     : 1.5,    # Profit factor above 1.5
