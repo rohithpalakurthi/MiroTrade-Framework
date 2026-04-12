@@ -1,0 +1,154 @@
+{
+  "generated_at": "2026-04-13T00:19:09.127228",
+  "total_tested": 10,
+  "best_params": {
+    "min_score": 13,
+    "fvg_min_pips": 8.0,
+    "ob_lookback": 10,
+    "rr_ratio": 1.5,
+    "ema_fast": 50,
+    "ema_slow": 200
+  },
+  "best_result": {
+    "params": {
+      "min_score": 13,
+      "fvg_min_pips": 8.0,
+      "ob_lookback": 10,
+      "rr_ratio": 1.5,
+      "ema_fast": 50,
+      "ema_slow": 200
+    },
+    "total_trades": 222,
+    "win_rate": 42.79,
+    "profit_factor": 1.79,
+    "net_pnl": 8225.79,
+    "return_pct": 82.26,
+    "max_drawdown": 1.65,
+    "sharpe": 0.26,
+    "final_balance": 18225.79,
+    "composite_score": 23.56
+  },
+  "baseline": {
+    "params": {
+      "min_score": 12,
+      "fvg_min_pips": 5.0,
+      "ob_lookback": 10,
+      "rr_ratio": 2.0,
+      "ema_fast": 50,
+      "ema_slow": 200
+    },
+    "total_trades": 222,
+    "win_rate": 37.84,
+    "profit_factor": 1.94,
+    "net_pnl": 11575.76,
+    "return_pct": 115.76,
+    "max_drawdown": 3.63,
+    "sharpe": 0.2726,
+    "final_balance": 21575.76,
+    "composite_score": 21.96
+  },
+  "improvement": {
+    "win_rate_delta": 4.95,
+    "pf_delta": -0.15,
+    "return_delta": -33.5,
+    "dd_delta": -1.98
+  },
+  "top5": [
+    {
+      "params": {
+        "min_score": 13,
+        "fvg_min_pips": 8.0,
+        "ob_lookback": 10,
+        "rr_ratio": 1.5,
+        "ema_fast": 50,
+        "ema_slow": 200
+      },
+      "total_trades": 222,
+      "win_rate": 42.79,
+      "profit_factor": 1.79,
+      "net_pnl": 8225.79,
+      "return_pct": 82.26,
+      "max_drawdown": 1.65,
+      "sharpe": 0.26,
+      "final_balance": 18225.79,
+      "composite_score": 23.56
+    },
+    {
+      "params": {
+        "min_score": 13,
+        "fvg_min_pips": 3.0,
+        "ob_lookback": 10,
+        "rr_ratio": 1.5,
+        "ema_fast": 50,
+        "ema_slow": 200
+      },
+      "total_trades": 222,
+      "win_rate": 42.79,
+      "profit_factor": 1.79,
+      "net_pnl": 8225.79,
+      "return_pct": 82.26,
+      "max_drawdown": 1.65,
+      "sharpe": 0.26,
+      "final_balance": 18225.79,
+      "composite_score": 23.56
+    },
+    {
+      "params": {
+        "min_score": 11,
+        "fvg_min_pips": 5.0,
+        "ob_lookback": 15,
+        "rr_ratio": 1.5,
+        "ema_fast": 50,
+        "ema_slow": 200
+      },
+      "total_trades": 830,
+      "win_rate": 41.57,
+      "profit_factor": 1.81,
+      "net_pnl": 62550.61,
+      "return_pct": 625.51,
+      "max_drawdown": 1.0,
+      "sharpe": 0.2203,
+      "final_balance": 72550.61,
+      "composite_score": 23.22
+    },
+    {
+      "params": {
+        "min_score": 11,
+        "fvg_min_pips": 3.0,
+        "ob_lookback": 15,
+        "rr_ratio": 1.5,
+        "ema_fast": 50,
+        "ema_slow": 200
+      },
+      "total_trades": 830,
+      "win_rate": 41.57,
+      "profit_factor": 1.81,
+      "net_pnl": 62550.61,
+      "return_pct": 625.51,
+      "max_drawdown": 1.0,
+      "sharpe": 0.2203,
+      "final_balance": 72550.61,
+      "composite_score": 23.22
+    },
+    {
+      "params": {
+        "min_score": 12,
+        "fvg_min_pips": 3.0,
+        "ob_lookback": 15,
+        "rr_ratio": 2.0,
+        "ema_fast": 50,
+        "ema_slow": 200
+      },
+      "total_trades": 222,
+      "win_rate": 37.84,
+      "profit_factor": 1.94,
+      "net_pnl": 11575.76,
+      "return_pct": 115.76,
+      "max_drawdown": 3.63,
+      "sharpe": 0.2726,
+      "final_balance": 21575.76,
+      "composite_score": 21.96
+    }
+  ],
+  "recommendation": "CONSIDER updating to new parameters after paper trade validation | Win Rate: +5.0% | PF: -0.15 | Return: -33.5%"
+}
