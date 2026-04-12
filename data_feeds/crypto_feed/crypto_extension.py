@@ -33,7 +33,7 @@ from strategies.confluence.confluence_engine import (
 SYMBOLS         = ["BTC/USDT", "ETH/USDT"]
 TIMEFRAME       = "1h"
 CANDLES         = 500
-MIN_SCORE       = 12
+MIN_SCORE       = 13   # Tuned for crypto - between 12 and 15
 RISK_PER_TRADE  = 0.01
 MIN_RR          = 2.0
 LOG_DIR         = "paper_trading/logs"
@@ -117,16 +117,17 @@ class CryptoExtension:
             return None
 
     def run_analysis(self, df):
-        """Run full SMC confluence analysis on crypto data."""
-        df = detect_fvg(df, min_gap_pips=50.0)    # Larger pips for crypto
+        """Run SMC confluence analysis tuned for crypto."""
+        df = detect_fvg(df, min_gap_pips=300.0)   # BTC needs large FVG threshold
         df = mark_filled_fvgs(df)
-        df = detect_order_blocks(df, lookback=10)
+        df = detect_order_blocks(df, lookback=15)  # Longer lookback for crypto
         df = mark_broken_obs(df)
-        df = detect_swing_points(df, lookback=10)
+        df = detect_swing_points(df, lookback=15)
         df = detect_bos(df)
-        df = add_ema(df, fast=50, slow=200)
-        df = add_kill_zones(df)
-        df = add_support_resistance(df, lookback=50)
+        df = add_ema(df, fast=21, slow=89)         # Faster EMAs suit crypto
+        df = add_support_resistance(df, lookback=100)
+        # Crypto trades 24/7 - skip session kill zones
+        df["in_kill_zone"] = True
         df = run_confluence_engine(df, min_score=MIN_SCORE)
         return df
 

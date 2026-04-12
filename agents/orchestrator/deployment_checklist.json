@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-04-13 01:19:56.998096",
+  "readiness_pct": 50,
+  "passed": 5,
+  "total": 10,
+  "checks": {
+    "paper_trades": {
+      "passed": false,
+      "value": 0,
+      "required": 30,
+      "label": "Paper trades: 0 (need 30)"
+    },
+    "paper_days": {
+      "passed": false,
+      "value": 0,
+      "required": 14,
+      "label": "Paper trading days: 0 (need 14)"
+    },
+    "paper_win_rate": {
+      "passed": false,
+      "value": 0,
+      "required": 50.0,
+      "label": "Live win rate: 0% (need 50.0%+)"
+    },
+    "paper_profit_factor": {
+      "passed": true,
+      "value": 999,
+      "required": 1.5,
+      "label": "Live profit factor: 999 (need 1.5+)"
+    },
+    "paper_drawdown": {
+      "passed": true,
+      "value": 0.0,
+      "required": 10.0,
+      "label": "Max drawdown: 0.0% (must be <10.0%)"
+    },
+    "risk_manager": {
+      "passed": true,
+      "value": 10,
+      "required": 7,
+      "label": "Risk score 10/10 (need 7)"
+    },
+    "orchestrator": {
+      "passed": false,
+      "value": "NO-GO",
+      "required": "GO",
+      "label": "Orchestrator verdict: NO-GO"
+    },
+    "backtest_return": {
+      "passed": true,
+      "value": 246.0,
+      "required": 50.0,
+      "label": "Backtest return 246% (need 50.0%+)"
+    },
+    "backtest_win_rate": {
+      "passed": true,
+      "value": 54.95,
+      "required": 50.0,
+      "label": "Backtest win rate 54.95% (need 50.0%+)"
+    },
+    "ea_demo_test": {
+      "passed": false,
+      "value": 0,
+      "required": 7,
+      "label": "EA demo tested 0 days (need 7 days)"
+    }
+  },
+  "ready_to_live": false,
+  "recommendation": "NOT READY - Continue paper trading and monitoring."
+}
