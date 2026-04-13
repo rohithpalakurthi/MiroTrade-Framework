@@ -1,0 +1,11 @@
+{
+  "action": "BUY",
+  "symbol": "XAUUSD",
+  "entry": 4765.0,
+  "sl": 4750.7,
+  "tp": 4793.59,
+  "lots": 0.01,
+  "source": "TEST",
+  "timestamp": "2026-04-13 03:30:13.200261",
+  "status": "pending"
+}
