@@ -157,10 +157,12 @@ class OrchestratorAgent:
 
         # --- Check 4: Paper Trading Signal ---
         if state:
-            open_trades  = state.get("open_trades", [])
+            open_trades   = state.get("open_trades", [])
             closed_trades = state.get("closed_trades", [])
 
-            if len(closed_trades) > 0:
+            # Safe signal extraction
+            decision["signal"] = "none"
+            if closed_trades and len(closed_trades) > 0:
                 last_trade = closed_trades[-1]
                 decision["signal"] = last_trade.get("signal", "none")
 

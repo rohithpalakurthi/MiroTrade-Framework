@@ -388,10 +388,12 @@ function updateClock(){
 }
 
 let basePrice=4765.88;
+let openPrice=4765.88;
+
 function updatePrice(){
   basePrice+=(Math.random()-.48)*1.5;
   document.getElementById('gold-price').textContent=basePrice.toFixed(2);
-  const chg=basePrice-4765.88;
+  const chg=basePrice-openPrice;
   const el=document.getElementById('gold-chg');
   el.textContent=(chg>=0?'+':'')+chg.toFixed(2);
   el.style.color=chg>=0?'var(--green)':'var(--red)';
@@ -401,22 +403,111 @@ updateClock();
 setInterval(updateClock,1000);
 setInterval(updatePrice,3000);
 
-function loadState(){
+// Load live state from paper trading logs
+async function loadState(){
   try{
-    const raw=localStorage.getItem('mirotrade_state');
-    if(!raw)return;
-    const s=JSON.parse(raw);
-    if(s.balance)document.getElementById('balance-display').textContent='$'+s.balance.toFixed(2);
+    // Try to load paper trading state
+    const r=await fetch('../../paper_trading/logs/state.json?t='+Date.now());
+    if(!r.ok) throw new Error('no state');
+    const s=await r.json();
+
+    // Live price from MT5 - try price feed first
+    try{
+      const pr=await fetch('live_price.json?t='+Date.now());
+      if(pr.ok){
+        const p=await pr.json();
+        if(p.bid){
+          const bid=parseFloat(p.bid);
+          const ask=parseFloat(p.ask);
+          document.getElementById('gold-price').textContent=bid.toFixed(2);
+          document.getElementById('gold-chg').textContent=(bid>0?'+':'')+bid.toFixed(2);
+          if(s.balance && parseFloat(p.balance)>0)
+            document.getElementById('balance-display').textContent='$'+parseFloat(p.balance).toFixed(2);
+        }
+      }
+    }catch(e){}
+
+    // Load risk state
+    try{
+      const rr=await fetch('../../agents/risk_manager/risk_state.json?t='+Date.now());
+      if(rr.ok){
+        const risk=await rr.json();
+        const el=document.getElementById('risk-status');
+        if(el){el.textContent=risk.score+'/10';el.style.color=risk.score>=7?'var(--green)':'var(--red)';}
+      }
+    }catch(e){}
+
+    // Load news state
+    try{
+      const na=await fetch('../../agents/news_sentinel/current_alert.json?t='+Date.now());
+      if(na.ok){
+        const news=await na.json();
+        const el=document.getElementById('news-status');
+        if(el){el.textContent=news.block_trading?'BLOCK':'OK';el.style.color=news.block_trading?'var(--red)':'var(--green)';}
+      }
+    }catch(e){}
+
+    // Load MTF bias
+    try{
+      const mt=await fetch('../../agents/market_analyst/mtf_bias.json?t='+Date.now());
+      if(mt.ok){
+        const mtf=await mt.json();
+        const el=document.getElementById('mtf-status');
+        const dir=mtf.direction||'neutral';
+        if(el){el.textContent=dir.toUpperCase().slice(0,4);el.style.color=dir==='BUY'?'var(--green)':dir==='SELL'?'var(--red)':'var(--muted)';}
+      }
+    }catch(e){}
+
+    // Trades
     const closed=s.closed_trades||[];
     const open=s.open_trades||[];
-    const wins=closed.filter(t=>t.pnl>0).length;
+    const wins=closed.filter(t=>parseFloat(t.pnl||0)>0).length;
     const total=closed.length;
+
+    // Update stats bar
+    document.getElementById('open-count').textContent=open.length;
+
     if(total>0){
       const wr=((wins/total)*100).toFixed(1);
       document.getElementById('wr-display').textContent=wr+'%';
       document.getElementById('wr-bar').style.width=wr+'%';
+
+      // Net PnL
+      const netPnl=closed.reduce((a,t)=>a+parseFloat(t.pnl||0),0);
+      const pnlEl=document.querySelector('.stat-val[style*="green"]');
+
+      // Profit factor
+      const gross_p=closed.filter(t=>parseFloat(t.pnl||0)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
+      const gross_l=Math.abs(closed.filter(t=>parseFloat(t.pnl||0)<=0).reduce((a,t)=>a+parseFloat(t.pnl),0));
+
+      // Drawdown
+      const peak=s.peak_balance||s.balance||10000;
+      const bal=s.balance||10000;
+      const dd=((peak-bal)/peak*100).toFixed(2);
+      document.getElementById('dd-display').textContent=dd+'%';
+      document.getElementById('dd-bar').style.width=Math.min(dd,100)+'%';
+
+      // Return
+      const ret=((bal-10000)/10000*100).toFixed(1);
     }
-    document.getElementById('open-count').textContent=open.length;
+
+    // Update trade rows
+    if(closed.length>0){
+      const rows=document.getElementById('trade-rows');
+      rows.innerHTML='';
+      closed.slice(-10).reverse().forEach(t=>{
+        const d=document.createElement('div');
+        d.className='trade-row';
+        const tc=t.signal==='BUY'?'tag-buy':'tag-sell';
+        const rc=t.result==='win'?'color:var(--green)':'color:var(--red)';
+        const pc=parseFloat(t.pnl||0)>0?'color:var(--green)':'color:var(--red)';
+        const pnl=parseFloat(t.pnl||0);
+        d.innerHTML=`<span class="tag ${tc}">${t.signal}</span><span style="color:var(--muted)">${parseFloat(t.entry_price||0).toFixed(0)}</span><span style="color:var(--muted)">${parseFloat(t.exit_price||0).toFixed(0)}</span><span style="${rc}">${(t.result||'').toUpperCase()}</span><span style="${pc}">${pnl>0?'+':''}$${Math.abs(pnl).toFixed(0)}</span><span style="color:var(--text)">$${(parseFloat(t.balance_after||s.balance||10000)/1000).toFixed(1)}K</span>`;
+        rows.appendChild(d);
+      });
+    }
+
+    // Open trades panel
     const ol=document.getElementById('open-trades-list');
     if(open.length>0){
       ol.innerHTML='';
@@ -426,8 +517,35 @@ function loadState(){
         d.innerHTML=`<div style="display:flex;justify-content:space-between"><span class="tag ${t.signal==='BUY'?'tag-buy':'tag-sell'}">${t.signal}</span><span style="color:var(--muted)">#${t.id}</span></div><div style="margin-top:5px;color:var(--muted)">Entry: <span style="color:var(--text)">${t.entry_price}</span></div><div style="color:var(--muted)">SL: <span style="color:var(--red)">${t.sl}</span> TP: <span style="color:var(--green)">${t.tp}</span></div>`;
         ol.appendChild(d);
       });
+      document.getElementById('open-count').textContent=open.length;
     }
-  }catch(e){}
+
+    // Load market analyst narrative
+    try{
+      const mr=await fetch('../../agents/market_analyst/market_narrative.json');
+      if(mr.ok){
+        const m=await mr.json();
+        if(m.price) basePrice=parseFloat(m.price);
+        if(m.trend){
+          const trendEl=document.querySelector('.sv[style*="green"]');
+        }
+      }
+    }catch(e){}
+
+    // Load orchestrator state
+    try{
+      const or=await fetch('../../agents/orchestrator/last_decision.json');
+      if(or.ok){
+        const o=await or.json();
+        const verdict=o.verdict||'NO-GO';
+        document.getElementById('orch-badge').textContent=verdict;
+        document.getElementById('orch-badge').style.color=verdict==='GO'?'var(--green)':'var(--red)';
+      }
+    }catch(e){}
+
+  }catch(e){
+    // Fallback - keep showing static data
+  }
 }
 
 loadState();

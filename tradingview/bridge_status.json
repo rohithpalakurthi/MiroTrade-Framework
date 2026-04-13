@@ -1,0 +1,18 @@
+{
+  "ngrok_url": "https://reverb-verse-unnamable.ngrok-free.dev",
+  "webhook_ok": true,
+  "webhook_url": "https://reverb-verse-unnamable.ngrok-free.dev/webhook",
+  "last_signal": {
+    "action": "BUY",
+    "entry": 4765.0,
+    "lots": 0.01,
+    "sl": 4750.7,
+    "source": "TEST",
+    "status": "pending",
+    "symbol": "XAUUSD",
+    "timestamp": "2026-04-13 03:30:13.200261",
+    "tp": 4793.59
+  },
+  "alert_count": 8,
+  "updated": "2026-04-14 02:39:17.111581"
+}

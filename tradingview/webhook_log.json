@@ -9,5 +9,82 @@
     },
     "status": "BLOCKED",
     "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
+  },
+  {
+    "time": "2026-04-13 17:20:56.020774",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4706.325,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "BLOCKED",
+    "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
+  },
+  {
+    "time": "2026-04-13 17:23:26.072339",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4707.82,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "BLOCKED",
+    "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
+  },
+  {
+    "time": "2026-04-13 17:30:01.001835",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4705.865,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "BLOCKED",
+    "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
+  },
+  {
+    "time": "2026-04-13 17:30:47.418063",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4706.4,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "BLOCKED",
+    "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
+  },
+  {
+    "time": "2026-04-13 19:20:33.609266",
+    "data": {
+      "action": "BUY",
+      "symbol": "XAUUSD",
+      "price": 4740.25,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "BLOCKED",
+    "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
+  },
+  {
+    "time": "2026-04-14 01:42:30.523079",
+    "data": {
+      "action": "BUY",
+      "symbol": "XAUUSD",
+      "price": 4744.185,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "BLOCKED",
+    "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
+  },
+  {
+    "time": "2026-04-14 01:47:23.645355",
+    "data": {
+      "action": "BUY",
+      "symbol": "XAUUSD",
+      "price": 4742.635,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "BLOCKED",
+    "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
   }
 ]

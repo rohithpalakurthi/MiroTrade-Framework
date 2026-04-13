@@ -1,20 +1,20 @@
 {
-  "timestamp": "2026-04-13T13:12:44.444715",
-  "cycle": 655,
+  "timestamp": "2026-04-14T02:38:56.437744",
+  "cycle": 2,
   "verdict": "NO-GO",
   "reasons": [
-    "NEWS BLOCK: Multiple high-impact events detected (11)",
+    "NEWS BLOCK: Multiple high-impact events detected (10)",
     "CAPACITY: Max open trades reached",
     "MTF: Neutral - timeframes not aligned"
   ],
   "checks": {
     "news": {
       "passed": false,
-      "reason": "Multiple high-impact events detected (11)"
+      "reason": "Multiple high-impact events detected (10)"
     },
     "portfolio_health": {
       "score": 7,
-      "reason": "DD:0.0% WR:N/A OpenTrades:8",
+      "reason": "DD:0.0% WR:N/A OpenTrades:9",
       "passed": true
     },
     "risk": {
@@ -23,7 +23,7 @@
       "reason": "Drawdown OK: 0.0%"
     },
     "paper_trader": {
-      "open_trades": 8,
+      "open_trades": 9,
       "closed_trades": 0,
       "balance": 94720.12,
       "passed": false

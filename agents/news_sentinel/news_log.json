@@ -1,7 +1,7 @@
 {
-  "scan_time": "2026-04-13T12:49:35.048613",
+  "scan_time": "2026-04-14T02:37:54.722409",
   "total_articles": 16,
-  "high_impact_count": 11,
+  "high_impact_count": 10,
   "high_impact_events": [
     {
       "title": "Bitcoin clings to monthly gains, historic losing streak still in play",
@@ -10,28 +10,16 @@
       "published": "2026-03-23T10:46:59Z"
     },
     {
+      "title": "Bond Traders Snap Back to Inflation as Higher-for-Longer Sets In",
+      "source": "Financial Post",
+      "sentiment": "neutral",
+      "published": "2026-04-12T19:21:46Z"
+    },
+    {
       "title": "Can $300 monthly investing really reach $1 million? Warren Buffett proven compounding strategy and the S&P 500 fast-track to financial freedom in 2026",
       "source": "The Times of India",
       "sentiment": "bullish",
       "published": "2026-04-11T18:29:50Z"
-    },
-    {
-      "title": "Wall Street ignores rising inflation, falling consumer confidence",
-      "source": "TheStreet",
-      "sentiment": "bullish",
-      "published": "2026-04-10T22:23:49Z"
-    },
-    {
-      "title": "Joseph Wang: Geopolitical tensions could trigger a global recession, high energy prices pose significant risks, and the US labor market shows signs of weakening | Forward Guidance",
-      "source": "Crypto Briefing",
-      "sentiment": "bullish",
-      "published": "2026-04-10T22:03:17Z"
-    },
-    {
-      "title": "Stocks drift lower and oil prices ease ahead of planned US-Iran talks",
-      "source": "CNA",
-      "sentiment": "bullish",
-      "published": "2026-04-10T21:30:00Z"
     },
     {
       "title": "BofA\u2019s Hartnett Sees the Surge in Commodities Lasting for Years",
@@ -58,22 +46,28 @@
       "published": "2026-04-09T06:00:00Z"
     },
     {
+      "title": "Bitcoin price falls under $71K as US-Iran war tensions spark sell-off",
+      "source": "Cointelegraph",
+      "sentiment": "bullish",
+      "published": "2026-04-12T19:56:12Z"
+    },
+    {
+      "title": "Inconclusive US-Iran talks, oil prices, inflation data to dictate investors' sentiment: Analysts",
+      "source": "BusinessLine",
+      "sentiment": "neutral",
+      "published": "2026-04-12T09:26:32Z"
+    },
+    {
       "title": "US inflation surges to 3.3% as impact of Iran war bites",
       "source": "New Zealand Herald",
       "sentiment": "bullish",
       "published": "2026-04-11T01:57:37Z"
-    },
-    {
-      "title": "BTC USD price shocks markets: Bitcoin rises over $73,000 despite US CPI spike to near 2-year high - here's what crypto traders need to know",
-      "source": "The Times of India",
-      "sentiment": "bullish",
-      "published": "2026-04-10T20:17:27Z"
     }
   ],
   "sentiment": {
-    "bullish": 10,
+    "bullish": 7,
     "bearish": 0,
-    "neutral": 6
+    "neutral": 9
   },
   "trading_blocked": true
 }

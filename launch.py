@@ -50,6 +50,13 @@ def run_news_sentinel_loop():
     except Exception as e:
         print("[NEWS SENTINEL] Fatal: {}".format(e))
 
+def run_price_feed():
+    try:
+        from dashboard.backend.price_feed import run
+        run()
+    except Exception as e:
+        print("[PRICE FEED] Error: {}".format(e))
+
 def run_risk_manager_loop():
     try:
         from agents.risk_manager.risk_manager import RiskManagerAgent
@@ -253,6 +260,7 @@ if __name__ == "__main__":
         threading.Thread(target=run_mt5_bridge,         daemon=True, name="MT5Bridge"),
         threading.Thread(target=run_crypto_extension,   daemon=True, name="Crypto"),
         threading.Thread(target=run_scheduler,          daemon=True, name="Scheduler"),
+        threading.Thread(target=run_price_feed, daemon=True, name="PriceFeed"),
     ]
     if tg_ok:
         threads.append(

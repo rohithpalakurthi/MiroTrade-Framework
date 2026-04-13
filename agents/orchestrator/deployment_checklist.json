@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-13 02:27:31.963177",
+  "generated_at": "2026-04-14 01:36:55.695777",
   "readiness_pct": 50,
   "passed": 5,
   "total": 10,
@@ -60,9 +60,9 @@
     },
     "ea_demo_test": {
       "passed": false,
-      "value": 0,
+      "value": 1,
       "required": 7,
-      "label": "EA demo tested 0 days (need 7 days)"
+      "label": "EA demo tested 1 days (need 7 days)"
     }
   },
   "ready_to_live": false,
