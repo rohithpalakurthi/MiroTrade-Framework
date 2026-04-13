@@ -1,0 +1,13 @@
+[
+  {
+    "time": "2026-04-13 16:41:04.847587",
+    "data": {
+      "action": "BUY",
+      "symbol": "XAUUSD",
+      "price": 4713.94,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "BLOCKED",
+    "reason": "NEWS: Multiple high-impact events detected (11) | ORCH: NO-GO"
+  }
+]
