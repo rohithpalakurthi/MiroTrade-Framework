@@ -1,129 +1,75 @@
 {
-  "updated": "2026-04-17 10:50:56.260327",
+  "updated": "2026-04-17 20:15:38.631503",
   "timeframes": {
     "H4": {
       "supply": [
         {
-          "high": 4816.39,
+          "high": 4817.68,
           "low": 4799.4,
-          "strength": 6,
-          "bar": 10
-        },
-        {
-          "high": 4790.93,
-          "low": 4760.45,
-          "strength": 6,
-          "bar": 11
-        },
-        {
-          "high": 4699.97,
-          "low": 4683.06,
           "strength": 5,
-          "bar": 3
+          "bar": 8
         },
         {
-          "high": 4810.12,
-          "low": 4789.47,
-          "strength": 4,
-          "bar": 17
+          "high": 4795.2,
+          "low": 4760.45,
+          "strength": 5,
+          "bar": 9
         }
       ],
       "demand": [
         {
           "high": 4721.24,
-          "low": 4690.76,
+          "low": 4686.49,
           "strength": 10,
-          "bar": 6
+          "bar": 4
         },
         {
           "high": 4636.17,
-          "low": 4627.03,
-          "strength": 9,
-          "bar": 24
+          "low": 4625.74,
+          "strength": 8,
+          "bar": 22
         },
         {
           "high": 4656.78,
-          "low": 4626.3,
-          "strength": 8,
-          "bar": 5
+          "low": 4622.03,
+          "strength": 7,
+          "bar": 3
         },
         {
           "high": 4744.2,
-          "low": 4713.81,
-          "strength": 7,
-          "bar": 16
+          "low": 4712.52,
+          "strength": 6,
+          "bar": 14
         },
         {
           "high": 4771.28,
-          "low": 4743.05,
-          "strength": 6,
-          "bar": 34
+          "low": 4741.76,
+          "strength": 5,
+          "bar": 32
         }
       ]
     },
     "H1": {
       "supply": [
         {
-          "high": 4825.39,
-          "low": 4818.38,
-          "strength": 7,
-          "bar": 8
-        },
-        {
-          "high": 4827.11,
+          "high": 4829.59,
           "low": 4816.18,
-          "strength": 7,
-          "bar": 35
-        },
-        {
-          "high": 4834.18,
-          "low": 4828.91,
-          "strength": 5,
-          "bar": 13
-        },
-        {
-          "high": 4829.0,
-          "low": 4815.62,
-          "strength": 5,
-          "bar": 14
-        },
-        {
-          "high": 4841.69,
-          "low": 4833.14,
-          "strength": 5,
-          "bar": 23
+          "strength": 4,
+          "bar": 26
         }
       ],
       "demand": [
         {
-          "high": 4811.62,
-          "low": 4803.0,
-          "strength": 6,
-          "bar": 12
+          "high": 4799.19,
+          "low": 4777.52,
+          "strength": 10,
+          "bar": 48
         },
         {
           "high": 4788.7,
-          "low": 4775.32,
-          "strength": 6,
-          "bar": 37
-        },
-        {
-          "high": 4793.83,
-          "low": 4783.81,
-          "strength": 5,
-          "bar": 20
-        },
-        {
-          "high": 4807.54,
-          "low": 4794.16,
-          "strength": 5,
-          "bar": 21
-        },
-        {
-          "high": 4799.96,
-          "low": 4786.58,
+          "low": 4767.03,
           "strength": 4,
-          "bar": 10
+          "bar": 28
         }
       ]
     }

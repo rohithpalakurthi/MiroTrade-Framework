@@ -22,11 +22,15 @@ load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 SCALE_STATE_FILE = "agents/master_trader/scale_out_state.json"
+TP_TARGETS_FILE  = "agents/master_trader/tp_targets.json"
+MTF_FILE         = "agents/market_analyst/mtf_bias.json"
 
 # Tier thresholds in R multiples
 TIER1_R = 1.0   # close 30% + SL to breakeven
 TIER2_R = 2.0   # close 30% + SL to +0.5R
 TIER3_R = 3.0   # trail remaining with 1.5 ATR
+
+TP1_TRIGGER_PTS = 0.5   # trigger smart exit within 0.5pts of TP1 price
 
 
 def send_telegram(msg):
@@ -79,6 +83,34 @@ def get_atr_h1():
         return round(float(tr.rolling(14).mean().iloc[-1]), 2)
     except:
         return 10.0
+
+
+def load_tp_targets():
+    try:
+        if os.path.exists(TP_TARGETS_FILE):
+            with open(TP_TARGETS_FILE) as f:
+                return json.load(f)
+    except:
+        pass
+    return {}
+
+
+def is_trend_favorable(direction):
+    """True if MTF bias agrees with the trade direction and session is active."""
+    try:
+        if os.path.exists(MTF_FILE):
+            with open(MTF_FILE) as f:
+                mtf = json.load(f)
+            bias = mtf.get("direction", "neutral").upper()
+            aligned = (direction == "BUY" and bias in ("BULLISH", "BULL", "STRONG BULL")) or \
+                      (direction == "SELL" and bias in ("BEARISH", "BEAR", "STRONG BEAR"))
+            # Avoid dead zone (01:00–06:00 UTC)
+            hour = datetime.utcnow().hour
+            dead_zone = 1 <= hour < 6
+            return aligned and not dead_zone
+    except:
+        pass
+    return False  # default: unfavorable → take profit safely
 
 
 def close_partial(ticket, volume, direction):
@@ -144,9 +176,10 @@ def check_scale_out():
     if not positions:
         return
 
-    state = load_scale_state()
-    atr   = get_atr_h1()
-    changed = False
+    state      = load_scale_state()
+    tp_targets = load_tp_targets()
+    atr        = get_atr_h1()
+    changed    = False
 
     for p in positions:
         ticket    = str(p.ticket)
@@ -169,15 +202,72 @@ def check_scale_out():
         # Init state for this ticket
         if ticket not in state:
             state[ticket] = {
-                "original_lots": lots,
-                "tier1_done"   : False,
-                "tier2_done"   : False,
+                "original_lots" : lots,
+                "tp1_done"      : False,
+                "tier1_done"    : False,
+                "tier2_done"    : False,
                 "tier3_trailing": False,
-                "tier3_sl"     : None,
+                "tier3_sl"      : None,
             }
             changed = True
 
         s = state[ticket]
+
+        # ── TP1 SMART EXIT: price reaches TP1 target (max 15pts) ──
+        tgt = tp_targets.get(ticket, {})
+        tp1_price = tgt.get("tp1", None)
+        tp2_price = tgt.get("tp2", 0)
+
+        if tp1_price and not s.get("tp1_done", False):
+            at_tp1 = (
+                (direction == "BUY"  and current >= tp1_price - TP1_TRIGGER_PTS) or
+                (direction == "SELL" and current <= tp1_price + TP1_TRIGGER_PTS)
+            )
+            if at_tp1:
+                favorable = is_trend_favorable(direction)
+                if favorable and tp2_price > 0:
+                    # Close 50% and trail remainder toward TP2
+                    close_lots = max(0.01, round(lots * 0.50, 2))
+                    ok, fill_px = close_partial(ticket, close_lots, direction)
+                    if ok:
+                        be_sl = round(entry + 0.5, 2) if direction == "BUY" else round(entry - 0.5, 2)
+                        modify_sl(ticket, be_sl, tp2_price)
+                        s["tp1_done"]   = True
+                        s["tier1_done"] = True   # prevent double-fire at +1R
+                        changed = True
+                        print("[ScaleOut] TP1 HIT (trail) ticket {} | closed 50% ({}L) @ {} | "
+                              "SL→BE | trailing to TP2 {}".format(
+                              ticket, close_lots, fill_px, tp2_price))
+                        send_telegram(
+                            "<b>MIRO TP1 HIT — TRAILING</b>\n"
+                            "Ticket {} {} | Closed 50% ({}L) @ {}\n"
+                            "SL moved to breakeven: {}\n"
+                            "Trailing remainder toward TP2: {}\n"
+                            "<i>Trend aligned — letting winner run</i>".format(
+                                ticket, direction, close_lots, fill_px,
+                                round(be_sl, 2), tp2_price
+                            )
+                        )
+                else:
+                    # Close 100% — conditions not favorable or no TP2
+                    reason = "no TP2" if tp2_price <= 0 else "trend unfavorable"
+                    ok, fill_px = close_partial(ticket, lots, direction)
+                    if ok:
+                        s["tp1_done"]   = True
+                        s["tier1_done"] = True
+                        s["tier2_done"] = True
+                        changed = True
+                        pts_gain = round(abs(fill_px - entry), 2)
+                        print("[ScaleOut] TP1 HIT (full close) ticket {} | {}L @ {} | +{} pts | {}".format(
+                            ticket, lots, fill_px, pts_gain, reason))
+                        send_telegram(
+                            "<b>MIRO TP1 HIT — FULL CLOSE</b>\n"
+                            "Ticket {} {} | {}L @ {} | +{} pts\n"
+                            "<i>{} — profit secured</i>".format(
+                                ticket, direction, lots, fill_px, pts_gain, reason
+                            )
+                        )
+            continue  # skip R-based tiers this cycle while TP1 not done
 
         # ── TIER 1: +1R → close 30% + SL to breakeven ────────────
         if r_now >= TIER1_R and not s["tier1_done"]:

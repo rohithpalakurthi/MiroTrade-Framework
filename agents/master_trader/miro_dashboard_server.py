@@ -38,7 +38,22 @@ FILES = {
     "paper_state"    : "paper_trading/logs/state.json",
 }
 
-PAUSE_FILE = "agents/master_trader/miro_pause.json"
+PAUSE_FILE     = "agents/master_trader/miro_pause.json"
+CB_CONFIG_FILE      = "agents/master_trader/circuit_breaker_config.json"
+TRADING_CONFIG_FILE = "agents/master_trader/trading_config.json"
+
+_CB_DEFAULTS = {"daily_loss_pct": 0.02, "weekly_loss_pct": 0.05, "drawdown_pct": 0.08}
+_TRADING_DEFAULTS = {
+    "risk_pct"                 : 0.01,
+    "max_lots"                 : 2.0,
+    "min_rr"                   : 1.5,
+    "min_confidence"           : 7,
+    "max_open_positions"       : 3,
+    "max_same_direction"       : 2,
+    "news_block_enabled"       : True,
+    "orchestrator_gate_enabled": True,
+    "session_filter_enabled"   : True,
+}
 app = Flask(__name__)
 CORS(app)
 _cache = {}
@@ -181,7 +196,177 @@ def api_pause():
 @app.route("/api/resume", methods=["POST"])
 def api_resume():
     if os.path.exists(PAUSE_FILE): os.remove(PAUSE_FILE)
+    # Also clear daily_paused in CB state so circuit breaker can re-arm at the current limit
+    cb_state_path = "agents/master_trader/circuit_breaker_state.json"
+    if os.path.exists(cb_state_path):
+        try:
+            with open(cb_state_path) as f:
+                st = json.load(f)
+            st["daily_paused"] = False
+            st["status"] = "OK"
+            with open(cb_state_path, "w") as f:
+                json.dump(st, f, indent=2)
+        except:
+            pass
     return jsonify({"status": "resumed"})
+
+@app.route("/api/close-all", methods=["POST"])
+def api_close_all():
+    """Close all open XAUUSD positions via MT5."""
+    closed = []
+    errors = []
+    try:
+        import MetaTrader5 as mt5
+        if not mt5.initialize():
+            return jsonify({"status": "error", "message": "MT5 init failed"}), 500
+
+        positions = list(mt5.positions_get(symbol="XAUUSD") or [])
+        if not positions:
+            mt5.shutdown()
+            return jsonify({"status": "ok", "closed": [], "message": "No open positions"})
+
+        for p in positions:
+            tick      = mt5.symbol_info_tick("XAUUSD")
+            direction = p.type   # 0=BUY, 1=SELL
+            otype     = mt5.ORDER_TYPE_SELL if direction == 0 else mt5.ORDER_TYPE_BUY
+            price     = tick.bid if direction == 0 else tick.ask
+            req = {
+                "action"      : mt5.TRADE_ACTION_DEAL,
+                "symbol"      : "XAUUSD",
+                "volume"      : p.volume,
+                "type"        : otype,
+                "position"    : p.ticket,
+                "price"       : price,
+                "deviation"   : 30,
+                "magic"       : 0,
+                "comment"     : "dashboard_close_all",
+                "type_time"   : mt5.ORDER_TIME_GTC,
+                "type_filling": mt5.ORDER_FILLING_IOC,
+            }
+            result = mt5.order_send(req)
+            if result.retcode == mt5.TRADE_RETCODE_DONE:
+                closed.append({"ticket": p.ticket, "pnl": round(p.profit, 2)})
+            else:
+                errors.append({"ticket": p.ticket, "error": result.comment})
+
+        mt5.shutdown()
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+    total_pnl = sum(c["pnl"] for c in closed)
+    return jsonify({
+        "status" : "ok",
+        "closed" : closed,
+        "errors" : errors,
+        "total_pnl": round(total_pnl, 2),
+    })
+
+@app.route("/api/cb-config", methods=["GET"])
+def api_cb_config_get():
+    cfg = dict(_CB_DEFAULTS)
+    if os.path.exists(CB_CONFIG_FILE):
+        try:
+            with open(CB_CONFIG_FILE) as f:
+                cfg.update(json.load(f))
+        except:
+            pass
+    return jsonify(cfg)
+
+@app.route("/api/cb-config", methods=["POST"])
+def api_cb_config_post():
+    from flask import request
+    body = request.get_json(force=True, silent=True) or {}
+    cfg = dict(_CB_DEFAULTS)
+    if os.path.exists(CB_CONFIG_FILE):
+        try:
+            with open(CB_CONFIG_FILE) as f:
+                cfg.update(json.load(f))
+        except:
+            pass
+    for key in ("daily_loss_pct", "weekly_loss_pct", "drawdown_pct"):
+        if key in body:
+            val = float(body[key])
+            if val <= 0 or val > 1:
+                return jsonify({"error": f"{key} must be between 0 and 1 (e.g. 0.02 for 2%)"}), 400
+            cfg[key] = round(val, 4)
+    os.makedirs("agents/master_trader", exist_ok=True)
+    with open(CB_CONFIG_FILE, "w") as f:
+        json.dump(cfg, f, indent=2)
+
+    # Auto-unpause if current daily loss is now below the new limit
+    auto_resumed = False
+    cb_state_path = "agents/master_trader/circuit_breaker_state.json"
+    if os.path.exists(cb_state_path):
+        try:
+            with open(cb_state_path) as f:
+                st = json.load(f)
+            current_loss = abs(st.get("daily_loss_pct", 0))
+            if st.get("daily_paused") and current_loss < cfg["daily_loss_pct"]:
+                if os.path.exists(PAUSE_FILE):
+                    pause_reason = ""
+                    try:
+                        with open(PAUSE_FILE) as f2:
+                            pause_reason = json.load(f2).get("reason", "")
+                    except:
+                        pass
+                    if "daily loss" in pause_reason.lower():
+                        os.remove(PAUSE_FILE)
+                st["daily_paused"] = False
+                st["daily_limit_pct"] = cfg["daily_loss_pct"]
+                st["status"] = "OK"
+                with open(cb_state_path, "w") as f:
+                    json.dump(st, f, indent=2)
+                auto_resumed = True
+        except:
+            pass
+
+    return jsonify({"status": "saved", "config": cfg, "auto_resumed": auto_resumed})
+
+@app.route("/api/trading-config", methods=["GET"])
+def api_trading_config_get():
+    cfg = dict(_TRADING_DEFAULTS)
+    if os.path.exists(TRADING_CONFIG_FILE):
+        try:
+            with open(TRADING_CONFIG_FILE) as f:
+                cfg.update(json.load(f))
+        except:
+            pass
+    return jsonify(cfg)
+
+@app.route("/api/trading-config", methods=["POST"])
+def api_trading_config_post():
+    from flask import request
+    body = request.get_json(force=True, silent=True) or {}
+    cfg = dict(_TRADING_DEFAULTS)
+    if os.path.exists(TRADING_CONFIG_FILE):
+        try:
+            with open(TRADING_CONFIG_FILE) as f:
+                cfg.update(json.load(f))
+        except:
+            pass
+    # Numeric fields
+    numeric = {
+        "risk_pct"          : (0.001, 0.10),
+        "max_lots"          : (0.01,  10.0),
+        "min_rr"            : (0.5,   5.0),
+        "min_confidence"    : (1,     10),
+        "max_open_positions": (1,     10),
+        "max_same_direction": (1,     5),
+    }
+    for key, (lo, hi) in numeric.items():
+        if key in body:
+            val = float(body[key])
+            if not (lo <= val <= hi):
+                return jsonify({"error": "{} must be between {} and {}".format(key, lo, hi)}), 400
+            cfg[key] = round(val, 4) if key in ("risk_pct","max_lots","min_rr") else int(val)
+    # Boolean toggles
+    for key in ("news_block_enabled", "orchestrator_gate_enabled", "session_filter_enabled"):
+        if key in body:
+            cfg[key] = bool(body[key])
+    os.makedirs("agents/master_trader", exist_ok=True)
+    with open(TRADING_CONFIG_FILE, "w") as f:
+        json.dump(cfg, f, indent=2)
+    return jsonify({"status": "saved", "config": cfg})
 
 @app.route("/api/health")
 def api_health():
@@ -243,10 +428,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 .sb-v{font-weight:700}
 
 /* ── Main Grid ── */
-.grid{display:grid;grid-template-columns:210px 1fr 250px;gap:1px;background:var(--border);min-height:calc(100vh - 86px)}
-.left{background:var(--bg2);padding:12px 14px;overflow-y:auto}
-.center{background:var(--bg2);display:flex;flex-direction:column;gap:1px;overflow-y:auto}
-.right{background:var(--bg2);display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.grid{display:grid;grid-template-columns:210px 1fr 250px;gap:1px;background:var(--border);height:calc(100vh - 104px)}
+.left{background:var(--bg2);padding:12px 14px;overflow-y:auto;height:100%}
+.center{background:var(--bg2);display:flex;flex-direction:column;gap:1px;overflow-y:auto;height:100%}
+.right{background:var(--bg2);display:flex;flex-direction:column;gap:1px;overflow-y:auto;height:100%}
 
 /* ── Section headers ── */
 .sec{font-size:9px;letter-spacing:2px;color:var(--muted);padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px;margin-top:16px;text-transform:uppercase}
@@ -258,6 +443,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 .mval{font-family:var(--display);font-size:17px;font-weight:700}
 .bar-bg{height:3px;background:var(--bg3);border-radius:2px;margin-top:4px}
 .bar-fill{height:3px;border-radius:2px;transition:width .6s}
+.cb-cfg-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.cb-input{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:10px;padding:3px 6px;border-radius:3px;width:54px;text-align:right}
+.cb-input:focus{outline:none;border-color:var(--accent)}
+.tc-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.tc-l{color:var(--text2);font-size:9px;flex:1}
+.tc-input{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:10px;padding:3px 6px;border-radius:3px;width:50px;text-align:right}
+.tc-input:focus{outline:none;border-color:var(--accent)}
+.tg-btn{font-size:8px;font-family:var(--mono);padding:3px 7px;border-radius:2px;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--bg3);transition:all .15s;letter-spacing:.5px}
+.tg-btn.active-on{background:rgba(0,200,122,.15);border-color:rgba(0,200,122,.4);color:var(--green);font-weight:700}
+.tg-btn.active-off{background:rgba(224,48,64,.12);border-color:rgba(224,48,64,.35);color:var(--red);font-weight:700}
 
 /* ── Account rows ── */
 .arow{display:flex;justify-content:space-between;padding:3px 0;font-size:10px;color:var(--text2);border-bottom:1px solid var(--border)}
@@ -294,7 +489,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 .stat-val{font-family:var(--display);font-size:18px;font-weight:700;margin-top:2px}
 
 /* ── Open trade cards ── */
-.ot-section{background:var(--bg2);padding:12px 14px}
+.ot-section{background:var(--bg2);padding:12px 14px;flex-shrink:0}
 .ot-card{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--green);padding:9px 11px;border-radius:3px;margin-bottom:5px;display:grid;grid-template-columns:60px 1fr 1fr 1fr 1fr;gap:8px;align-items:center;font-size:10px}
 .ot-card.sell{border-left-color:var(--red)}
 .tag{padding:1px 6px;border-radius:2px;font-size:9px;font-weight:700}
@@ -302,17 +497,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 .tag-sell{background:rgba(224,48,64,.2);color:var(--red)}
 
 /* ── Chart ── */
-.chart-wrap{background:var(--bg2);padding:14px;flex:1;min-height:220px}
+.chart-wrap{background:var(--bg2);padding:14px;flex-shrink:0}
 .chart-title{font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase}
 
 /* ── Trades table ── */
-.trades-wrap{background:var(--bg2);padding:12px 14px}
+.trades-wrap{background:var(--bg2);padding:12px 14px;flex-shrink:0}
 .th{display:grid;grid-template-columns:50px 60px 60px 50px 58px 62px;gap:4px;font-size:9px;color:var(--muted);letter-spacing:1px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px;text-transform:uppercase}
 .tr{display:grid;grid-template-columns:50px 60px 60px 50px 58px 62px;gap:4px;font-size:10px;padding:4px 0;border-bottom:1px solid var(--border);align-items:center}
 .tr:last-child{border-bottom:none}
 
 /* ── Intel panels (center/right) ── */
-.panel{background:var(--bg2);padding:12px 14px}
+.panel{background:var(--bg2);padding:12px 14px;flex-shrink:0}
 .panel-title{font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:9px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
 .panel-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
@@ -387,7 +582,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 .kl{color:var(--text2)}
 
 /* ── Right panels ── */
-.rp{background:var(--bg2);padding:12px 14px}
+.rp{background:var(--bg2);padding:12px 14px;flex-shrink:0}
 
 /* ── Confluence ring ── */
 .ring-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:8px}
@@ -538,8 +733,42 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div class="cbtn danger" onclick="alert('Go live only after checklist hits 100%')">LIVE MODE</div>
     <div class="cbtn" onclick="pauseMiro()">⛔ PAUSE</div>
     <div class="cbtn" onclick="resumeMiro()">▶ RESUME</div>
+    <div class="cbtn danger" onclick="closeAllPositions()">✕ CLOSE ALL</div>
     <div class="cbtn" onclick="refreshAll()">↺ REFRESH</div>
     <div class="cbtn" onclick="alert('Optimizer runs at midnight IST automatically.')">OPTIMIZE</div>
+  </div>
+
+  <div class="sec">trading config</div>
+  <div class="tc-row"><span class="tc-l">Risk/Trade %</span><input class="tc-input" id="tc-risk" type="number" step="0.1" min="0.1" max="10" value="1.0"></div>
+  <div class="tc-row"><span class="tc-l">Min RR</span><input class="tc-input" id="tc-rr" type="number" step="0.1" min="0.5" max="5" value="1.5"></div>
+  <div class="tc-row"><span class="tc-l">Min Confidence</span><input class="tc-input" id="tc-conf" type="number" step="1" min="1" max="10" value="7"></div>
+  <div class="tc-row"><span class="tc-l">Max Positions</span><input class="tc-input" id="tc-maxpos" type="number" step="1" min="1" max="10" value="3"></div>
+  <div class="tc-row"><span class="tc-l">Max Same Dir</span><input class="tc-input" id="tc-maxdir" type="number" step="1" min="1" max="5" value="2"></div>
+  <div class="tc-row"><span class="tc-l">Max Lots</span><input class="tc-input" id="tc-lots" type="number" step="0.1" min="0.01" max="10" value="2.0"></div>
+  <div class="cbtn" style="margin-top:8px" onclick="saveTradingConfig()">SAVE CONFIG</div>
+  <div id="tc-msg" style="font-size:9px;margin-top:5px;min-height:12px"></div>
+
+  <div class="sec">trading gates</div>
+  <div class="tc-row" style="margin-bottom:5px">
+    <span class="tc-l" style="font-size:9px">NEWS BLOCK</span>
+    <div style="display:flex;gap:3px">
+      <div class="tg-btn" id="tg-news-on"  onclick="setToggle('news_block_enabled',true)">ON</div>
+      <div class="tg-btn" id="tg-news-off" onclick="setToggle('news_block_enabled',false)">OFF</div>
+    </div>
+  </div>
+  <div class="tc-row" style="margin-bottom:5px">
+    <span class="tc-l" style="font-size:9px">ORCH GATE</span>
+    <div style="display:flex;gap:3px">
+      <div class="tg-btn" id="tg-orch-on"  onclick="setToggle('orchestrator_gate_enabled',true)">ON</div>
+      <div class="tg-btn" id="tg-orch-off" onclick="setToggle('orchestrator_gate_enabled',false)">OFF</div>
+    </div>
+  </div>
+  <div class="tc-row" style="margin-bottom:5px">
+    <span class="tc-l" style="font-size:9px">SESSION FILTER</span>
+    <div style="display:flex;gap:3px">
+      <div class="tg-btn" id="tg-sess-on"  onclick="setToggle('session_filter_enabled',true)">ON</div>
+      <div class="tg-btn" id="tg-sess-off" onclick="setToggle('session_filter_enabled',false)">OFF</div>
+    </div>
   </div>
 
   <div class="sec">framework agents</div>
@@ -681,6 +910,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div class="krow"><span class="kl">Daily Loss</span><span class="bold mono" id="cb-dl">0%</span></div>
     <div class="krow"><span class="kl">Status</span><span class="mono g" id="cb-st">OK</span></div>
     <div class="bar-bg" style="margin-top:4px"><div class="bar-fill" id="cb-bar" style="background:var(--warn);width:0%"></div></div>
+    <div class="chart-title" style="margin-top:14px">cb limits</div>
+    <div class="cb-cfg-row"><span class="kl">Daily Loss %</span><input class="cb-input" id="cfg-dl" type="number" step="0.1" min="0.1" max="10" value="2.0"></div>
+    <div class="cb-cfg-row"><span class="kl">Weekly Loss %</span><input class="cb-input" id="cfg-wl" type="number" step="0.1" min="0.5" max="20" value="5.0"></div>
+    <div class="cb-cfg-row"><span class="kl">Drawdown %</span><input class="cb-input" id="cfg-dd" type="number" step="0.1" min="1" max="30" value="8.0"></div>
+    <div class="cbtn" style="margin-top:8px" onclick="saveCBConfig()">SAVE LIMITS</div>
+    <div id="cb-cfg-msg" style="font-size:9px;margin-top:5px;min-height:12px"></div>
   </div>
 
   <!-- Market Narrative -->
@@ -707,6 +942,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 <script>
 // ── Equity Chart ──────────────────────────────────────────────
 let eqChart = null;
+let _lastGoldPrice = null;
 (function(){
   eqChart = new Chart(document.getElementById('equityChart'), {
     type:'line',
@@ -773,14 +1009,19 @@ function render(d){
   const ss   = (pp.signal_score)||{};
 
   // ── Ticker ──
-  if(price.bid){
+  if(price.bid != null){
+    const chg=_lastGoldPrice!=null?price.bid-_lastGoldPrice:null;
     document.getElementById('tk-price').textContent=f(price.bid,2);
     document.getElementById('tk-bid').textContent=f(price.bid,2);
     document.getElementById('tk-ask').textContent=f(price.ask,2);
     document.getElementById('tk-spd').textContent=f(price.spread,2);
+    const ce=document.getElementById('tk-chg');
+    if(chg!=null&&Math.abs(chg)>0.001){ce.textContent=(chg>=0?'▲':' ▼')+f(Math.abs(chg),2);ce.style.color=chg>=0?'var(--green)':'var(--red)';}
+    else if(ce.textContent==='--')ce.textContent='';
+    _lastGoldPrice=price.bid;
   }
-  if(dy.dxy) document.getElementById('tk-dxy').textContent=f(dy.dxy.price,2);
-  if(dy.yields) document.getElementById('tk-yield').textContent=f(dy.yields.price,3)+'%';
+  if(dy.dxy) document.getElementById('tk-dxy').textContent=f(dy.dxy,2);
+  if(dy.yield_10y) document.getElementById('tk-yield').textContent=f(dy.yield_10y,3)+'%';
   if(rg.kelly_risk_pct!=null) document.getElementById('tk-kelly').textContent=f(rg.kelly_risk_pct,2)+'%';
   if(mtf.direction){
     const dir=mtf.direction.toUpperCase();
@@ -797,7 +1038,7 @@ function render(d){
   {const e=document.getElementById('sb-mt5');if(mt5.connected){e.textContent='LIVE';e.style.color='var(--green)';}else{e.textContent='OFF';e.style.color='var(--red)';}}
   if(bs.webhook_ok!=null){const e=document.getElementById('sb-wh');e.textContent=bs.webhook_ok?'OK':'DOWN';e.style.color=bs.webhook_ok?'var(--green)':'var(--red)';}
   if(bs.alert_count!=null) document.getElementById('sb-tv').textContent=bs.alert_count;
-  if(cb.daily_loss_pct!=null){const dl=Math.abs(cb.daily_loss_pct||0)*100;const e=document.getElementById('sb-loss');e.textContent=f(dl,2)+'%';e.style.color=dl>1?'var(--red)':'';}
+  {const dl=Math.abs(cb.daily_loss_pct||0)*100;const lim=(cb.daily_limit_pct||0.02)*100;const e=document.getElementById('sb-loss');e.textContent=f(dl,2)+'%';e.style.color=dl>=lim?'var(--red)':dl>lim*0.7?'var(--warn)':'';}
   // sync to system status grid
   [['sb-news','ss-news'],['sb-risk','ss-risk'],['sb-orch','ss-orch'],['sb-mtf','ss-mtf'],['sb-mt5','ss-mt5'],['sb-wh','ss-wh'],['sb-tv','ss-tv']].forEach(([s,t])=>{
     const src=document.getElementById(s),dst=document.getElementById(t);
@@ -943,7 +1184,7 @@ function render(d){
         row.innerHTML=`<span><span class="adot ${cls}"></span>${a.name}</span><span style="font-size:9px;color:${lc}">${lbl}</span>`;
         al.appendChild(row);
       });
-      const ab=document.getElementById('b-agents');ab.textContent=alive+'/'+d.agents_legacy.length+' AGENTS';ab.className='hbadge '+(alive>=10?'green':alive>=6?'warn':'red');
+      const tot=d.agents_legacy.length||13;const ab=document.getElementById('b-agents');ab.textContent=alive+'/'+tot+' AGENTS';ab.className='hbadge '+(alive>=10?'green':alive>=6?'warn':'red');
     }
   }
 
@@ -1019,24 +1260,25 @@ function render(d){
 
   // ── DXY & Yields ──
   if(dy.dxy){
-    const dc=dy.dxy.change_pct||0;
-    document.getElementById('dxy-p').textContent=f(dy.dxy.price,2);
+    const dc=dy.dxy_change||0;
+    document.getElementById('dxy-p').textContent=f(dy.dxy,2);
     document.getElementById('dxy-p').style.cssText=fc(-dc);
-    document.getElementById('dxy-c').textContent=(dc>=0?'+':'')+f(dc,2)+'%';
+    document.getElementById('dxy-c').textContent=(dc>=0?'+':'')+f(dc,3);
     document.getElementById('dxy-c').style.cssText=fc(-dc);
   }
-  if(dy.yields){
-    const yc=dy.yields.change_pct||0;
-    document.getElementById('yld-p').textContent=f(dy.yields.price,3)+'%';
-    document.getElementById('yld-c').textContent=(yc>=0?'+':'')+f(yc,3);
+  if(dy.yield_10y){
+    const yc=dy.yield_change||0;
+    document.getElementById('yld-p').textContent=f(dy.yield_10y,3)+'%';
+    document.getElementById('yld-c').textContent=(yc>=0?'+':'')+f(yc,3)+'%';
     document.getElementById('yld-c').style.cssText=fc(-yc);
   }
-  if(dy.gold_signal){
-    const gs=dy.gold_signal,bias=gs.bias||'NEUTRAL';
-    const bc=bias==='BULLISH_GOLD'?'var(--green)':bias==='BEARISH_GOLD'?'var(--red)':'var(--muted)';
-    const gbe=document.getElementById('gold-bias');gbe.textContent=bias.replace('_GOLD','');gbe.style.color=bc;
-    document.getElementById('gold-ba').textContent='+'+(gs.buy_confidence_adj||0);
-    document.getElementById('gold-sa').textContent='+'+(gs.sell_confidence_adj||0);
+  if(dy.gold_bias){
+    const bias=dy.gold_bias||'NEUTRAL';
+    const strength=dy.strength||'';
+    const bc=bias==='BULLISH'?'var(--green)':bias==='BEARISH'?'var(--red)':'var(--muted)';
+    const gbe=document.getElementById('gold-bias');gbe.textContent=bias+(strength?' '+strength:'');gbe.style.color=bc;
+    document.getElementById('gold-ba').textContent=(dy.buy_confidence_adj>=0?'+':'')+f(dy.buy_confidence_adj||0,0);
+    document.getElementById('gold-sa').textContent=(dy.sell_confidence_adj>=0?'+':'')+f(dy.sell_confidence_adj||0,0);
   }
 
   // ── News Brain ──
@@ -1055,11 +1297,16 @@ function render(d){
     document.getElementById('k-ar').textContent=f(rg.avg_r_used,2)+'R';
     const kre=document.getElementById('k-rec');kre.textContent=rg.in_recovery?'YES — 50% SIZE':'No';kre.style.color=rg.in_recovery?'var(--red)':'var(--green)';
   }
-  if(cb.daily_loss_pct!=null){
+  {
     const dl=Math.abs(cb.daily_loss_pct||0)*100;
-    const cbe=document.getElementById('cb-dl');cbe.textContent=f(dl,2)+'%';cbe.style.color=dl>1?'var(--red)':'';
-    document.getElementById('cb-st').textContent=cb.status||'OK';
-    document.getElementById('cb-bar').style.width=Math.min(dl/2*100,100)+'%';
+    const lim=(cb.daily_limit_pct||0.02)*100;
+    const cbe=document.getElementById('cb-dl');
+    cbe.textContent=f(dl,2)+'% / '+f(lim,1)+'% limit';
+    cbe.style.color=dl>=lim?'var(--red)':dl>lim*0.7?'var(--warn)':'';
+    const cst=document.getElementById('cb-st');
+    cst.textContent=cb.status||'OK';
+    cst.style.color=cb.status==='PAUSED'?'var(--red)':cb.status==='OK'?'var(--green)':'';
+    document.getElementById('cb-bar').style.width=Math.min(lim>0?dl/lim*100:0,100)+'%';
   }
 
   // ── Narrative ──
@@ -1096,8 +1343,100 @@ async function refreshAll(){
 }
 async function pauseMiro(){await fetch('/api/pause',{method:'POST'});refreshAll();}
 async function resumeMiro(){await fetch('/api/resume',{method:'POST'});refreshAll();}
+async function closeAllPositions(){
+  if(!confirm('Close ALL open XAUUSD positions now?\n\nThis cannot be undone.'))return;
+  const r=await fetch('/api/close-all',{method:'POST'});
+  const d=await r.json();
+  if(d.status==='error'){alert('Error: '+d.message);return;}
+  if(d.closed.length===0){alert('No open positions to close.');return;}
+  const lines=d.closed.map(c=>'  Ticket '+c.ticket+' → P&L $'+c.pnl);
+  if(d.errors.length>0)lines.push('\nFailed: '+d.errors.map(e=>e.ticket).join(', '));
+  alert('Closed '+d.closed.length+' position(s)\nTotal P&L: $'+d.total_pnl+'\n\n'+lines.join('\n'));
+  refreshAll();
+}
+
+// ── Trading Config ────────────────────────────────────────────
+let _tcState = {};
+async function loadTradingConfig(){
+  try{
+    const r=await fetch('/api/trading-config');
+    _tcState=await r.json();
+    document.getElementById('tc-risk').value=+(_tcState.risk_pct*100).toFixed(2);
+    document.getElementById('tc-rr').value=+(_tcState.min_rr).toFixed(1);
+    document.getElementById('tc-conf').value=_tcState.min_confidence;
+    document.getElementById('tc-maxpos').value=_tcState.max_open_positions;
+    document.getElementById('tc-maxdir').value=_tcState.max_same_direction;
+    document.getElementById('tc-lots').value=+(_tcState.max_lots).toFixed(2);
+    _renderToggles(_tcState);
+  }catch(e){}
+}
+function _renderToggles(cfg){
+  _setToggleUI('tg-news', cfg.news_block_enabled);
+  _setToggleUI('tg-orch', cfg.orchestrator_gate_enabled);
+  _setToggleUI('tg-sess', cfg.session_filter_enabled);
+}
+function _setToggleUI(prefix,val){
+  const on=document.getElementById(prefix+'-on');
+  const off=document.getElementById(prefix+'-off');
+  if(!on||!off)return;
+  on.className='tg-btn'+(val?' active-on':'');
+  off.className='tg-btn'+(!val?' active-off':'');
+}
+async function setToggle(key,val){
+  _tcState[key]=val;
+  _renderToggles(_tcState);
+  try{
+    await fetch('/api/trading-config',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({[key]:val})});
+  }catch(e){}
+}
+async function saveTradingConfig(){
+  const risk=parseFloat(document.getElementById('tc-risk').value);
+  const rr=parseFloat(document.getElementById('tc-rr').value);
+  const conf=parseInt(document.getElementById('tc-conf').value);
+  const maxpos=parseInt(document.getElementById('tc-maxpos').value);
+  const maxdir=parseInt(document.getElementById('tc-maxdir').value);
+  const lots=parseFloat(document.getElementById('tc-lots').value);
+  const msg=document.getElementById('tc-msg');
+  if([risk,rr,conf,maxpos,maxdir,lots].some(v=>isNaN(v)||v<=0)){msg.style.color='var(--red)';msg.textContent='Invalid values';return;}
+  try{
+    const r=await fetch('/api/trading-config',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({risk_pct:risk/100,min_rr:rr,min_confidence:conf,
+        max_open_positions:maxpos,max_same_direction:maxdir,max_lots:lots})});
+    const res=await r.json();
+    if(res.status==='saved'){msg.style.color='var(--green)';msg.textContent='Saved ✓';}
+    else{msg.style.color='var(--red)';msg.textContent=res.error||'Error';}
+  }catch(e){msg.style.color='var(--red)';msg.textContent='Request failed';}
+  setTimeout(()=>{msg.textContent='';},3000);
+}
+
+async function loadCBConfig(){
+  try{
+    const r=await fetch('/api/cb-config');const c=await r.json();
+    document.getElementById('cfg-dl').value=+(c.daily_loss_pct*100).toFixed(2);
+    document.getElementById('cfg-wl').value=+(c.weekly_loss_pct*100).toFixed(2);
+    document.getElementById('cfg-dd').value=+(c.drawdown_pct*100).toFixed(2);
+  }catch(e){}
+}
+async function saveCBConfig(){
+  const dl=parseFloat(document.getElementById('cfg-dl').value);
+  const wl=parseFloat(document.getElementById('cfg-wl').value);
+  const dd=parseFloat(document.getElementById('cfg-dd').value);
+  const msg=document.getElementById('cb-cfg-msg');
+  if([dl,wl,dd].some(v=>isNaN(v)||v<=0)){msg.style.color='var(--red)';msg.textContent='Invalid values';return;}
+  try{
+    const r=await fetch('/api/cb-config',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({daily_loss_pct:dl/100,weekly_loss_pct:wl/100,drawdown_pct:dd/100})});
+    const res=await r.json();
+    if(res.status==='saved'){msg.style.color='var(--green)';msg.textContent=res.auto_resumed?'Saved ✓ — trading resumed':'Saved ✓';}
+    else{msg.style.color='var(--red)';msg.textContent=res.error||'Error';}
+  }catch(e){msg.style.color='var(--red)';msg.textContent='Request failed';}
+  setTimeout(()=>{msg.textContent='';},3000);
+}
 
 refreshAll();
+loadCBConfig();
+loadTradingConfig();
 setInterval(refreshAll, 3000);
 </script>
 </body>

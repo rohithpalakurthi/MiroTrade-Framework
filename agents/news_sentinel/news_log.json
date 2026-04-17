@@ -1,7 +1,11 @@
 {
-  "scan_time": "2026-04-17 10:50:32.220614",
+  "scan_time": "2026-04-17 20:05:22.943882",
+  "source": "Claude AI",
+  "decision": "ALLOW",
+  "reason": "No major scheduled economic events within 30 minutes, no breaking geopolitical crisis reported, and normal market conditions prevail.",
+  "confidence": 85,
+  "market_state": "NORMAL",
   "blocked": false,
-  "reason": "No scheduled events - market clear",
-  "utc_hour": 5,
-  "utc_day": 4
+  "has_claude": true,
+  "has_newsapi": true
 }

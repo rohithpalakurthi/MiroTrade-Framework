@@ -34,8 +34,29 @@ MAX_SAME_DIRECTION = 2       # max positions in same direction
 RISK_PCT           = 0.01    # 1% account risk per trade
 MIN_CONFIDENCE     = 7       # minimum GPT confidence score (out of 10) to enter
 MAX_LOTS           = 2.0     # hard cap per position
+MIN_RR             = 1.5     # minimum risk:reward ratio — reject trades below this
+ORCH_STALE_SECS    = 180     # treat orchestrator verdict as stale after 3 minutes
+TP1_MAX_PTS        = 15.0    # TP1 capped at 15 points from entry — smart exit decides trail or close
+MIN_SL_PTS         = 10.0    # minimum SL distance — rejects entries with SL tighter than 10pts
+MAX_DAILY_TRADES   = 5       # max new entries per calendar day
+
+TRADING_CONFIG_FILE = "agents/master_trader/trading_config.json"
+_TRADING_DEFAULTS = {
+    "risk_pct"                 : 0.01,
+    "max_lots"                 : 2.0,
+    "min_rr"                   : 1.5,
+    "min_confidence"           : 7,
+    "max_open_positions"       : 3,
+    "max_same_direction"       : 2,
+    "news_block_enabled"       : True,
+    "orchestrator_gate_enabled": True,
+    "session_filter_enabled"   : True,
+    "max_daily_trades"         : 5,
+    "min_sl_pts"               : 10.0,
+}
 
 LOG_FILE         = "agents/master_trader/trade_log.json"
+TP_TARGETS_FILE  = "agents/master_trader/tp_targets.json"
 STATE_FILE       = "agents/master_trader/state.json"
 BRIEF_FILE       = "agents/master_trader/last_brief.json"
 PAUSE_FILE       = "agents/master_trader/miro_pause.json"
@@ -94,8 +115,10 @@ class MasterTraderAgent:
     def __init__(self):
         os.makedirs("agents/master_trader", exist_ok=True)
         self._last_entry_time    = None
-        self._position_decisions = {}   # ticket -> last decision ISO timestamp
-        self._session_losses     = 0    # consecutive losses this session
+        self._position_decisions = {}
+        self._session_losses     = 0
+        self._daily_trades       = 0     # entries today
+        self._daily_trade_date   = None  # date string for reset
         self._load_state()
         print("[MasterTrader] MIRO AI initialized — autonomous XAUUSD trading brain")
         print("[MasterTrader] Max positions: {} | Risk/trade: {}% | Min confidence: {}/10".format(
@@ -111,6 +134,8 @@ class MasterTraderAgent:
                 self._last_entry_time    = s.get("last_entry_time")
                 self._position_decisions = s.get("position_decisions", {})
                 self._session_losses     = s.get("session_losses", 0)
+                self._daily_trades       = s.get("daily_trades", 0)
+                self._daily_trade_date   = s.get("daily_trade_date")
         except:
             pass
 
@@ -121,6 +146,8 @@ class MasterTraderAgent:
                     "last_entry_time"   : self._last_entry_time,
                     "position_decisions": self._position_decisions,
                     "session_losses"    : self._session_losses,
+                    "daily_trades"      : self._daily_trades,
+                    "daily_trade_date"  : self._daily_trade_date,
                 }, f, indent=2)
         except:
             pass
@@ -292,6 +319,16 @@ class MasterTraderAgent:
     def is_paused(self):
         return os.path.exists(PAUSE_FILE)
 
+    def _load_trading_config(self):
+        cfg = dict(_TRADING_DEFAULTS)
+        if os.path.exists(TRADING_CONFIG_FILE):
+            try:
+                with open(TRADING_CONFIG_FILE) as f:
+                    cfg.update(json.load(f))
+            except:
+                pass
+        return cfg
+
     def get_intelligence_context(self):
         """
         Load all specialist agent outputs into one dict for prompt injection.
@@ -375,19 +412,18 @@ class MasterTraderAgent:
         # ── DXY / Yields ─────────────────────────────────────────────────
         dxy_block = "DXY/Yields: not yet computed"
         if dxy.get("dxy"):
-            gs = dxy.get("gold_signal", {})
             dxy_block = (
-                "DXY: {dxy_price:.2f} ({dxy_chg:+.2f}%) | US10Y: {y_price:.3f}% ({y_chg:+.3f}%)\n"
+                "DXY: {dxy_price:.2f} ({dxy_chg:+.2f}) | US10Y: {y_price:.3f}% ({y_chg:+.3f}%)\n"
                 "  Gold correlation signal: {bias} | "
                 "Buy adj: +{buy_adj} | Sell adj: +{sell_adj}"
             ).format(
-                dxy_price=dxy["dxy"].get("price", 0),
-                dxy_chg=dxy["dxy"].get("change_pct", 0),
-                y_price=(dxy.get("yields") or {}).get("price", 0),
-                y_chg=(dxy.get("yields") or {}).get("change_pct", 0),
-                bias=gs.get("bias", "NEUTRAL"),
-                buy_adj=gs.get("buy_confidence_adj", 0),
-                sell_adj=gs.get("sell_confidence_adj", 0),
+                dxy_price=dxy.get("dxy", 0),
+                dxy_chg=dxy.get("dxy_change", 0),
+                y_price=dxy.get("yield_10y", 0),
+                y_chg=dxy.get("yield_change", 0),
+                bias=dxy.get("gold_bias", "NEUTRAL"),
+                buy_adj=dxy.get("buy_confidence_adj", 0),
+                sell_adj=dxy.get("sell_confidence_adj", 0),
             )
 
         # ── Kelly / Risk Guard ───────────────────────────────────────────
@@ -811,16 +847,26 @@ RULES:
 
     # ── Execution layer ──────────────────────────────────────────────────
 
-    def execute_entry(self, entry_signal, account):
+    def execute_entry(self, entry_signal, account, intel=None):
         """Open a new position based on MIRO's signal."""
         try:
             import MetaTrader5 as mt5
 
+            intel      = intel or {}
             action     = entry_signal["action"]
             entry_px   = float(entry_signal["entry"])
             sl         = float(entry_signal["sl"])
             tp1        = float(entry_signal.get("tp1", 0))
             tp2        = float(entry_signal.get("tp2", 0))
+
+            # Cap TP1 to max 15 points — scale_out handles partial exit at this level
+            tp1_cap = round(entry_px + TP1_MAX_PTS, 2) if action == "BUY" else round(entry_px - TP1_MAX_PTS, 2)
+            if tp1 <= 0:
+                tp1 = tp1_cap   # no TP1 given — use 15pt default
+            elif action == "BUY" and tp1 > tp1_cap:
+                tp1 = tp1_cap
+            elif action == "SELL" and tp1 < tp1_cap:
+                tp1 = tp1_cap
             confidence = entry_signal.get("confidence", 0)
             reasoning  = entry_signal.get("reasoning", "")
             setup_type = entry_signal.get("setup_type", "")
@@ -832,20 +878,50 @@ RULES:
                 return False
 
             sl_dist = abs(entry_px - sl)
-            if sl_dist < 0.5:
-                print("[MasterTrader] Skipping — SL distance {:.2f} too tight".format(sl_dist))
+            if sl_dist < MIN_SL_PTS:
+                print("[MasterTrader] Skipping — SL distance {:.2f} pts below minimum {}pts".format(
+                    sl_dist, MIN_SL_PTS))
                 return False
 
-            # Lot size: risk 1% of balance
-            balance = account.get("balance", 10000)
-            risk_amount = balance * RISK_PCT
+            # Daily trade limit — reset counter at UTC midnight
+            today = datetime.utcnow().strftime("%Y-%m-%d")
+            if self._daily_trade_date != today:
+                self._daily_trades     = 0
+                self._daily_trade_date = today
+            _max_daily = getattr(self, "_cfg", _TRADING_DEFAULTS).get("max_daily_trades", MAX_DAILY_TRADES)
+            if self._daily_trades >= _max_daily:
+                print("[MasterTrader] Skipping — daily trade limit {}/{} reached".format(
+                    self._daily_trades, _max_daily))
+                return False
+
+            # Pull live config (set by check_once or fallback to defaults)
+            _cfg       = getattr(self, "_cfg", _TRADING_DEFAULTS)
+            _min_rr    = _cfg.get("min_rr",    MIN_RR)
+            _max_lots  = _cfg.get("max_lots",  MAX_LOTS)
+            _base_risk = _cfg.get("risk_pct",  RISK_PCT)
+
+            # Minimum RR check
+            tp_final = tp2 if tp2 > 0 else tp1
+            if tp_final > 0:
+                rr = ((tp_final - entry_px) / sl_dist if action == "BUY"
+                      else (entry_px - tp_final) / sl_dist)
+                if rr < _min_rr:
+                    print("[MasterTrader] Skipping — RR {:.2f} below minimum {:.1f} (SL:{} TP:{})".format(
+                        rr, _min_rr, round(sl, 2), round(tp_final, 2)))
+                    return False
+
+            # Lot size: Kelly risk % × regime size multiplier × dashboard config
+            balance      = account.get("balance", 10000)
+            risk_pct     = intel.get("kelly_risk_pct",   _base_risk)
+            size_mult    = intel.get("regime_size_mult", 1.0)
+            risk_amount  = balance * risk_pct * size_mult
             # Adjust for consecutive losses
             if self._session_losses >= 3:
                 risk_amount *= 0.5
                 print("[MasterTrader] 50% size due to {} consecutive losses".format(
                     self._session_losses))
 
-            lots = round(min(risk_amount / (sl_dist * 100), MAX_LOTS), 2)
+            lots = round(min(risk_amount / (sl_dist * 100), _max_lots), 2)
             lots = max(lots, 0.01)
 
             if not mt5.initialize():
@@ -874,10 +950,13 @@ RULES:
             mt5.shutdown()
 
             if result.retcode == mt5.TRADE_RETCODE_DONE:
-                self._last_entry_time = datetime.now().isoformat()
+                self._last_entry_time  = datetime.now().isoformat()
+                self._daily_trades    += 1
+                self._daily_trade_date = datetime.utcnow().strftime("%Y-%m-%d")
                 self._save_state()
                 print("[MasterTrader] ENTRY {} {} lots @ {} | SL:{} TP:{} | {}".format(
                     action, lots, price, sl, tp_price, reasoning[:60]))
+                pos_ticket = str(result.order)
                 self._log({
                     "event"     : "ENTRY",
                     "action"    : action,
@@ -891,6 +970,18 @@ RULES:
                     "reasoning" : reasoning,
                     "ticket"    : result.deal,
                 })
+                # Write TP targets so scale_out can manage smart TP1 exit
+                try:
+                    _tgts = {}
+                    if os.path.exists(TP_TARGETS_FILE):
+                        with open(TP_TARGETS_FILE) as _tf:
+                            _tgts = json.load(_tf)
+                    _tgts[pos_ticket] = {"tp1": tp1, "tp2": tp2, "direction": action,
+                                         "entry": round(price, 2)}
+                    with open(TP_TARGETS_FILE, "w") as _tf:
+                        json.dump(_tgts, _tf, indent=2)
+                except Exception as _e:
+                    print("[MasterTrader] tp_targets write error: {}".format(_e))
                 self.send_telegram(
                     "<b>MIRO ENTRY</b>\n"
                     "================================\n"
@@ -1076,6 +1167,10 @@ RULES:
     def check_once(self):
         """Full analysis + decision + execution cycle."""
 
+        # Load live config — picks up dashboard changes without restart
+        self._cfg = self._load_trading_config()
+        cfg = self._cfg
+
         # Respect pause flag (set by circuit breaker or Telegram /pause)
         if self.is_paused():
             print("[MasterTrader] PAUSED — position management only")
@@ -1152,6 +1247,28 @@ RULES:
             print("[MasterTrader] Paused — skipping new entries")
             return
 
+        # ── Orchestrator gate (can be disabled from dashboard) ───────────
+        if cfg.get("orchestrator_gate_enabled", True):
+            orch_verdict = "NO-GO"
+            orch_reason  = "Orchestrator offline or unread"
+            try:
+                if os.path.exists(ORCH_FILE):
+                    with open(ORCH_FILE) as _f:
+                        _od = json.load(_f)
+                    _ts  = _od.get("timestamp", "")
+                    _age = (datetime.now() - datetime.fromisoformat(_ts)).total_seconds() if _ts else 9999
+                    if _age > ORCH_STALE_SECS:
+                        orch_reason = "Orchestrator verdict stale ({:.0f}s old)".format(_age)
+                    else:
+                        orch_verdict = _od.get("verdict", "NO-GO")
+                        _reasons     = _od.get("reasons", [])
+                        orch_reason  = " | ".join(_reasons) if isinstance(_reasons, list) else str(_reasons)
+            except Exception as _e:
+                orch_reason = "Orchestrator read error: {}".format(_e)
+            if orch_verdict != "GO":
+                print("[MasterTrader] Orchestrator NO-GO — {}".format(orch_reason))
+                return
+
         if intel.get("calendar_paused"):
             print("[MasterTrader] Calendar pause — skipping new entries")
             return
@@ -1161,11 +1278,13 @@ RULES:
                 intel.get("regime_block", "CHOPPY")))
             return
 
-        if news.get("blocked"):
+        # ── News block (can be disabled from dashboard) ───────────────────
+        if cfg.get("news_block_enabled", True) and news.get("blocked"):
             print("[MasterTrader] News block active — no new entries")
             return
 
-        if session["quality"] in ("LOW", "AVOID"):
+        # ── Session filter (can be disabled from dashboard) ───────────────
+        if cfg.get("session_filter_enabled", True) and session["quality"] in ("LOW", "AVOID"):
             print("[MasterTrader] Session {} — no new entries".format(session["session"]))
             return
 
@@ -1174,35 +1293,37 @@ RULES:
             print("[MasterTrader] Entry cooldown ({}/{}s)".format(elapsed, ENTRY_COOLDOWN))
             return
 
-        # Check position limits
-        if open_count >= MAX_OPEN_POSITIONS:
-            print("[MasterTrader] Max positions reached ({}/{})".format(
-                open_count, MAX_OPEN_POSITIONS))
+        # Check position limits (from live config)
+        max_pos = cfg.get("max_open_positions", MAX_OPEN_POSITIONS)
+        if open_count >= max_pos:
+            print("[MasterTrader] Max positions reached ({}/{})".format(open_count, max_pos))
             return
 
+        max_dir   = cfg.get("max_same_direction", MAX_SAME_DIRECTION)
+        min_conf  = cfg.get("min_confidence",     MIN_CONFIDENCE)
         buys  = sum(1 for p in positions_info if p["direction"] == "BUY")
         sells = sum(1 for p in positions_info if p["direction"] == "SELL")
 
         for entry in result.get("new_entries", []):
-            if entry.get("confidence", 0) < MIN_CONFIDENCE:
+            if entry.get("confidence", 0) < min_conf:
                 print("[MasterTrader] Skipping entry — confidence {}/{}".format(
-                    entry.get("confidence", 0), MIN_CONFIDENCE))
+                    entry.get("confidence", 0), min_conf))
                 continue
 
             direction = entry.get("action", "")
-            if direction == "BUY"  and buys  >= MAX_SAME_DIRECTION:
+            if direction == "BUY"  and buys  >= max_dir:
                 print("[MasterTrader] Already {} BUYs — skipping".format(buys))
                 continue
-            if direction == "SELL" and sells >= MAX_SAME_DIRECTION:
+            if direction == "SELL" and sells >= max_dir:
                 print("[MasterTrader] Already {} SELLs — skipping".format(sells))
                 continue
 
-            ok = self.execute_entry(entry, account)
+            ok = self.execute_entry(entry, account, intel)
             if ok:
                 if direction == "BUY":  buys  += 1
                 else:                   sells += 1
                 open_count += 1
-                if open_count >= MAX_OPEN_POSITIONS:
+                if open_count >= max_pos:
                     break
 
     def run(self, interval_seconds=SCAN_INTERVAL):

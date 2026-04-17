@@ -72,8 +72,11 @@ class MT5Bridge:
 
         self.connected = True
         info = mt5.account_info()
-        print("MT5 Bridge connected | Account: {} | Balance: ${}".format(
-            info.login, round(info.balance, 2)))
+        if info:
+            print("MT5 Bridge connected | Account: {} | Balance: ${}".format(
+                info.login, round(info.balance, 2)))
+        else:
+            print("MT5 Bridge connected (account info unavailable)")
         return True
 
     # ── TP1 Manager ───────────────────────────────────────────────
@@ -239,6 +242,10 @@ class MT5Bridge:
         if not self.connected:
             return None
         info = mt5.account_info()
+        if info is None:
+            print("[BRIDGE] account_info() returned None — MT5 may have disconnected")
+            self.connected = False
+            return None
         return {
             "balance" : round(info.balance, 2),
             "equity"  : round(info.equity, 2),
@@ -448,6 +455,8 @@ class MT5Bridge:
             return
 
         account  = self.get_account_info()
+        if account is None:
+            return  # MT5 disconnected mid-cycle — skip this sync
         positions = self.get_open_positions()
 
         # Update state file
@@ -500,11 +509,15 @@ class MT5Bridge:
         print("[BRIDGE] Sync loop running every {}s".format(interval))
         while True:
             try:
+                if not self.connected:
+                    print("[BRIDGE] Reconnecting to MT5...")
+                    self.connect()
                 if self.connected:
                     self.sync_to_dashboard()
-                    self.check_tp1_hits()   # partial close + SL to BE when TP1 hit
+                    self.check_tp1_hits()
             except Exception as e:
-                print("[BRIDGE] Sync error: {}".format(e))
+                print("[BRIDGE] Sync error: {} — will retry in {}s".format(e, interval))
+                self.connected = False
             time.sleep(interval)
 
     def status(self):

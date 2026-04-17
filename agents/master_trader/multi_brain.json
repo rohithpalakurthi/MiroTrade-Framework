@@ -1,11 +1,11 @@
 {
-  "updated": "2026-04-17 10:51:25.671622",
+  "updated": "2026-04-17 20:16:28.295076",
   "models": [
     {
       "action": "NEUTRAL",
       "confidence": 0,
-      "score": 1,
-      "reasoning": "Price above EMA 8/21/50 (bullish); H4 + M15 trending up; Stoch overbought (78); Price at demand zone 4783.81-4793.83; Price at supply zone 4816.18-4827.11",
+      "score": 3,
+      "reasoning": "Price above EMA 8/21/50 (bullish); H4 + M15 trending up; RSI overbought (74); Stoch overbought (88); Regime: TRENDING_BULL",
       "name": "Rule-Based"
     }
   ],
@@ -19,23 +19,23 @@
     "total_models": 1
   },
   "snapshot": {
-    "price": 4802.95,
-    "bid": 4802.91,
-    "ask": 4803.22,
-    "spread": 0.31,
-    "rsi": 58.4,
-    "stoch_k": 77.8,
-    "atr": 13.38,
-    "e8": 4796.35,
-    "e21": 4799.2,
-    "e50": 4798.93,
-    "e200": 4742.99,
+    "price": 4874.56,
+    "bid": 4874.52,
+    "ask": 4874.84,
+    "spread": 0.32,
+    "rsi": 74.0,
+    "stoch_k": 87.8,
+    "atr": 21.67,
+    "e8": 4833.14,
+    "e21": 4813.27,
+    "e50": 4805.96,
+    "e200": 4775.18,
     "above_e8": true,
     "above_e21": true,
     "above_e50": true,
     "above_e200": true,
-    "last5_bull": 2,
-    "m15_last_close": 4802.95,
+    "last5_bull": 3,
+    "m15_last_close": 4874.56,
     "m15_trend_up": true,
     "h4_trend_up": true
   },

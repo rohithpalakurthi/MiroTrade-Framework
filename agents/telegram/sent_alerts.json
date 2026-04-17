@@ -2,7 +2,9 @@
   "trade_ids": [
     "open_0",
     "open_1",
-    "close_1"
+    "close_1",
+    "open_2",
+    "close_2"
   ],
   "signal_ids": []
 }

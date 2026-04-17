@@ -12,9 +12,10 @@ from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-BE_STATE_FILE = "agents/master_trader/breakeven_state.json"
-BE_TRIGGER_R  = 1.0   # R multiple at which SL moves to entry
-BE_BUFFER_PTS = 0.5   # tiny buffer above entry to cover spread
+BE_STATE_FILE    = "agents/master_trader/breakeven_state.json"
+SCALE_STATE_FILE = "agents/master_trader/scale_out_state.json"
+BE_TRIGGER_R     = 1.0   # R multiple at which SL moves to entry
+BE_BUFFER_PTS    = 0.5   # tiny buffer above entry to cover spread
 
 
 def send_telegram(msg):
@@ -52,6 +53,15 @@ def run():
 
             positions = list(mt5.positions_get(symbol="XAUUSD") or [])
 
+            # Load scale_out state to avoid double-modifying SL at tier 1
+            scale_state = {}
+            if os.path.exists(SCALE_STATE_FILE):
+                try:
+                    with open(SCALE_STATE_FILE) as _sf:
+                        scale_state = json.load(_sf)
+                except:
+                    pass
+
             for p in positions:
                 ticket    = str(p.ticket)
                 direction = "BUY" if p.type == 0 else "SELL"
@@ -68,7 +78,9 @@ def run():
                     else (entry - current) / sl_dist
                 )
 
-                already_done = state.get(ticket, {}).get("be_done", False)
+                # Skip if scale_out already handled breakeven for this ticket
+                scale_tier1_done = scale_state.get(ticket, {}).get("tier1_done", False)
+                already_done = state.get(ticket, {}).get("be_done", False) or scale_tier1_done
 
                 if r_now >= BE_TRIGGER_R and not already_done:
                     # Move SL to entry + small buffer

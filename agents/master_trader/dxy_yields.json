@@ -1,16 +1,16 @@
 {
-  "dxy": 98.219,
-  "dxy_change": 0.004,
-  "yield_10y": 4.309,
-  "yield_change": 0.027,
-  "time": "2026-04-17 10:50:52.267246",
+  "dxy": 97.773,
+  "dxy_change": -0.442,
+  "yield_10y": 4.234,
+  "yield_change": -0.075,
+  "time": "2026-04-17 20:15:43.279281",
   "dxy_prev": 98.215,
-  "yield_prev": 4.282,
-  "score": 1,
+  "yield_prev": 4.309,
+  "score": 3,
   "gold_bias": "BULLISH",
-  "strength": "MODERATE",
-  "buy_confidence_adj": 1,
-  "sell_confidence_adj": -1,
-  "summary": "DXY +0.004 (98.219) | 10Y 4.309% (+0.027%) \u2192 Gold BULLISH MODERATE",
-  "updated": "2026-04-17 10:50:53.389028"
+  "strength": "STRONG",
+  "buy_confidence_adj": 3,
+  "sell_confidence_adj": -3,
+  "summary": "DXY -0.442 (97.773) | 10Y 4.234% (-0.075%) \u2192 Gold BULLISH STRONG",
+  "updated": "2026-04-17 20:15:44.076645"
 }

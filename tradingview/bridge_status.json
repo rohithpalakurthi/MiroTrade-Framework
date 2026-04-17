@@ -3,16 +3,19 @@
   "webhook_ok": true,
   "webhook_url": "https://reverb-verse-unnamable.ngrok-free.dev/webhook",
   "last_signal": {
-    "action": "SELL",
-    "entry": 4788.925,
-    "lots": 0.38,
-    "sl": 4813.63,
+    "action": "BUY",
+    "entry": 4877.185,
+    "lots": 0.14,
+    "signal_type": "",
+    "sl": 4844.67,
     "source": "XAU Scalper v15",
     "status": "pending",
     "symbol": "XAUUSD",
-    "timestamp": "2026-04-17 02:12:12.441518",
-    "tp": 4714.8
+    "timestamp": "2026-04-17 20:18:10.526408",
+    "tp": 4974.72,
+    "tp1": 4893.44,
+    "tp2": 4974.72
   },
-  "alert_count": 140,
-  "updated": "2026-04-17 10:55:03.880053"
+  "alert_count": 200,
+  "updated": "2026-04-17 20:20:19.120100"
 }

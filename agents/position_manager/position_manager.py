@@ -35,7 +35,8 @@ NEWS_FILE        = "agents/news_sentinel/current_alert.json"
 # Hard-rule guardrails (applied before LLM, non-negotiable)
 HARD_CUT_LOSS_R      = -2.0   # If loss exceeds 2R, always close regardless of LLM
 HARD_TAKE_PROFIT_R   = 4.0    # If profit exceeds 4R, always close (don't give it back)
-STALE_TRADE_MINUTES  = 240    # If flat (<0.3R) for 4 hours, close to free capital
+STALE_TRADE_MINUTES  = 120    # If flat (<0.3R) for 2 hours, close to free capital
+LONDON_CLOSE_UTC     = 17     # 17:00 UTC = London close — auto-close flat positions
 
 
 class PositionManagerAgent:
@@ -43,6 +44,8 @@ class PositionManagerAgent:
     def __init__(self):
         os.makedirs("agents/position_manager", exist_ok=True)
         self._last_decision = {}   # ticket -> last decision timestamp
+        self._llm_fallback_alerted_at = None   # rate-limit Telegram alert to once/hour
+        self._last_llm_errors = {}             # store actual errors for Telegram
         self._load_state()
         print("[PosMgr] Position Manager Agent initialized")
         print("[PosMgr] Hard rules: cut >{:.1f}R loss | take >{:.1f}R profit | stale >{}min".format(
@@ -268,10 +271,18 @@ class PositionManagerAgent:
             return "CLOSE_FULL", "Hard rule: profit {:.1f}R exceeds {:.1f}R target — locking in".format(
                 r_multiple, HARD_TAKE_PROFIT_R)
 
-        # Stale trade: in trade >4hrs and barely profitable
+        # Stale trade: flat for 2 hours
         if age_min >= STALE_TRADE_MINUTES and abs(r_multiple) < 0.3:
             return "CLOSE_FULL", "Hard rule: trade stale {}min with only {:.1f}R — freeing capital".format(
                 age_min, r_multiple)
+
+        # London close: 17:00–17:05 UTC — close flat positions before dead zone
+        utc_hour   = datetime.utcnow().hour
+        utc_minute = datetime.utcnow().minute
+        at_london_close = (utc_hour == LONDON_CLOSE_UTC and utc_minute <= 5)
+        if at_london_close and r_multiple < 0.5:
+            return "CLOSE_FULL", "London close 17:00 UTC — closing flat {:.1f}R position before dead zone".format(
+                r_multiple)
 
         return None, None
 
@@ -366,30 +377,31 @@ RESPOND with JSON only — no explanation outside the JSON:
                     temperature = 0.2,
                     max_tokens  = 800,
                 )
+                self._last_llm_errors = {}   # clear on success
                 return self._parse_llm_response(response.choices[0].message.content)
             except Exception as e:
                 err_str = str(e)
-                if "429" in err_str or "insufficient_quota" in err_str or "rate_limit" in err_str:
-                    print("[PosMgr] GPT-4o quota exceeded — falling back to Claude Haiku")
-                else:
-                    print("[PosMgr] GPT-4o error: {} — falling back to Claude Haiku".format(e))
+                short = "quota/rate-limit" if ("429" in err_str or "insufficient_quota" in err_str or "rate_limit" in err_str) else err_str[:80]
+                self._last_llm_errors["gpt4o"] = short
 
-        # ── Fallback: Claude Haiku ───────────────────────────────────────
+        # ── Fallback: Claude Sonnet ──────────────────────────────────────
         anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
-        if anthropic_key:
+        if not anthropic_key:
+            self._last_llm_errors["claude"] = "ANTHROPIC_API_KEY not set in .env"
+        else:
             try:
                 import anthropic
                 client = anthropic.Anthropic(api_key=anthropic_key)
                 msg = client.messages.create(
-                    model      = "claude-haiku-4-5-20251001",
+                    model      = "claude-sonnet-4-6",
                     max_tokens = 800,
                     messages   = [{"role": "user", "content": prompt}],
                 )
+                self._last_llm_errors = {}   # clear on success
                 return self._parse_llm_response(msg.content[0].text)
             except Exception as e:
-                print("[PosMgr] Claude Haiku error: {}".format(e))
+                self._last_llm_errors["claude"] = str(e)[:80]
 
-        print("[PosMgr] All LLM backends failed — holding all positions")
         return None
 
     # ── Main evaluation loop ─────────────────────────────────────────────
@@ -486,9 +498,7 @@ RESPOND with JSON only — no explanation outside the JSON:
             lots      = pos["lots"]
 
             if action == "HOLD":
-                print("[PosMgr] HOLD  ticket {} | {}".format(ticket, reason))
-                self.log_decision(ticket, "HOLD", reason)
-                continue
+                continue  # don't log HOLDs — keeps decisions_log clean
 
             if action == "CLOSE_FULL":
                 ok, msg = self.close_position(ticket, lots, direction, "ai_full")
@@ -554,6 +564,69 @@ RESPOND with JSON only — no explanation outside the JSON:
 
         self._save_state()
 
+    def apply_soft_rules(self, positions_info, market_ctx):
+        """
+        Rule-based fallback when all LLMs are unavailable.
+        Applies conservative protection rules without AI reasoning.
+        Returns list of decisions in same format as LLM output.
+        """
+        decisions = []
+        trend = market_ctx.get("trend", "MIXED")
+
+        for p in positions_info:
+            ticket    = p["ticket"]
+            direction = p["direction"]
+            r         = p["r_multiple"]
+            age       = p["age_minutes"]
+            sl        = p["sl"]
+            entry     = p["entry"]
+            tp        = p["tp"]
+
+            # Rule 1: trend strongly against position at any loss → close
+            bull_trend = trend in ("BULL", "STRONG BULL")
+            bear_trend = trend in ("BEAR", "STRONG BEAR")
+            trend_against = (direction == "BUY" and bear_trend) or (direction == "SELL" and bull_trend)
+
+            if r <= -1.0 and trend_against:
+                decisions.append({
+                    "ticket": ticket, "action": "CLOSE_FULL", "new_sl": None,
+                    "reasoning": "Rule-based: -{:.1f}R loss with trend against {}".format(abs(r), direction)
+                })
+                continue
+
+            # Rule 2: tighten SL at +1R if not already protected
+            if r >= 1.0 and sl > 0:
+                if direction == "BUY" and sl < entry:
+                    new_sl = round(entry + 0.5, 2)
+                    decisions.append({
+                        "ticket": ticket, "action": "TIGHTEN_SL", "new_sl": new_sl,
+                        "reasoning": "Rule-based: at +{:.1f}R — moving SL to breakeven".format(r)
+                    })
+                    continue
+                elif direction == "SELL" and sl > entry:
+                    new_sl = round(entry - 0.5, 2)
+                    decisions.append({
+                        "ticket": ticket, "action": "TIGHTEN_SL", "new_sl": new_sl,
+                        "reasoning": "Rule-based: at +{:.1f}R — moving SL to breakeven".format(r)
+                    })
+                    continue
+
+            # Rule 3: stale at 120min flat — warn via Telegram, close if trend against
+            if age >= 120 and abs(r) < 0.3 and trend_against:
+                decisions.append({
+                    "ticket": ticket, "action": "CLOSE_FULL", "new_sl": None,
+                    "reasoning": "Rule-based: stale {}min at {:.1f}R with trend against".format(age, r)
+                })
+                continue
+
+            # Default: hold
+            decisions.append({
+                "ticket": ticket, "action": "HOLD", "new_sl": None,
+                "reasoning": "Rule-based fallback: no action criteria met at {:.1f}R".format(r)
+            })
+
+        return decisions
+
     def check_once(self):
         """One evaluation cycle: fetch positions → market → decide → execute."""
         positions = self.get_positions()
@@ -603,15 +676,33 @@ RESPOND with JSON only — no explanation outside the JSON:
 
         # --- Ask LLM for remaining positions ---
         if llm_positions:
-            print("[PosMgr] Asking GPT-4o about {} position(s)...".format(len(llm_positions)))
+            print("[PosMgr] Asking LLM about {} position(s)...".format(len(llm_positions)))
             llm_result = self.ask_llm(llm_positions, market_ctx, agent_ctx)
             if llm_result:
                 summary = llm_result.get("market_summary", "")
                 if summary:
-                    print("[PosMgr] GPT-4o: {}".format(summary))
+                    print("[PosMgr] LLM: {}".format(summary))
                 self.execute_decisions(llm_result, positions_info, market_ctx)
             else:
-                print("[PosMgr] LLM returned no decision — holding all")
+                print("[PosMgr] LLM unavailable — rule-based fallback active")
+                # Alert once per hour only
+                now = datetime.now()
+                last = self._llm_fallback_alerted_at
+                if last is None or (now - datetime.fromisoformat(last)).total_seconds() > 3600:
+                    self._llm_fallback_alerted_at = now.isoformat()
+                    errs = self._last_llm_errors
+                    gpt_err = errs.get("gpt4o", "no key")
+                    cld_err = errs.get("claude", "no key")
+                    self.send_telegram(
+                        "<b>⚠️ MIRO — LLM FALLBACK ACTIVE</b>\n"
+                        "GPT-4o: {}\n"
+                        "Claude: {}\n\n"
+                        "Rule-based protection is running.\n"
+                        "<b>Fix:</b> Check API keys in .env and restart launch.py".format(
+                            gpt_err, cld_err)
+                    )
+                soft_decisions = self.apply_soft_rules(llm_positions, market_ctx)
+                self.execute_decisions({"decisions": soft_decisions}, positions_info, market_ctx)
 
     def run(self, interval_seconds=CHECK_INTERVAL):
         """Main loop."""

@@ -22,13 +22,31 @@ from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-PAUSE_FILE      = "agents/master_trader/paused.flag"
+PAUSE_FILE      = "agents/master_trader/miro_pause.json"
 CB_STATE_FILE   = "agents/master_trader/circuit_breaker_state.json"
+_OLD_PAUSE_FLAG = "agents/master_trader/paused.flag"
+CB_CONFIG_FILE  = "agents/master_trader/circuit_breaker_config.json"
 LOG_FILE        = "agents/master_trader/trade_log.json"
 
-DAILY_LOSS_LIMIT_PCT   = 0.02   # 2% daily loss → pause
-WEEKLY_LOSS_LIMIT_PCT  = 0.05   # 5% weekly loss → reduce size
-EQUITY_DRAWDOWN_LIMIT  = 0.08   # 8% drawdown from peak → emergency pause
+_DEFAULT_DAILY_LOSS    = 0.02
+_DEFAULT_WEEKLY_LOSS   = 0.05
+_DEFAULT_DRAWDOWN      = 0.08
+
+
+def load_cb_config():
+    defaults = {
+        "daily_loss_pct" : _DEFAULT_DAILY_LOSS,
+        "weekly_loss_pct": _DEFAULT_WEEKLY_LOSS,
+        "drawdown_pct"   : _DEFAULT_DRAWDOWN,
+    }
+    if os.path.exists(CB_CONFIG_FILE):
+        try:
+            with open(CB_CONFIG_FILE) as f:
+                cfg = json.load(f)
+            defaults.update({k: v for k, v in cfg.items() if k in defaults})
+        except:
+            pass
+    return defaults
 
 
 def send_telegram(message):
@@ -108,15 +126,23 @@ def is_paused():
 
 def set_paused(val, reason=""):
     if val:
+        os.makedirs("agents/master_trader", exist_ok=True)
         with open(PAUSE_FILE, "w") as f:
-            f.write(json.dumps({"time": str(datetime.now()), "reason": reason}))
+            json.dump({"paused": True, "time": str(datetime.now()), "reason": reason}, f)
     else:
         if os.path.exists(PAUSE_FILE):
             os.remove(PAUSE_FILE)
+        if os.path.exists(_OLD_PAUSE_FLAG):
+            os.remove(_OLD_PAUSE_FLAG)
 
 
 def check_circuit_breakers():
     """Check all circuit breakers. Pause if any limit is hit."""
+    cfg     = load_cb_config()
+    DAILY_LOSS_LIMIT_PCT  = cfg["daily_loss_pct"]
+    WEEKLY_LOSS_LIMIT_PCT = cfg["weekly_loss_pct"]
+    EQUITY_DRAWDOWN_LIMIT = cfg["drawdown_pct"]
+
     state   = load_state()
     account = get_account()
     if not account:
@@ -153,6 +179,13 @@ def check_circuit_breakers():
     if state["peak_equity"] == 0 or equity > state["peak_equity"]:
         state["peak_equity"] = equity
 
+    # Store computed loss metrics so dashboard can read them
+    day_start_for_metric = state["day_start_balance"]
+    state["daily_loss_pct"]  = round((day_start_for_metric - equity) / day_start_for_metric, 4) if day_start_for_metric > 0 else 0
+    state["daily_limit_pct"] = DAILY_LOSS_LIMIT_PCT
+    state["drawdown_limit_pct"] = EQUITY_DRAWDOWN_LIMIT
+    state["weekly_limit_pct"] = WEEKLY_LOSS_LIMIT_PCT
+    state["status"] = "PAUSED" if is_paused() else "OK"
     save_state(state)
 
     # ── Daily loss check ─────────────────────────────────────────
@@ -298,10 +331,23 @@ def evening_summary(account, state):
 
 
 def run():
-    print("[CircuitBreaker] Starting — daily {}% | drawdown {}% | weekly {}%".format(
-        int(DAILY_LOSS_LIMIT_PCT * 100),
-        int(EQUITY_DRAWDOWN_LIMIT * 100),
-        int(WEEKLY_LOSS_LIMIT_PCT * 100)))
+    # Migrate old paused.flag → miro_pause.json
+    if os.path.exists(_OLD_PAUSE_FLAG) and not os.path.exists(PAUSE_FILE):
+        try:
+            with open(_OLD_PAUSE_FLAG) as f:
+                old = json.load(f)
+            with open(PAUSE_FILE, "w") as f:
+                json.dump({"paused": True, "time": old.get("time", ""), "reason": old.get("reason", "")}, f)
+            os.remove(_OLD_PAUSE_FLAG)
+            print("[CircuitBreaker] Migrated paused.flag → miro_pause.json")
+        except:
+            pass
+
+    cfg = load_cb_config()
+    print("[CircuitBreaker] Starting — daily {}% | drawdown {}% | weekly {}% (from config)".format(
+        cfg["daily_loss_pct"] * 100,
+        cfg["drawdown_pct"] * 100,
+        cfg["weekly_loss_pct"] * 100))
 
     last_morning  = ""
     last_evening  = ""

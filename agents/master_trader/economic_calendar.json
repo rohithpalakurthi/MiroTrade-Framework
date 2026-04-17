@@ -1,13 +1,4 @@
 {
-  "updated": "2026-04-17 05:20:50.672921",
-  "events": [
-    {
-      "name": "US NFP",
-      "time_utc": "2026-04-17T12:30:00",
-      "impact": "HIGH",
-      "forecast": "",
-      "previous": "",
-      "minutes_away": 429
-    }
-  ]
+  "updated": "2026-04-17 14:45:36.034455",
+  "events": []
 }

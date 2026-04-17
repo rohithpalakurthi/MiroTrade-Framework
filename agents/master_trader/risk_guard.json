@@ -1,16 +1,16 @@
 {
-  "updated": "2026-04-17 10:55:12.349138",
-  "kelly_risk_pct": 0.5,
-  "risk_pct": 0.005,
+  "updated": "2026-04-17 20:19:54.935985",
+  "kelly_risk_pct": 1.0,
+  "risk_pct": 0.01,
   "win_rate_used": 0,
   "avg_r_used": 0,
   "trades_sample": 0,
-  "in_recovery": true,
+  "in_recovery": false,
   "correlation": {
     "warning": true,
-    "message": "All 4 positions in same direction \u2014 correlated risk",
-    "buys": 0,
-    "sells": 4
+    "message": "All 5 positions in same direction \u2014 correlated risk",
+    "buys": 5,
+    "sells": 0
   },
-  "recommended_size_note": "RECOVERY MODE: 0.5% risk"
+  "recommended_size_note": "Kelly half-f: 1.0% risk"
 }

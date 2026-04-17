@@ -1,21 +1,21 @@
 {
-  "regime": "RANGING",
-  "confidence": 75,
-  "vol_ratio": 0.84,
-  "atr_now": 13.38,
-  "atr_avg": 15.89,
-  "direction_pct": -0.2,
-  "ema_stack": "MIXED",
-  "updated": "2026-04-17 10:50:53.386328",
+  "regime": "TRENDING_BULL",
+  "confidence": 60,
+  "vol_ratio": 1.25,
+  "atr_now": 21.67,
+  "atr_avg": 17.33,
+  "direction_pct": 1.82,
+  "ema_stack": "BULL",
+  "updated": "2026-04-17 20:15:36.845530",
   "allowed_setups": [
-    "REVERSAL",
-    "SCALP"
+    "TREND_CONTINUATION",
+    "PULLBACK_TO_EMA"
   ],
-  "size_mult": 0.8,
-  "min_confidence": 7,
-  "sl_mult": 1.0,
+  "size_mult": 1.0,
+  "min_confidence": 6,
+  "sl_mult": 1.5,
   "avoid": [
-    "BREAKOUT"
+    "REVERSAL"
   ],
-  "note": "Fade extremes. Tight targets. Quick exits."
+  "note": "Buy dips to EMAs. Wide targets. Hold longer."
 }

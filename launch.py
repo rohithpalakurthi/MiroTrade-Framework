@@ -406,7 +406,7 @@ def run_scheduler():
     try:
         import schedule
         schedule.every().day.at("03:30").do(morning_briefing)
-        schedule.every().day.at("16:30").do(evening_summary)
+        schedule.every().day.at("16:30").do(daily_pnl_summary)   # 22:00 IST
         schedule.every().day.at("18:30").do(nightly_optimization)
         set_status("Scheduler", "running", "9am/10pm/midnight IST")
         while True:
@@ -449,6 +449,83 @@ def evening_summary():
         TelegramAlertAgent().send_daily_summary(state)
     except Exception as e:
         print("[SCHEDULER] Summary error: {}".format(e))
+
+def daily_pnl_summary():
+    """22:00 IST daily P&L Telegram summary."""
+    print("\n[SCHEDULER] Sending daily P&L summary...")
+    try:
+        import json, requests
+        token   = os.getenv("TELEGRAM_BOT_TOKEN", "")
+        chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
+        if not token or not chat_id:
+            return
+
+        dec_log = "agents/position_manager/decisions_log.json"
+        trades_today = []
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        if os.path.exists(dec_log):
+            with open(dec_log) as f:
+                logs = json.load(f)
+            trades_today = [
+                l for l in logs
+                if l.get("time", "").startswith(today)
+                and l.get("action") in ("CLOSE_FULL", "CLOSE_PARTIAL")
+                and "OK" in l.get("result", "")
+            ]
+
+        # Parse P&L from result strings like "OK Closed at 4821.23"
+        closes  = len(trades_today)
+        reasons = {}
+        for t in trades_today:
+            key = "hard_rule" if "Hard rule" in t.get("reasoning","") else \
+                  "tp1"       if "TP1" in t.get("reasoning","") else \
+                  "ai"        if "ai_" in t.get("result","") else "rule"
+            reasons[key] = reasons.get(key, 0) + 1
+
+        # Load pm state for daily trades count
+        mt_state = {}
+        if os.path.exists("agents/master_trader/state.json"):
+            with open("agents/master_trader/state.json") as f:
+                mt_state = json.load(f)
+
+        # Load risk state for balance
+        balance = "?"
+        if os.path.exists("agents/risk_manager/risk_state.json"):
+            with open("agents/risk_manager/risk_state.json") as f:
+                rs = json.load(f)
+            balance = rs.get("balance", "?")
+
+        regime = "?"
+        if os.path.exists("agents/master_trader/regime.json"):
+            with open("agents/master_trader/regime.json") as f:
+                regime = json.load(f).get("regime", "?")
+
+        entries_today = mt_state.get("daily_trades", 0)
+        reason_str = " | ".join("{}: {}".format(k, v) for k, v in reasons.items()) or "none"
+
+        msg = (
+            "<b>📊 MIRO DAILY SUMMARY — {}</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "<b>Entries today:</b>  {}\n"
+            "<b>Positions closed:</b> {}\n"
+            "<b>Closed by:</b> {}\n"
+            "<b>Regime:</b> {}\n"
+            "<b>Balance:</b> ${}\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "<i>Next session starts at London open 07:00 UTC</i>"
+        ).format(
+            datetime.now().strftime("%Y-%m-%d"),
+            entries_today, closes, reason_str, regime, balance
+        )
+        requests.post(
+            "https://api.telegram.org/bot{}/sendMessage".format(token),
+            data={"chat_id": chat_id, "text": msg, "parse_mode": "HTML"},
+            timeout=10
+        )
+    except Exception as e:
+        print("[SCHEDULER] Daily summary error: {}".format(e))
+
 
 def nightly_optimization():
     print("\n[SCHEDULER] Running nightly v15F optimization (30 combos)...")
@@ -517,40 +594,49 @@ if __name__ == "__main__":
     if tg_ok:
         threads.append(threading.Thread(target=run_telegram_agent, daemon=True, name="Telegram"))
 
-    # Staggered launch
-    for t in threads:
+    # Staggered launch — silent per-agent, show progress bar
+    total = len(threads)
+    for i, t in enumerate(threads):
         t.start()
-        print("  Started: {}".format(t.name))
+        bar = "█" * (i + 1) + "░" * (total - i - 1)
+        print("  Launching [{bar}] {cur}/{tot}\r".format(
+            bar=bar[:30], cur=i+1, tot=total), end="", flush=True)
         time.sleep(1)
+    print("")  # newline after progress bar
+
+    # ── Key status ───────────────────────────────────────────
+    openai_ok    = "✓ set" if os.getenv("OPENAI_API_KEY",    "").startswith("sk-") else "✗ MISSING"
+    anthropic_ok = "✓ set" if os.getenv("ANTHROPIC_API_KEY", "").startswith("sk-") else "✗ MISSING"
 
     print("")
-    print("  All {} agents launched!".format(len(threads)))
-    print("  Paper Trader   : Scanning MT5 every 60s")
-    print("  News Sentinel  : Scanning every 30min")
-    print("  Risk Manager   : Updating every 5min")
-    print("  Orchestrator   : GO/NO-GO every 60s")
-    print("  Market Analyst : Narrative every 1hr")
-    print("  M5 Scalper     : London/NY kill zones")
-    print("  MTF Analysis   : Bias every 1hr")
-    print("  MT5 Bridge     : Syncing every 30s")
-    print("  Position Mgr   : AI managing positions every 30s")
-    print("  Master Trader  : MIRO autonomous AI trading every 30s")
-    print("  Crypto         : BTC/ETH every 5min")
-    print("  Price Feed     : MT5 price every 5s")
-    print("  Scheduler      : 9am/10pm/midnight IST")
-    print("  ── MIRO Specialist Agents ──────────────────────")
-    print("  Scale Out      : 3-tier +1R/+2R/+3R every 15s")
-    print("  Econ Calendar  : NFP/CPI/FOMC pause guard")
-    print("  Breakeven Guard: SL to entry at +1R every 10s")
-    print("  DXY / Yields   : USD correlation every 5min")
-    print("  Regime Detector: Market regime every 5min")
-    print("  Fibonacci      : Auto fib levels every 5min")
-    print("  Trade Journal  : GPT-4o post-trade journal")
-    print("  Supply & Demand: Order block zones every 5min")
-    print("  Corr Guard     : Kelly + correlation every 2min")
-    print("  Multi Brain    : 3-model consensus every 5min")
-    print("  MIRO Dashboard : Intelligence UI at :5055")
-    print("  Partial Entry  : 3-tranche scale-in every 15s")
+    print("  {:<22} {:<10} {}".format("AGENT", "INTERVAL", "ROLE"))
+    print("  " + "─" * 54)
+    rows = [
+        ("MasterTrader",    "30s",   "MIRO — autonomous AI entries"),
+        ("PositionManager", "30s",   "AI position management"),
+        ("ScaleOut",        "15s",   "3-tier TP: +1R / +2R / +3R"),
+        ("BreakevenGuard",  "10s",   "SL → entry at +1R"),
+        ("CircuitBreaker",  "10s",   "Daily loss limit"),
+        ("Orchestrator",    "60s",   "GO/NO-GO gate"),
+        ("MarketAnalyst",   "1hr",   "MTF narrative"),
+        ("NewsSentinel",    "30min", "High-impact news block"),
+        ("RiskManager",     "5min",  "Kelly sizing + drawdown"),
+        ("DXYYields",       "5min",  "DXY / US10Y correlation"),
+        ("RegimeDetector",  "5min",  "Bull/bear/chop regime"),
+        ("MultiBrain",      "5min",  "3-model AI consensus"),
+        ("SupplyDemand",    "5min",  "S&D order block zones"),
+        ("Fibonacci",       "5min",  "Auto fib levels"),
+        ("EconCalendar",    "live",  "NFP/CPI/FOMC pause guard"),
+        ("MT5Bridge",       "30s",   "Live MT5 sync"),
+        ("MiroDashboard",   "live",  "UI → localhost:5055"),
+    ]
+    for name, interval, role in rows:
+        print("  {:<22} {:<10} {}".format(name, interval, role))
+    print("  " + "─" * 54)
+    print("  OpenAI API key   : {}".format(openai_ok))
+    print("  Anthropic API key: {}".format(anthropic_ok))
+    print("")
+    print("  {} agents running  |  Dashboard → http://localhost:5055".format(total))
     print("  Press Ctrl+C to stop")
     print("=" * 60)
 

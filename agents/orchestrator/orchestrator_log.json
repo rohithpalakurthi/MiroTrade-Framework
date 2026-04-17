@@ -1,7 +1,7 @@
 [
   {
-    "timestamp": "2026-04-17T03:07:07.761325",
-    "cycle": 18,
+    "timestamp": "2026-04-17T18:42:05.025782",
+    "cycle": 294,
     "verdict": "GO",
     "reasons": [
       "All systems green - ready to trade"
@@ -12,19 +12,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -35,11 +35,11 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T03:08:07.784300",
-    "cycle": 19,
+    "timestamp": "2026-04-17T18:43:05.062909",
+    "cycle": 295,
     "verdict": "GO",
     "reasons": [
       "All systems green - ready to trade"
@@ -50,19 +50,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -73,11 +73,11 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T03:09:07.825100",
-    "cycle": 20,
+    "timestamp": "2026-04-17T18:44:05.094066",
+    "cycle": 296,
     "verdict": "GO",
     "reasons": [
       "All systems green - ready to trade"
@@ -88,19 +88,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -111,11 +111,11 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T03:10:07.852320",
-    "cycle": 21,
+    "timestamp": "2026-04-17T18:45:05.141266",
+    "cycle": 297,
     "verdict": "GO",
     "reasons": [
       "All systems green - ready to trade"
@@ -126,19 +126,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -149,11 +149,11 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T03:11:07.888604",
-    "cycle": 22,
+    "timestamp": "2026-04-17T18:46:05.171730",
+    "cycle": 298,
     "verdict": "GO",
     "reasons": [
       "All systems green - ready to trade"
@@ -164,19 +164,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -187,11 +187,11 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T03:12:07.916131",
-    "cycle": 23,
+    "timestamp": "2026-04-17T18:47:05.205011",
+    "cycle": 299,
     "verdict": "GO",
     "reasons": [
       "All systems green - ready to trade"
@@ -202,19 +202,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -225,11 +225,11 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T03:13:07.947619",
-    "cycle": 24,
+    "timestamp": "2026-04-17T18:48:05.244339",
+    "cycle": 300,
     "verdict": "GO",
     "reasons": [
       "All systems green - ready to trade"
@@ -240,19 +240,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -263,11 +263,11 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T03:14:07.971405",
-    "cycle": 25,
+    "timestamp": "2026-04-17T18:49:05.270083",
+    "cycle": 301,
     "verdict": "GO",
     "reasons": [
       "All systems green - ready to trade"
@@ -278,19 +278,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -301,3316 +301,10 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T03:15:07.995144",
-    "cycle": 26,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:16:08.026995",
-    "cycle": 27,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 9,
-        "reason": "DD:0.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 0,
-        "balance": 10000.0,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "none",
-    "confidence": 88
-  },
-  {
-    "timestamp": "2026-04-17T03:17:08.068423",
-    "cycle": 28,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:18:08.133297",
-    "cycle": 29,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:19:08.172314",
-    "cycle": 30,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:20:08.206561",
-    "cycle": 31,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:21:08.264061",
-    "cycle": 32,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:22:08.292374",
-    "cycle": 33,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:23:08.321602",
-    "cycle": 34,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:24:08.347566",
-    "cycle": 35,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:25:08.379452",
-    "cycle": 36,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:26:08.415921",
-    "cycle": 37,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:27:08.443957",
-    "cycle": 38,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:28:08.494841",
-    "cycle": 39,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:29:08.559445",
-    "cycle": 40,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:30:08.617690",
-    "cycle": 41,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:31:08.656533",
-    "cycle": 42,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:32:08.690709",
-    "cycle": 43,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:33:08.726860",
-    "cycle": 44,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:34:08.762230",
-    "cycle": 45,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:35:08.823350",
-    "cycle": 46,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:36:08.859101",
-    "cycle": 47,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:37:08.886196",
-    "cycle": 48,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:38:08.944800",
-    "cycle": 49,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:39:08.975425",
-    "cycle": 50,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:40:09.044812",
-    "cycle": 51,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:41:09.136746",
-    "cycle": 52,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:42:09.170266",
-    "cycle": 53,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:43:09.219118",
-    "cycle": 54,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:44:09.249326",
-    "cycle": 55,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:45:09.272870",
-    "cycle": 56,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:46:09.301808",
-    "cycle": 57,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:47:09.323075",
-    "cycle": 58,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:48:09.348097",
-    "cycle": 59,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:49:09.360394",
-    "cycle": 60,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:50:09.378785",
-    "cycle": 61,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:51:09.401866",
-    "cycle": 62,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:52:09.420780",
-    "cycle": 63,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:53:09.438734",
-    "cycle": 64,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:54:09.478679",
-    "cycle": 65,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:55:09.499148",
-    "cycle": 66,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:56:09.549104",
-    "cycle": 67,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:57:09.571256",
-    "cycle": 68,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:58:09.596342",
-    "cycle": 69,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T03:59:09.617698",
-    "cycle": 70,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:00:09.638247",
-    "cycle": 71,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:01:09.660954",
-    "cycle": 72,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:02:09.680487",
-    "cycle": 73,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:03:09.699557",
-    "cycle": 74,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:04:09.723837",
-    "cycle": 75,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:05:09.744601",
-    "cycle": 76,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:06:09.767622",
-    "cycle": 77,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:07:09.788318",
-    "cycle": 78,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:08:09.807932",
-    "cycle": 79,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:09:09.827767",
-    "cycle": 80,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:10:09.852969",
-    "cycle": 81,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:11:09.874841",
-    "cycle": 82,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:12:09.894204",
-    "cycle": 83,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:13:09.915126",
-    "cycle": 84,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:14:09.939690",
-    "cycle": 85,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:15:09.982399",
-    "cycle": 86,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:16:10.005052",
-    "cycle": 87,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:17:10.025360",
-    "cycle": 88,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:18:10.045514",
-    "cycle": 89,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:19:10.066729",
-    "cycle": 90,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:20:10.085764",
-    "cycle": 91,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:21:10.107823",
-    "cycle": 92,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:22:10.139295",
-    "cycle": 93,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:23:10.158051",
-    "cycle": 94,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:24:10.178964",
-    "cycle": 95,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:25:10.203476",
-    "cycle": 96,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:26:10.226488",
-    "cycle": 97,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:27:10.252290",
-    "cycle": 98,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:28:10.270757",
-    "cycle": 99,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:29:10.289161",
-    "cycle": 100,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:30:10.308302",
-    "cycle": 101,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:31:10.331665",
-    "cycle": 102,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:32:10.350289",
-    "cycle": 103,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:33:10.369664",
-    "cycle": 104,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:34:10.388016",
-    "cycle": 105,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:35:10.405533",
-    "cycle": 106,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:36:10.427776",
-    "cycle": 107,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:37:10.451893",
-    "cycle": 108,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:38:10.473462",
-    "cycle": 109,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:39:10.494336",
-    "cycle": 110,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:40:10.517198",
-    "cycle": 111,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T04:41:10.585181",
-    "cycle": 112,
-    "verdict": "GO",
-    "reasons": [
-      "All systems green - ready to trade"
-    ],
-    "checks": {
-      "news": {
-        "passed": true,
-        "reason": "Clear"
-      },
-      "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
-        "passed": true
-      },
-      "risk": {
-        "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
-      },
-      "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
-        "passed": true
-      },
-      "mtf": {
-        "direction": "neutral",
-        "h1": "bullish",
-        "h4": "bullish",
-        "passed": true
-      }
-    },
-    "signal": "SELL",
-    "confidence": 80
-  },
-  {
-    "timestamp": "2026-04-17T10:50:34.246305",
+    "timestamp": "2026-04-17T18:49:33.067509",
     "cycle": 1,
     "verdict": "GO",
     "reasons": [
@@ -3622,19 +316,19 @@
         "reason": "Clear"
       },
       "portfolio_health": {
-        "score": 8,
-        "reason": "DD:4.0% WR:N/A OpenTrades:0",
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 93366.82,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -3645,10 +339,10 @@
       }
     },
     "signal": "SELL",
-    "confidence": 80
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T10:51:34.288172",
+    "timestamp": "2026-04-17T18:50:33.104461",
     "cycle": 2,
     "verdict": "GO",
     "reasons": [
@@ -3661,18 +355,18 @@
       },
       "portfolio_health": {
         "score": 7,
-        "reason": "DD:7.4% WR:N/A OpenTrades:0",
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 90005.94,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -3683,10 +377,10 @@
       }
     },
     "signal": "SELL",
-    "confidence": 72
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T10:52:34.310883",
+    "timestamp": "2026-04-17T18:51:33.125007",
     "cycle": 3,
     "verdict": "GO",
     "reasons": [
@@ -3699,18 +393,18 @@
       },
       "portfolio_health": {
         "score": 7,
-        "reason": "DD:7.4% WR:N/A OpenTrades:0",
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 90005.94,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -3721,10 +415,10 @@
       }
     },
     "signal": "SELL",
-    "confidence": 72
+    "confidence": 70
   },
   {
-    "timestamp": "2026-04-17T10:53:34.337177",
+    "timestamp": "2026-04-17T18:52:33.143459",
     "cycle": 4,
     "verdict": "GO",
     "reasons": [
@@ -3737,18 +431,1082 @@
       },
       "portfolio_health": {
         "score": 7,
-        "reason": "DD:7.4% WR:N/A OpenTrades:0",
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T18:53:33.162918",
+    "cycle": 5,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T18:54:33.182087",
+    "cycle": 6,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T18:55:33.200399",
+    "cycle": 7,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T18:56:33.220528",
+    "cycle": 8,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T18:57:33.247067",
+    "cycle": 9,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T18:58:33.269420",
+    "cycle": 10,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T18:59:33.290071",
+    "cycle": 11,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:00:33.310153",
+    "cycle": 12,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:01:33.330767",
+    "cycle": 13,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:02:33.351114",
+    "cycle": 14,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:03:33.372127",
+    "cycle": 15,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:04:33.396934",
+    "cycle": 16,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:05:33.421331",
+    "cycle": 17,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:06:33.448393",
+    "cycle": 18,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:07:33.468234",
+    "cycle": 19,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:08:33.485926",
+    "cycle": 20,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:09:33.504488",
+    "cycle": 21,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:10:33.524051",
+    "cycle": 22,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:11:33.543278",
+    "cycle": 23,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:12:33.561688",
+    "cycle": 24,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:13:33.580500",
+    "cycle": 25,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:14:33.628807",
+    "cycle": 26,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:15:07.526043",
+    "cycle": 1,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:16:07.555354",
+    "cycle": 2,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:4.6% WR:N/A OpenTrades:1",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 1,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:17:07.576973",
+    "cycle": 3,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:4.6% WR:N/A OpenTrades:1",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 1,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:18:07.598488",
+    "cycle": 4,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:4.6% WR:N/A OpenTrades:1",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 1,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:19:07.619992",
+    "cycle": 5,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:4.6% WR:N/A OpenTrades:1",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 1,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:20:07.647196",
+    "cycle": 6,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:4.6% WR:N/A OpenTrades:2",
         "passed": true
       },
       "risk": {
         "approved": true,
         "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
       },
       "paper_trader": {
-        "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 90005.94,
+        "open_trades": 2,
+        "closed_trades": 4,
+        "balance": 92708.76,
         "passed": true
       },
       "mtf": {
@@ -3762,7 +1520,691 @@
     "confidence": 72
   },
   {
-    "timestamp": "2026-04-17T10:54:34.359896",
+    "timestamp": "2026-04-17T19:21:07.689887",
+    "cycle": 7,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:22:07.718878",
+    "cycle": 8,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:23:07.771984",
+    "cycle": 9,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 72
+  },
+  {
+    "timestamp": "2026-04-17T19:24:07.824996",
+    "cycle": 10,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:25:07.847834",
+    "cycle": 11,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:26:07.903982",
+    "cycle": 12,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:27:07.927011",
+    "cycle": 13,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:28:07.949802",
+    "cycle": 14,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:29:07.974103",
+    "cycle": 15,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:30:08.002964",
+    "cycle": 16,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:31:08.034416",
+    "cycle": 17,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:32:08.064733",
+    "cycle": 18,
+    "verdict": "NO-GO",
+    "reasons": [
+      "CAPACITY: Max open trades reached"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 6,
+        "reason": "DD:4.6% WR:N/A OpenTrades:3",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 3,
+        "closed_trades": 4,
+        "balance": 92708.76,
+        "passed": false
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 0
+  },
+  {
+    "timestamp": "2026-04-17T19:33:38.088521",
+    "cycle": 20,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 72
+  },
+  {
+    "timestamp": "2026-04-17T19:34:38.112116",
+    "cycle": 21,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 8,
+        "reason": "ALERT: Drawdown 4.6% - risk reduced 25%"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 72
+  },
+  {
+    "timestamp": "2026-04-17T19:35:16.355361",
+    "cycle": 1,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:36:16.382996",
+    "cycle": 2,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:37:16.416640",
+    "cycle": 3,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:38:16.446814",
+    "cycle": 4,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:39:16.477189",
     "cycle": 5,
     "verdict": "GO",
     "reasons": [
@@ -3775,18 +2217,18 @@
       },
       "portfolio_health": {
         "score": 7,
-        "reason": "DD:7.4% WR:N/A OpenTrades:0",
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
         "passed": true
       },
       "risk": {
         "approved": true,
-        "score": 8,
-        "reason": "Drawdown OK: 4.0%"
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
       },
       "paper_trader": {
         "open_trades": 0,
-        "closed_trades": 2,
-        "balance": 90005.94,
+        "closed_trades": 4,
+        "balance": 89551.41,
         "passed": true
       },
       "mtf": {
@@ -3797,6 +2239,1564 @@
       }
     },
     "signal": "SELL",
-    "confidence": 72
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:40:16.507694",
+    "cycle": 6,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:41:16.539554",
+    "cycle": 7,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:42:16.571947",
+    "cycle": 8,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:43:16.601871",
+    "cycle": 9,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:44:16.631569",
+    "cycle": 10,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:45:16.667576",
+    "cycle": 11,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:46:16.705411",
+    "cycle": 12,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:47:16.738160",
+    "cycle": 13,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:48:16.775175",
+    "cycle": 14,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:49:16.811932",
+    "cycle": 15,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:50:16.844065",
+    "cycle": 16,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:51:16.877402",
+    "cycle": 17,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:52:16.904764",
+    "cycle": 18,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:53:16.936424",
+    "cycle": 19,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:54:16.967834",
+    "cycle": 20,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:55:17.001241",
+    "cycle": 21,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:56:17.031606",
+    "cycle": 22,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:57:17.058489",
+    "cycle": 23,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:58:17.093889",
+    "cycle": 24,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T19:59:17.133439",
+    "cycle": 25,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:00:17.161929",
+    "cycle": 26,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:01:17.191674",
+    "cycle": 27,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:02:17.232218",
+    "cycle": 28,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:03:17.267559",
+    "cycle": 29,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:04:17.319506",
+    "cycle": 30,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:05:17.346433",
+    "cycle": 31,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:06:17.376980",
+    "cycle": 32,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:07:17.410367",
+    "cycle": 33,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:08:17.438029",
+    "cycle": 34,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:09:17.479771",
+    "cycle": 35,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:10:17.508912",
+    "cycle": 36,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:11:17.541102",
+    "cycle": 37,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:12:17.572997",
+    "cycle": 38,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:13:17.600684",
+    "cycle": 39,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:14:17.634150",
+    "cycle": 40,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:15:17.667740",
+    "cycle": 41,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:16:17.722138",
+    "cycle": 42,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:17:17.751288",
+    "cycle": 43,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:18:17.785643",
+    "cycle": 44,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:19:17.818758",
+    "cycle": 45,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
+  },
+  {
+    "timestamp": "2026-04-17T20:20:17.856404",
+    "cycle": 46,
+    "verdict": "GO",
+    "reasons": [
+      "All systems green - ready to trade"
+    ],
+    "checks": {
+      "news": {
+        "passed": true,
+        "reason": "Clear"
+      },
+      "portfolio_health": {
+        "score": 7,
+        "reason": "DD:7.9% WR:N/A OpenTrades:0",
+        "passed": true
+      },
+      "risk": {
+        "approved": true,
+        "score": 7,
+        "reason": "CAUTION: Drawdown 7.9% - risk halved"
+      },
+      "paper_trader": {
+        "open_trades": 0,
+        "closed_trades": 4,
+        "balance": 89551.41,
+        "passed": true
+      },
+      "mtf": {
+        "direction": "neutral",
+        "h1": "bullish",
+        "h4": "bullish",
+        "passed": true
+      }
+    },
+    "signal": "SELL",
+    "confidence": 70
   }
 ]
