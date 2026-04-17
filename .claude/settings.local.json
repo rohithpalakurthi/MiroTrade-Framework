@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python analyze_trades.py)",
+      "Bash(python -c ' *)",
+      "Bash(python -c \"from agents.master_trader.miro_dashboard_server import app; print\\('imports ok'\\)\")",
+      "Bash(pip install *)",
+      "Bash(timeout 5 python -c ' *)",
+      "Bash(taskkill /F /FI \"WINDOWTITLE eq miro_dash*\")",
+      "Bash(python agents/master_trader/miro_dashboard_server.py)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5055/)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d[-3:] if isinstance\\(d,list\\) else d, indent=2\\)\\)\")",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if k not in ['trades','equity_curve']}, indent=2\\)\\)\")",
+      "Bash(python *)",
+      "Bash(netstat -ano)",
+      "Bash(curl -s \"http://localhost:5055/api/miro?t=1\")",
+      "Bash(tasklist *)"
+    ]
+  }
+}

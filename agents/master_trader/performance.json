@@ -1,0 +1,33 @@
+{
+  "updated": "2026-04-17 10:51:04.249109",
+  "overall_7d": {
+    "label": "7-day",
+    "count": 0,
+    "win_rate": 0,
+    "avg_r": 0,
+    "profit_factor": 0,
+    "total_pnl": 0
+  },
+  "overall_30d": {
+    "label": "30-day",
+    "count": 0,
+    "win_rate": 0,
+    "avg_r": 0,
+    "profit_factor": 0,
+    "total_pnl": 0
+  },
+  "overall_all": {
+    "label": "all-time",
+    "count": 0,
+    "win_rate": 0,
+    "avg_r": 0,
+    "profit_factor": 0,
+    "total_pnl": 0
+  },
+  "by_setup": {},
+  "by_session": {},
+  "adaptive_thresholds": {},
+  "equity_curve": [],
+  "total_trades": 0,
+  "consecutive_losses": 0
+}

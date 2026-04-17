@@ -2,14 +2,14 @@
   "approved": true,
   "multiplier": 1.0,
   "risk_pct": 1.0,
-  "score": 10,
-  "reason": "Drawdown OK: 0.0%",
-  "drawdown_pct": 0.0,
+  "score": 8,
+  "reason": "Drawdown OK: 4.0%",
+  "drawdown_pct": 3.96,
   "portfolio_heat": 0.0,
-  "consec_losses": 0,
+  "consec_losses": 1,
   "consec_wins": 0,
   "win_rate": 50.0,
-  "open_trades": 9,
-  "balance": 94720.12,
-  "timestamp": "2026-04-14T02:37:54.381301"
+  "open_trades": 0,
+  "balance": 93366.82,
+  "timestamp": "2026-04-17T10:50:33.210441"
 }

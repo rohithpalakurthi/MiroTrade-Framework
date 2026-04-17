@@ -1,0 +1,938 @@
+//@version=6
+indicator("XAU/USD SCALPER v15 Final — India IST", overlay=true, max_lines_count=500, max_labels_count=500)
+
+// ═══════════════════════════════════════════════════════════
+//  INPUTS — EMA
+// ═══════════════════════════════════════════════════════════
+ema8_len   = input.int(8,   "EMA 8",   group="EMA Settings")
+ema21_len  = input.int(21,  "EMA 21",  group="EMA Settings")
+ema50_len  = input.int(50,  "EMA 50",  group="EMA Settings")
+ema200_len = input.int(200, "EMA 200", group="EMA Settings")
+
+// ═══════════════════════════════════════════════════════════
+//  INPUTS — STOCHASTIC
+// ═══════════════════════════════════════════════════════════
+stoch_k  = input.int(5,  "%K",         group="Stochastic")
+stoch_d  = input.int(3,  "%D",         group="Stochastic")
+stoch_s  = input.int(3,  "Smooth",     group="Stochastic")
+stoch_ob = input.int(75, "Overbought", group="Stochastic")
+stoch_os = input.int(25, "Oversold",   group="Stochastic")
+
+// ═══════════════════════════════════════════════════════════
+//  INPUTS — RSI
+// ═══════════════════════════════════════════════════════════
+rsi_len = input.int(7,  "RSI Length",  group="RSI")
+rsi_ob  = input.int(70, "Overbought",  group="RSI")
+rsi_os  = input.int(30, "Oversold",    group="RSI")
+
+// ═══════════════════════════════════════════════════════════
+//  INPUTS — VOLUME
+// ═══════════════════════════════════════════════════════════
+mfi_len        = input.int(14,   "MFI Length",     group="Volume")
+vol_ma_len     = input.int(20,   "Volume MA",      group="Volume")
+vol_spike_mult = input.float(1.5,"Volume Spike x", group="Volume", step=0.1)
+
+// ═══════════════════════════════════════════════════════════
+//  INPUTS — RISK
+//  KEY SETTINGS:
+//  sl_mult  = 1.5 ATR stop loss
+//  rr_tp1   = 0.5 (TP1 = 0.75 ATR — hits 2x before SL at 1.5 ATR)
+//  rr_tp2   = 3.0 (big runner target)
+//  Phase 2 trail = 3.0 ATR (wide so TP2 can hit)
+// ═══════════════════════════════════════════════════════════
+sl_mult         = input.float(1.5, "Initial SL ATR",                          group="Risk", step=0.5)
+trail_phase1    = input.float(1.5, "Trail ATR Phase 1 (before TP1)",          group="Risk", step=0.5)
+trail_phase2    = input.float(3.0, "Trail ATR Phase 2 (after TP1 — wider)",   group="Risk", step=0.5)
+atr_len         = input.int(14,   "ATR Length",                               group="Risk")
+// KEY: TP1 at 0.5R = 0.75 ATR vs SL at 1.5 ATR
+// TP1 needs price to move 0.75 ATR before SL needs 1.5 ATR
+// Mathematically TP1 hits 2x more often than SL
+rr_tp1          = input.float(0.5, "TP1 R:R — 0.5 means TP1 hits before SL", group="Risk", step=0.1)
+rr_tp2          = input.float(3.0, "TP2 R:R",                                 group="Risk", step=0.5)
+min_score       = input.int(5,    "Min Signal Score (0-10)",                  group="Risk", minval=0, maxval=10)
+signal_cooldown = input.int(5,    "Min Bars Between Signals",                 group="Risk", minval=1, maxval=20)
+min_rsi_slope   = input.float(1.5,"Min RSI Slope (stronger = fewer signals)", group="Risk", step=0.5)
+require_volume  = input.bool(true, "Block signals when volume is LOW",        group="Risk")
+ema_ext_mult    = input.float(2.5, "Max EMA21 distance (ATR) before blocked", group="Risk", step=0.5)
+
+// ═══════════════════════════════════════════════════════════
+//  INPUTS — DISPLAY
+// ═══════════════════════════════════════════════════════════
+show_emas           = input.bool(true,  "Show EMA Lines",                        group="Display")
+show_ema_cloud      = input.bool(true,  "Show EMA Clouds",                       group="Display")
+show_ema200_zone    = input.bool(true,  "Show EMA 200 Zone",                     group="Display")
+show_vwap           = input.bool(true,  "Show VWAP",                             group="Display")
+show_signals        = input.bool(true,  "Show Entry Signals",                    group="Display")
+show_results        = input.bool(true,  "Show Trade Results",                    group="Display")
+show_trail          = input.bool(true,  "Show Live Trail SL Line",               group="Display")
+show_vol_dots       = input.bool(true,  "Show Volume Spike Dots",                group="Display")
+show_session_bg     = input.bool(true,  "Show Session Backgrounds",              group="Display")
+show_session_lbls   = input.bool(true,  "Show Session Labels",                   group="Display")
+show_cross_lbls     = input.bool(true,  "Show Golden/Death Cross",               group="Display")
+show_signal_table   = input.bool(true,  "Show Signal Console Table",             group="Display")
+show_ist_table      = input.bool(true,  "Show IST Session Table",                group="Display")
+show_score_table    = input.bool(true,  "Show Win/Loss Scoreboard",              group="Display")
+allow_asian_signals = input.bool(false, "Allow Asian Session Signals",           group="Display")
+
+// ═══════════════════════════════════════════════════════════
+//  SESSIONS — India IST (UTC+5:30)
+// ═══════════════════════════════════════════════════════════
+is_asian        = not na(time(timeframe.period, "0000-0700:1234567", "UTC"))
+is_london_prime = not na(time(timeframe.period, "0700-0900:1234567", "UTC"))
+is_london_full  = not na(time(timeframe.period, "0700-1600:1234567", "UTC"))
+is_overlap      = not na(time(timeframe.period, "1300-1600:1234567", "UTC"))
+is_ny_full      = not na(time(timeframe.period, "1200-2100:1234567", "UTC"))
+is_ny_after     = not na(time(timeframe.period, "1600-2100:1234567", "UTC"))
+is_dead         = not is_asian and not is_london_full and not is_ny_full
+is_news1        = not na(time(timeframe.period, "0815-0845:1234567", "UTC"))
+is_news2        = not na(time(timeframe.period, "1315-1345:1234567", "UTC"))
+is_news3        = not na(time(timeframe.period, "1745-1815:1234567", "UTC"))
+is_news         = is_news1 or is_news2 or is_news3
+is_london_only  = is_london_full and not is_overlap
+is_ny_only      = is_ny_after and not is_overlap
+valid_session   = is_london_full or is_ny_full or (allow_asian_signals and is_asian)
+
+// ═══════════════════════════════════════════════════════════
+//  CORE CALCULATIONS
+// ═══════════════════════════════════════════════════════════
+ema8   = ta.ema(close, ema8_len)
+ema21  = ta.ema(close, ema21_len)
+ema50  = ta.ema(close, ema50_len)
+ema200 = ta.ema(close, ema200_len)
+
+k   = ta.sma(ta.stoch(close, high, low, stoch_k), stoch_d)
+d   = ta.sma(k, stoch_s)
+rsi = ta.rsi(close, rsi_len)
+atr = ta.atr(atr_len)
+
+above_200    = close > ema200
+below_200    = close < ema200
+golden_cross = ta.crossover(ema50, ema200)
+death_cross  = ta.crossunder(ema50, ema200)
+ema8_slope   = ema8 - ema8[3]
+rsi_slope    = rsi - rsi[3]
+
+body          = math.abs(close - open)
+candle_strong = body > atr * 0.15
+bull_candle   = close > open and candle_strong
+bear_candle   = close < open and candle_strong
+
+// 2 of last 3 candles confirm direction — filters single candle fakeouts
+bull_momentum = (close[1]>open[1]?1:0) + (close[2]>open[2]?1:0) + (close[3]>open[3]?1:0) >= 2
+bear_momentum = (close[1]<open[1]?1:0) + (close[2]<open[2]?1:0) + (close[3]<open[3]?1:0) >= 2
+
+// ═══════════════════════════════════════════════════════════
+//  VOLUME
+// ═══════════════════════════════════════════════════════════
+vol_ma     = ta.sma(volume, vol_ma_len)
+vol_spike  = volume > vol_ma * vol_spike_mult
+vol_good   = volume > vol_ma * 0.8
+vol_ok     = not require_volume or vol_good
+vwap_val   = ta.vwap(close)
+vwap_above = close > vwap_val
+vwap_below = close < vwap_val
+obv        = ta.obv
+obv_ma     = ta.ema(obv, 10)
+obv_bull   = obv > obv_ma
+obv_bear   = obv < obv_ma
+mfi        = ta.mfi(hlc3, mfi_len)
+mfi_os     = mfi < 25
+mfi_ob     = mfi > 75
+rvol       = volume / math.max(vol_ma, 1)
+
+// ═══════════════════════════════════════════════════════════
+//  CONSOLIDATION
+// ═══════════════════════════════════════════════════════════
+atr_avg          = ta.sma(atr, 20)
+is_consolidating = atr < atr_avg * 0.5
+consol_open      = is_consolidating and not is_consolidating[1]
+
+// ═══════════════════════════════════════════════════════════
+//  ATR SPIKE FILTER
+//  After a news candle or shock move ATR spikes
+//  Entering immediately after a spike = inflated SL, far TP1
+//  Block signals for 3 bars after ATR exceeds 2x its average
+//  This removes the "chasing a big candle" SL hits
+// ═══════════════════════════════════════════════════════════
+var int atr_spike_bar = -999
+if atr > atr_avg * 2.0
+    atr_spike_bar := bar_index
+atr_spike_cooldown = (bar_index - atr_spike_bar) >= 3
+
+// ═══════════════════════════════════════════════════════════
+//  EMA21 SLOPE CONFIRMATION
+//  EMA21 must be actively moving in trade direction
+//  Slope = EMA21 now vs 2 bars ago
+//  Flat or opposite EMA21 = momentum has stalled
+//  This catches the "EMA aligned but already turning" SL hits
+// ═══════════════════════════════════════════════════════════
+ema21_slope      = ema21 - ema21[2]
+ema21_slope_bull = ema21_slope > 0.05
+ema21_slope_bear = ema21_slope < -0.05
+
+// Session bias vars kept as neutral (not used in signals)
+var bool session_bias_bull = false
+var bool session_bias_bear = false
+var bool session_long_ok   = true
+var bool session_short_ok  = true
+
+var int score_bull_raw = 0
+var int score_bear_raw = 0
+
+// ═══════════════════════════════════════════════════════════
+//  EMA EXTENSION FILTER
+//  If price is more than ema_ext_mult ATR from EMA21
+//  it is overextended — mean reversion risk is high
+//  Block trend and reentry entries when overextended
+//  Reversals exempt — they use overextension as a condition
+// ═══════════════════════════════════════════════════════════
+ema21_dist       = math.abs(close - ema21)
+not_overextended = ema21_dist <= atr * ema_ext_mult
+
+// ═══════════════════════════════════════════════════════════
+//  STOCHASTIC AGREEMENT FILTER
+//  Crossover happened but are K and D still moving correctly?
+//  K above D and K rising = valid long momentum
+//  K below D and K falling = valid short momentum
+//  Catches stalling crossovers that lead to failed trades
+// ═══════════════════════════════════════════════════════════
+stoch_agree_bull = k > d and k > k[1]
+stoch_agree_bear = k < d and k < k[1]
+
+// ═══════════════════════════════════════════════════════════
+//  STOCHASTIC CROSSOVERS — pre-calculated (Pine v6)
+// ═══════════════════════════════════════════════════════════
+cross_up = ta.crossover(k, d)
+cross_dn = ta.crossunder(k, d)
+
+stoch_cross_up3  = cross_up or cross_up[1] or cross_up[2]
+stoch_cross_dn3  = cross_dn or cross_dn[1] or cross_dn[2]
+stoch_os_cross3  = (cross_up and k[1]<stoch_os+5) or (cross_up[1] and k[2]<stoch_os+5) or (cross_up[2] and k[3]<stoch_os+5)
+stoch_ob_cross3  = (cross_dn and k[1]>stoch_ob-5) or (cross_dn[1] and k[2]>stoch_ob-5) or (cross_dn[2] and k[3]>stoch_ob-5)
+stoch_extreme_os = (cross_up and k[1]<10) or (cross_up[1] and k[2]<10) or (cross_up[2] and k[3]<10)
+stoch_extreme_ob = (cross_dn and k[1]>90) or (cross_dn[1] and k[2]>90) or (cross_dn[2] and k[3]>90)
+
+// ═══════════════════════════════════════════════════════════
+//  ZONES
+// ═══════════════════════════════════════════════════════════
+near_ema21   = math.abs(close-ema21)    <= atr*0.6
+near_ema50   = math.abs(close-ema50)    <= atr*0.7
+near_ema200  = math.abs(close-ema200)   <= atr*1.5
+near_vwap    = math.abs(close-vwap_val) <= atr*0.5
+near_any_ema = near_ema21 or near_ema50 or near_ema200 or near_vwap
+
+prev_bear2of3 = (close[1]<open[1]?1:0)+(close[2]<open[2]?1:0)+(close[3]<open[3]?1:0) >= 2
+prev_bull2of3 = (close[1]>open[1]?1:0)+(close[2]>open[2]?1:0)+(close[3]>open[3]?1:0) >= 2
+
+bull_core    = above_200 and ema50>ema200 and ema8>ema21
+bear_core    = below_200 and ema50<ema200 and ema8<ema21
+bull_partial = above_200 and ema50>ema200
+bear_partial = below_200 and ema50<ema200
+
+// ═══════════════════════════════════════════════════════════
+//  SIGNAL SCORE 0 to 10
+// ═══════════════════════════════════════════════════════════
+score_bull_raw := (above_200                                    ? 2 : 0) +
+                  (ema50>ema200                                 ? 1 : 0) +
+                  (ema8>ema21 and ema21>ema50 and ema50>ema200  ? 1 : 0) +
+                  (stoch_os_cross3                              ? 1 : 0) +
+                  (rsi>40 and rsi<75 and rsi_slope>0           ? 1 : 0) +
+                  (vwap_above                                   ? 1 : 0) +
+                  (obv_bull                                     ? 1 : 0) +
+                  (vol_good                                     ? 1 : 0) +
+                  (bull_candle                                  ? 1 : 0)
+
+score_bear_raw := (below_200                                    ? 2 : 0) +
+                  (ema50<ema200                                 ? 1 : 0) +
+                  (ema8<ema21 and ema21<ema50 and ema50<ema200  ? 1 : 0) +
+                  (stoch_ob_cross3                              ? 1 : 0) +
+                  (rsi<60 and rsi>25 and rsi_slope<0           ? 1 : 0) +
+                  (vwap_below                                   ? 1 : 0) +
+                  (obv_bear                                     ? 1 : 0) +
+                  (vol_good                                     ? 1 : 0) +
+                  (bear_candle                                  ? 1 : 0)
+
+score_bull = score_bull_raw
+score_bear = score_bear_raw
+
+score_bar(s) =>
+    filled = math.round(s)
+    b = ""
+    for i = 1 to 10
+        b := b + (i <= filled ? "█" : "░")
+    b + " " + str.tostring(s) + "/10"
+
+score_color(s) =>
+    s >= 8 ? color.new(#00E5A0,0) : s >= 6 ? color.new(#F5C842,0) : color.new(#FF4C6A,0)
+
+// ═══════════════════════════════════════════════════════════
+//  SIGNAL COOLDOWN + JUST CLOSED
+// ═══════════════════════════════════════════════════════════
+var int  last_signal_bar = -999
+var bool just_closed     = false
+cooldown_ok = (bar_index - last_signal_bar) >= signal_cooldown and not just_closed
+
+// ═══════════════════════════════════════════════════════════
+//  SIGNAL CONDITIONS v15
+//
+//  KEY INSIGHT: Filters should be applied selectively
+//
+//  TYPE 1 TREND — Full EMA stack aligned
+//  When ALL 4 EMAs are in order this IS the confirmation
+//  No volume, no slope, no momentum filter needed
+//  Just EMA alignment + stoch crossover + valid session
+//  This restores the big trend captures that were being blocked
+//
+//  TYPE 2 REENTRY — Pullback to EMA (less obvious setup)
+//  All quality filters applied here because setup is ambiguous
+//  Volume + stoch agree + momentum + EMA21 slope all required
+//  This is where bad entries happen — filter hard here
+//
+//  TYPE 3 REVERSAL — Extreme stoch near EMA (counter-move)
+//  Only candle and EMA proximity required
+//  These are high conviction because stoch is at extreme
+// ═══════════════════════════════════════════════════════════
+
+// Full EMA stack — strongest signal possible
+full_bull_stack = above_200 and ema50>ema200 and ema21>ema50 and ema8>ema21
+full_bear_stack = below_200 and ema50<ema200 and ema21<ema50 and ema8<ema21
+
+// TYPE 1 TREND — fires freely when full stack aligned
+// No volume block, no EMA21 slope, no momentum candle count
+// Only needs: full stack + stoch crossover + RSI not extreme + session
+long_trend  = full_bull_stack and stoch_cross_up3 and k<75 and rsi>35 and rsi<80 and rsi_slope>0 and bull_candle and atr_spike_cooldown and valid_session and not is_consolidating and score_bull>=min_score and cooldown_ok
+short_trend = full_bear_stack and stoch_cross_dn3 and k>25 and rsi<65 and rsi>20 and rsi_slope<0 and bear_candle and atr_spike_cooldown and valid_session and not is_consolidating and score_bear>=min_score and cooldown_ok
+
+// TYPE 2 REENTRY — strict filters (pullbacks are ambiguous)
+// All quality filters applied: volume + slope + agree + momentum
+long_reentry  = bull_partial and (near_ema21 or near_ema50 or near_vwap) and stoch_os_cross3 and stoch_agree_bull and ema21_slope_bull and rsi>35 and rsi<70 and rsi_slope>min_rsi_slope and bull_candle and bull_momentum and vol_ok and atr_spike_cooldown and valid_session and not is_consolidating and score_bull>=(min_score-1) and cooldown_ok
+short_reentry = bear_partial and (near_ema21 or near_ema50 or near_vwap) and stoch_ob_cross3 and stoch_agree_bear and ema21_slope_bear and rsi<65 and rsi>30 and rsi_slope<(-min_rsi_slope) and bear_candle and bear_momentum and vol_ok and atr_spike_cooldown and valid_session and not is_consolidating and score_bear>=(min_score-1) and cooldown_ok
+
+// TYPE 3 REVERSAL — high conviction extreme stoch near any EMA
+long_reversal  = near_any_ema and stoch_extreme_os and rsi<40 and rsi_slope>0 and bull_candle and prev_bear2of3 and valid_session and not just_closed
+short_reversal = near_any_ema and stoch_extreme_ob and rsi>60 and rsi_slope<0 and bear_candle and prev_bull2of3 and valid_session and not just_closed
+
+any_long  = long_trend or long_reentry or long_reversal
+any_short = short_trend or short_reentry or short_reversal
+
+if any_long or any_short
+    last_signal_bar := bar_index
+
+// ═══════════════════════════════════════════════════════════
+//  LABEL ALTERNATOR — prevents visual overlap
+// ═══════════════════════════════════════════════════════════
+var int label_counter = 0
+if any_long or any_short
+    label_counter := label_counter + 1
+label_side_alt = label_counter % 2 == 0
+
+// ═══════════════════════════════════════════════════════════
+//  TRADE STATE MACHINE
+//
+//  Phase 1: Fixed SL — tight trail_phase1
+//  Phase 2: After TP1 — SL to breakeven — wide trail_phase2
+//  TP2 takes priority over trail SL on same bar
+//  just_closed blocks signals on close bar
+// ═══════════════════════════════════════════════════════════
+var int   trade_phase    = 0
+var bool  is_long_trade  = false
+var float entry_px       = na
+var float initial_sl     = na
+var float tp1_px         = na
+var float tp2_px         = na
+var float trail_sl       = na
+var float trail_sl_prev  = na
+var float risk_pts       = na
+var int   snap_entry_bar = -1
+var float snap_entry_px  = na
+
+just_closed := false
+
+// Result detection — all before state changes
+tp1_long_hit    = trade_phase==1 and is_long_trade     and not na(tp1_px) and high>=tp1_px
+tp1_short_hit   = trade_phase==1 and not is_long_trade and not na(tp1_px) and low<=tp1_px
+tp2_long_hit    = trade_phase==2 and is_long_trade     and not na(tp2_px) and high>=tp2_px
+tp2_short_hit   = trade_phase==2 and not is_long_trade and not na(tp2_px) and low<=tp2_px
+phase1_sl_long  = trade_phase==1 and is_long_trade     and not na(initial_sl) and close<=initial_sl
+phase1_sl_short = trade_phase==1 and not is_long_trade and not na(initial_sl) and close>=initial_sl
+// FIX: TP2 takes priority — trail SL suppressed if TP2 fires same bar
+phase2_sl_long  = trade_phase==2 and is_long_trade     and not na(trail_sl) and close<=trail_sl and not tp2_long_hit
+phase2_sl_short = trade_phase==2 and not is_long_trade and not na(trail_sl) and close>=trail_sl and not tp2_short_hit
+
+trail_moved_up   = trade_phase==2 and is_long_trade     and not na(trail_sl) and not na(trail_sl_prev) and (trail_sl-trail_sl_prev)>=atr
+trail_moved_down = trade_phase==2 and not is_long_trade and not na(trail_sl) and not na(trail_sl_prev) and (trail_sl_prev-trail_sl)>=atr
+big_run          = trail_moved_up or trail_moved_down
+
+// BUG FIX: Use var so these values persist to the result label section
+// Without var, they get recalculated to na after the close block resets entry_px etc
+var float result_entry_px = na
+var float result_risk_pts = na
+var float result_trail_sl = na
+
+// Capture BEFORE any state changes this bar
+if not na(entry_px)
+    result_entry_px := entry_px
+if not na(risk_pts)
+    result_risk_pts := risk_pts
+if not na(trail_sl)
+    result_trail_sl := trail_sl
+
+// Entry
+if any_long and trade_phase==0
+    trade_phase    := 1
+    is_long_trade  := true
+    entry_px       := close
+    snap_entry_px  := close
+    snap_entry_bar := bar_index
+    initial_sl     := close - atr*sl_mult
+    tp1_px         := close + atr*sl_mult*rr_tp1
+    tp2_px         := close + atr*sl_mult*rr_tp2
+    trail_sl       := close - atr*sl_mult
+    trail_sl_prev  := close - atr*sl_mult
+    risk_pts       := atr*sl_mult
+
+if any_short and trade_phase==0
+    trade_phase    := 1
+    is_long_trade  := false
+    entry_px       := close
+    snap_entry_px  := close
+    snap_entry_bar := bar_index
+    initial_sl     := close + atr*sl_mult
+    tp1_px         := close - atr*sl_mult*rr_tp1
+    tp2_px         := close - atr*sl_mult*rr_tp2
+    trail_sl       := close + atr*sl_mult
+    trail_sl_prev  := close + atr*sl_mult
+    risk_pts       := atr*sl_mult
+
+// TP1 — move to phase 2 with SL at breakeven
+if tp1_long_hit
+    trade_phase := 2
+    trail_sl    := entry_px
+
+if tp1_short_hit
+    trade_phase := 2
+    trail_sl    := entry_px
+
+// Phase 1 trail (tight — protects before TP1)
+if trade_phase==1 and is_long_trade
+    trail_sl := math.max(trail_sl, close - atr*trail_phase1)
+if trade_phase==1 and not is_long_trade
+    trail_sl := math.min(trail_sl, close + atr*trail_phase1)
+
+// Phase 2 trail (wide — lets TP2 hit)
+if trade_phase==2 and is_long_trade
+    trail_sl_prev := trail_sl
+    trail_sl      := math.max(trail_sl, close - atr*trail_phase2)
+if trade_phase==2 and not is_long_trade
+    trail_sl_prev := trail_sl
+    trail_sl      := math.min(trail_sl, close + atr*trail_phase2)
+
+// Close trade
+if phase1_sl_long or phase1_sl_short or phase2_sl_long or phase2_sl_short or tp2_long_hit or tp2_short_hit
+    just_closed   := true
+    trade_phase   := 0
+    entry_px      := na
+    initial_sl    := na
+    tp1_px        := na
+    tp2_px        := na
+    trail_sl      := na
+    trail_sl_prev := na
+    risk_pts      := na
+
+in_long  = trade_phase > 0 and is_long_trade
+in_short = trade_phase > 0 and not is_long_trade
+
+// ═══════════════════════════════════════════════════════════
+//  WIN / LOSS COUNTER
+//  Trail exit after TP1 = WIN (TP1 was already banked)
+//  Only phase1 SL before TP1 = true loss
+// ═══════════════════════════════════════════════════════════
+var int cnt_tp1       = 0
+var int cnt_tp2       = 0
+var int cnt_sl        = 0
+var int cnt_trail_win = 0
+
+if tp1_long_hit or tp1_short_hit
+    cnt_tp1 += 1
+if tp2_long_hit or tp2_short_hit
+    cnt_tp2 += 1
+if phase1_sl_long or phase1_sl_short
+    cnt_sl += 1
+if phase2_sl_long or phase2_sl_short
+    cnt_trail_win += 1
+
+total_closed  = cnt_tp1 + cnt_tp2 + cnt_sl + cnt_trail_win
+total_wins    = cnt_tp1 + cnt_tp2 + cnt_trail_win
+total_losses  = cnt_sl
+live_win_rate = total_closed > 0 ? math.round(total_wins / total_closed * 100, 1) : 0.0
+
+// ═══════════════════════════════════════════════════════════
+//  SESSION BACKGROUNDS
+// ═══════════════════════════════════════════════════════════
+bgcolor(show_session_bg and is_dead                                 ? color.new(#2C2C2C,90) : na, title="Dead Zone")
+bgcolor(show_session_bg and is_asian and not is_london_full         ? color.new(#1A3A5C,90) : na, title="Asian")
+bgcolor(show_session_bg and is_london_prime and not is_overlap      ? color.new(#1565C0,82) : na, title="London Prime")
+bgcolor(show_session_bg and is_london_only  and not is_london_prime ? color.new(#1976D2,89) : na, title="London")
+bgcolor(show_session_bg and is_overlap                              ? color.new(#F5C842,80) : na, title="Overlap")
+bgcolor(show_session_bg and is_ny_only                              ? color.new(#BF360C,89) : na, title="NY After")
+bgcolor(show_session_bg and is_news                                 ? color.new(#FF6600,75) : na, title="News")
+bgcolor(is_consolidating and show_session_bg                        ? color.new(#888888,85) : na, title="Consolidation")
+bgcolor(in_long                                                     ? color.new(#00E5A0,96) : na, title="Long Active")
+bgcolor(in_short                                                    ? color.new(#FF4C6A,96) : na, title="Short Active")
+
+// ═══════════════════════════════════════════════════════════
+//  SESSION OPEN LABELS
+// ═══════════════════════════════════════════════════════════
+is_london_prime_open = is_london_prime and not is_london_prime[1]
+is_overlap_open      = is_overlap      and not is_overlap[1]
+is_asian_open        = is_asian        and not is_asian[1]
+is_ny_after_open     = is_ny_after     and not is_ny_after[1]
+is_news_open         = is_news         and not is_news[1]
+
+if show_session_lbls and is_asian_open
+    label.new(bar_index, high+atr*2, "ASIAN 05:30 IST\nWatch Only", style=label.style_label_down, color=color.new(#1A3A5C,0), textcolor=color.white, size=size.small)
+if show_session_lbls and is_london_prime_open
+    label.new(bar_index, high+atr*2, "LONDON 12:30 IST\nGood Scalp Window", style=label.style_label_down, color=color.new(#1565C0,0), textcolor=color.white, size=size.small)
+if show_session_lbls and is_overlap_open
+    label.new(bar_index, high+atr*2, "OVERLAP 18:30 IST\nBEST TIME", style=label.style_label_down, color=color.new(#F5C842,0), textcolor=color.black, size=size.normal)
+if show_session_lbls and is_ny_after_open and not is_overlap
+    label.new(bar_index, high+atr*2, "NY 21:30 IST\nReduce Size", style=label.style_label_down, color=color.new(#E65100,0), textcolor=color.white, size=size.small)
+if show_session_lbls and is_news_open
+    label.new(bar_index, high+atr*3, "NEWS TIME\nHigh Risk — Your Call", style=label.style_label_down, color=color.new(#FF6600,0), textcolor=color.white, size=size.normal)
+if show_session_lbls and consol_open
+    label.new(bar_index, high+atr*4, "CONSOLIDATION\nSkip signals", style=label.style_label_down, color=color.new(#888888,0), textcolor=color.white, size=size.normal)
+
+// ═══════════════════════════════════════════════════════════
+//  EMA PLOTS
+// ═══════════════════════════════════════════════════════════
+ema8_plot   = plot(show_emas ? ema8   : na, "EMA 8",   color=color.new(#00E5A0,0), linewidth=1)
+ema21_plot  = plot(show_emas ? ema21  : na, "EMA 21",  color=color.new(#00BCD4,0), linewidth=1)
+ema50_plot  = plot(show_emas ? ema50  : na, "EMA 50",  color=color.new(#F5C842,0), linewidth=2)
+ema200_plot = plot(show_emas ? ema200 : na, "EMA 200", color=color.new(#FF4C6A,0), linewidth=3)
+
+fill(ema8_plot,  ema21_plot, color=show_ema_cloud?(ema8>ema21?color.new(#00E5A0,90):color.new(#FF4C6A,90)):na)
+fill(ema21_plot, ema50_plot, color=show_ema_cloud?(ema21>ema50?color.new(#00E5A0,94):color.new(#FF4C6A,94)):na)
+
+ema200_hi = plot(show_ema200_zone ? ema200+atr*0.3 : na, "EMA200 Hi", color=color.new(#FF4C6A,90), linewidth=1)
+ema200_lo = plot(show_ema200_zone ? ema200-atr*0.3 : na, "EMA200 Lo", color=color.new(#FF4C6A,90), linewidth=1)
+fill(ema200_hi, ema200_lo, color=show_ema200_zone?color.new(#FF4C6A,92):na)
+
+plot(show_vwap ? vwap_val : na, "VWAP", color=color.new(#E040FB,0), linewidth=2)
+
+// Trail SL — red in phase 1, orange in phase 2
+plot(show_trail and (in_long or in_short) ? trail_sl : na,
+     "Live Trail SL",
+     color=trade_phase==1?color.new(#FF4C6A,0):color.new(#FF9800,0),
+     linewidth=2, style=plot.style_linebr)
+
+plotshape(show_vol_dots and vol_spike, title="Vol Spike", location=location.bottom, style=shape.circle, color=color.new(#E040FB,0), size=size.tiny)
+
+// ═══════════════════════════════════════════════════════════
+//  GOLDEN / DEATH CROSS
+// ═══════════════════════════════════════════════════════════
+if show_cross_lbls and golden_cross
+    label.new(bar_index, low-atr*2, "GOLDEN CROSS\nBULL MARKET", style=label.style_label_up, color=color.new(#F5C842,0), textcolor=color.black, size=size.normal)
+if show_cross_lbls and death_cross
+    label.new(bar_index, high+atr*2, "DEATH CROSS\nBEAR MARKET", style=label.style_label_down, color=color.new(#FF4C6A,0), textcolor=color.white, size=size.normal)
+
+// ═══════════════════════════════════════════════════════════
+//  LABEL FUNCTIONS
+//  4 functions — LONG always uses long math, SHORT always uses short math
+//  Visual position (above/below bar) is completely separate from SL/TP math
+// ═══════════════════════════════════════════════════════════
+long_label_below(nm, lc, tc, sc) =>
+    label.new(bar_index, low-atr*1.8,
+         nm + "\nScore: " + score_bar(sc) +
+         "\nEntry: " + str.tostring(math.round(close,2)) +
+         "\nSL:    " + str.tostring(math.round(close-atr*sl_mult,2)) +
+         "\nTP1:   " + str.tostring(math.round(close+atr*sl_mult*rr_tp1,2)) +
+         "\nTP2:   " + str.tostring(math.round(close+atr*sl_mult*rr_tp2,2)),
+         style=label.style_label_up, color=lc, textcolor=tc, size=size.normal)
+
+long_label_above(nm, lc, tc, sc) =>
+    label.new(bar_index, high+atr*1.8,
+         nm + "\nScore: " + score_bar(sc) +
+         "\nEntry: " + str.tostring(math.round(close,2)) +
+         "\nSL:    " + str.tostring(math.round(close-atr*sl_mult,2)) +
+         "\nTP1:   " + str.tostring(math.round(close+atr*sl_mult*rr_tp1,2)) +
+         "\nTP2:   " + str.tostring(math.round(close+atr*sl_mult*rr_tp2,2)),
+         style=label.style_label_down, color=lc, textcolor=tc, size=size.normal)
+
+short_label_above(nm, lc, tc, sc) =>
+    label.new(bar_index, high+atr*1.8,
+         nm + "\nScore: " + score_bar(sc) +
+         "\nEntry: " + str.tostring(math.round(close,2)) +
+         "\nSL:    " + str.tostring(math.round(close+atr*sl_mult,2)) +
+         "\nTP1:   " + str.tostring(math.round(close-atr*sl_mult*rr_tp1,2)) +
+         "\nTP2:   " + str.tostring(math.round(close-atr*sl_mult*rr_tp2,2)),
+         style=label.style_label_down, color=lc, textcolor=tc, size=size.normal)
+
+short_label_below(nm, lc, tc, sc) =>
+    label.new(bar_index, low-atr*1.8,
+         nm + "\nScore: " + score_bar(sc) +
+         "\nEntry: " + str.tostring(math.round(close,2)) +
+         "\nSL:    " + str.tostring(math.round(close+atr*sl_mult,2)) +
+         "\nTP1:   " + str.tostring(math.round(close-atr*sl_mult*rr_tp1,2)) +
+         "\nTP2:   " + str.tostring(math.round(close-atr*sl_mult*rr_tp2,2)),
+         style=label.style_label_up, color=lc, textcolor=tc, size=size.normal)
+
+// ═══════════════════════════════════════════════════════════
+//  ENTRY SIGNAL LABELS
+//  If already in a trade — show small grey "IN TRADE" label
+//  just_closed prevents signals on same bar a trade closes
+// ═══════════════════════════════════════════════════════════
+if show_signals
+    bool in_trade_now = (trade_phase > 0) and not (any_long or any_short)
+
+    if long_trend
+        lc = is_news?color.new(#FF6600,0):color.new(#2979FF,0)
+        nm = is_news?"BUY TREND — NEWS":"BUY — TREND"
+        if in_trade_now
+            label.new(bar_index, low-atr*0.8, "BUY — IN TRADE", style=label.style_label_up, color=color.new(#333333,0), textcolor=color.new(#666666,0), size=size.tiny)
+        else if label_side_alt
+            long_label_below(nm, lc, color.white, score_bull)
+        else
+            long_label_above(nm, lc, color.white, score_bull)
+
+    if long_reentry
+        lc = is_news?color.new(#FF6600,0):color.new(#00E5A0,0)
+        nm = is_news?"BUY REENTRY — NEWS":"BUY — REENTRY"
+        tc = is_news?color.white:color.black
+        if in_trade_now
+            label.new(bar_index, low-atr*0.8, "BUY — IN TRADE", style=label.style_label_up, color=color.new(#333333,0), textcolor=color.new(#666666,0), size=size.tiny)
+        else if label_side_alt
+            long_label_below(nm, lc, tc, score_bull)
+        else
+            long_label_above(nm, lc, tc, score_bull)
+
+    if long_reversal
+        lc = is_news?color.new(#FF6600,0):color.new(#F5C842,0)
+        nm = is_news?"BUY REVERSAL — NEWS":"BUY — REVERSAL"
+        if in_trade_now
+            label.new(bar_index, low-atr*0.8, "BUY — IN TRADE", style=label.style_label_up, color=color.new(#333333,0), textcolor=color.new(#666666,0), size=size.tiny)
+        else if label_side_alt
+            long_label_below(nm, lc, color.black, score_bull)
+        else
+            long_label_above(nm, lc, color.black, score_bull)
+
+    if short_trend
+        lc = is_news?color.new(#FF6600,0):color.new(#2979FF,0)
+        nm = is_news?"SELL TREND — NEWS":"SELL — TREND"
+        if in_trade_now
+            label.new(bar_index, high+atr*0.8, "SELL — IN TRADE", style=label.style_label_down, color=color.new(#333333,0), textcolor=color.new(#666666,0), size=size.tiny)
+        else if label_side_alt
+            short_label_above(nm, lc, color.white, score_bear)
+        else
+            short_label_below(nm, lc, color.white, score_bear)
+
+    if short_reentry
+        lc = is_news?color.new(#FF6600,0):color.new(#FF4C6A,0)
+        nm = is_news?"SELL REENTRY — NEWS":"SELL — REENTRY"
+        if in_trade_now
+            label.new(bar_index, high+atr*0.8, "SELL — IN TRADE", style=label.style_label_down, color=color.new(#333333,0), textcolor=color.new(#666666,0), size=size.tiny)
+        else if label_side_alt
+            short_label_above(nm, lc, color.white, score_bear)
+        else
+            short_label_below(nm, lc, color.white, score_bear)
+
+    if short_reversal
+        lc = is_news?color.new(#FF6600,0):color.new(#F5C842,0)
+        nm = is_news?"SELL REVERSAL — NEWS":"SELL — REVERSAL"
+        if in_trade_now
+            label.new(bar_index, high+atr*0.8, "SELL — IN TRADE", style=label.style_label_down, color=color.new(#333333,0), textcolor=color.new(#666666,0), size=size.tiny)
+        else if label_side_alt
+            short_label_above(nm, lc, color.black, score_bear)
+        else
+            short_label_below(nm, lc, color.black, score_bear)
+
+// ═══════════════════════════════════════════════════════════
+//  TRADE RESULT LABELS + CONNECTING DASHED LINES
+//  Line colour matches result type
+//  Green  = TP1, Bright green = TP2, Red = SL, Green = trail exit (TP1 banked)
+// ═══════════════════════════════════════════════════════════
+if show_results
+    // LONG results — TP1 below bar, TP2 above bar (separated)
+    if tp1_long_hit
+        line.new(snap_entry_bar, snap_entry_px, bar_index, snap_entry_px, color=color.new(#00C853,50), width=1, style=line.style_dashed, xloc=xloc.bar_index)
+        label.new(bar_index, low-atr*1.5, "TP1 HIT  +"+str.tostring(rr_tp1)+"R\nClose 50% — SL to Breakeven", style=label.style_label_up, color=color.new(#00C853,0), textcolor=color.white, size=size.small)
+
+    if tp2_long_hit
+        line.new(snap_entry_bar, snap_entry_px, bar_index, snap_entry_px, color=color.new(#00E676,50), width=1, style=line.style_dashed, xloc=xloc.bar_index)
+        label.new(bar_index, high+atr*2.5, "TP2 HIT  +"+str.tostring(rr_tp2)+"R\nFull Close", style=label.style_label_down, color=color.new(#00E676,0), textcolor=color.black, size=size.normal)
+
+    // SHORT results — TP1 ABOVE bar, TP2 BELOW bar (never overlap)
+    // BUG FIX: Previously both TP1 and TP2 were below bar and stacked on fast moves
+    if tp1_short_hit
+        line.new(snap_entry_bar, snap_entry_px, bar_index, snap_entry_px, color=color.new(#00C853,50), width=1, style=line.style_dashed, xloc=xloc.bar_index)
+        label.new(bar_index, high+atr*1.5, "TP1 HIT  +"+str.tostring(rr_tp1)+"R\nClose 50% — SL to Breakeven", style=label.style_label_down, color=color.new(#00C853,0), textcolor=color.white, size=size.small)
+
+    if tp2_short_hit
+        line.new(snap_entry_bar, snap_entry_px, bar_index, snap_entry_px, color=color.new(#00E676,50), width=1, style=line.style_dashed, xloc=xloc.bar_index)
+        label.new(bar_index, low-atr*2.5, "TP2 HIT  +"+str.tostring(rr_tp2)+"R\nFull Close", style=label.style_label_up, color=color.new(#00E676,0), textcolor=color.black, size=size.normal)
+
+    if phase1_sl_long
+        line.new(snap_entry_bar, snap_entry_px, bar_index, snap_entry_px, color=color.new(#FF1744,50), width=1, style=line.style_dashed, xloc=xloc.bar_index)
+        label.new(bar_index, low-atr*1.5, "SL HIT  -1R\nFull Loss", style=label.style_label_up, color=color.new(#FF1744,0), textcolor=color.white, size=size.small)
+
+    if phase1_sl_short
+        line.new(snap_entry_bar, snap_entry_px, bar_index, snap_entry_px, color=color.new(#FF1744,50), width=1, style=line.style_dashed, xloc=xloc.bar_index)
+        label.new(bar_index, high+atr*1.5, "SL HIT  -1R\nFull Loss", style=label.style_label_down, color=color.new(#FF1744,0), textcolor=color.white, size=size.small)
+
+    if phase2_sl_long
+        rr_e = not na(result_entry_px) and not na(result_risk_pts) and result_risk_pts>0 ? math.round((result_trail_sl-result_entry_px)/result_risk_pts,1) : 0.0
+        line.new(snap_entry_bar, snap_entry_px, bar_index, snap_entry_px, color=color.new(#00C853,50), width=1, style=line.style_dashed, xloc=xloc.bar_index)
+        label.new(bar_index, low-atr*1.5, "EXIT  "+(rr_e>=0?"+":"")+str.tostring(rr_e)+"R\nTP1 banked", style=label.style_label_up, color=color.new(#00C853,0), textcolor=color.white, size=size.small)
+
+    if phase2_sl_short
+        rr_e = not na(result_entry_px) and not na(result_risk_pts) and result_risk_pts>0 ? math.round((result_entry_px-result_trail_sl)/result_risk_pts,1) : 0.0
+        line.new(snap_entry_bar, snap_entry_px, bar_index, snap_entry_px, color=color.new(#00C853,50), width=1, style=line.style_dashed, xloc=xloc.bar_index)
+        label.new(bar_index, high+atr*1.5, "EXIT  "+(rr_e>=0?"+":"")+str.tostring(rr_e)+"R\nTP1 banked", style=label.style_label_down, color=color.new(#00C853,0), textcolor=color.white, size=size.small)
+
+// ═══════════════════════════════════════════════════════════
+//  SIGNAL CONSOLE TABLE — TOP RIGHT
+// ═══════════════════════════════════════════════════════════
+session_name  = is_news?"NEWS CAUTION":is_overlap?"OVERLAP BEST":is_london_prime?"LONDON PRIME":is_london_only?"LONDON":is_ny_only?"NEW YORK":is_asian?"ASIAN":"DEAD ZONE"
+session_clr   = is_news?color.new(#FF6600,0):is_overlap?color.new(#F5C842,0):is_london_prime?color.new(#2979FF,0):is_london_only?color.new(#1976D2,0):is_ny_only?color.new(#E65100,0):is_asian?color.new(#4B79A1,0):color.new(#5A6070,0)
+trade_now_txt = is_consolidating?"CONSOLIDATION":is_news?"CAUTION NEWS":valid_session?"YES TRADE":"NO WAIT"
+trade_now_clr = is_consolidating?color.new(#888888,0):is_news?color.new(#FF6600,0):valid_session?color.new(#00E5A0,0):color.new(#FF4C6A,0)
+sig_type      = long_trend?"BUY TREND":long_reentry?"BUY REENTRY":long_reversal?"BUY REVERSAL":short_trend?"SELL TREND":short_reentry?"SELL REENTRY":short_reversal?"SELL REVERSAL":"WAITING"
+sig_clr       = long_trend?color.new(#2979FF,0):long_reentry?color.new(#00E5A0,0):long_reversal?color.new(#F5C842,0):short_trend?color.new(#2979FF,0):short_reentry?color.new(#FF4C6A,0):short_reversal?color.new(#F5C842,0):color.new(#5A6070,0)
+full_bull     = ema8>ema21 and ema21>ema50 and ema50>ema200 and above_200
+full_bear     = ema8<ema21 and ema21<ema50 and ema50<ema200 and below_200
+stack_txt     = full_bull?"FULL BULL":full_bear?"FULL BEAR":bull_core?"PARTIAL BULL":bear_core?"PARTIAL BEAR":"MIXED"
+stack_clr     = full_bull?color.new(#00E5A0,0):full_bear?color.new(#FF4C6A,0):bull_core?color.new(#00E5A0,40):bear_core?color.new(#FF4C6A,40):color.new(#F5C842,0)
+phase_txt     = trade_phase==0?"FLAT":trade_phase==1?"PHASE 1 — Fixed SL":"PHASE 2 — Wide Trail"
+phase_clr     = trade_phase==0?color.new(#5A6070,0):trade_phase==1?color.new(#FF4C6A,0):color.new(#FF9800,0)
+trail_txt     = (in_long or in_short) and not na(trail_sl) ? str.tostring(math.round(trail_sl,2)) : "—"
+consol_txt    = is_consolidating?"YES — SKIP":"NO — OK"
+consol_clr    = is_consolidating?color.new(#888888,0):color.new(#00E5A0,0)
+cooldown_txt  = cooldown_ok?"READY":str.tostring(signal_cooldown-(bar_index-last_signal_bar))+" bars"
+cooldown_clr  = cooldown_ok?color.new(#00E5A0,0):color.new(#F5C842,0)
+vol_txt       = vol_good?"ABOVE AVG — OK":require_volume?"LOW — BLOCKED":"LOW — ALLOWED"
+vol_clr       = vol_good?color.new(#00E5A0,0):require_volume?color.new(#FF4C6A,0):color.new(#F5C842,0)
+ext_txt       = not_overextended?"IN RANGE":"OVEREXTENDED — BLOCKED"
+ext_clr       = not_overextended?color.new(#00E5A0,0):color.new(#FF4C6A,0)
+sagree_txt    = stoch_agree_bull?"BULL AGREE":stoch_agree_bear?"BEAR AGREE":"MIXED"
+sagree_clr    = stoch_agree_bull?color.new(#00E5A0,0):stoch_agree_bear?color.new(#FF4C6A,0):color.new(#F5C842,0)
+mom_bull_txt  = bull_momentum?"CONFIRMED":"WEAK"
+mom_bear_txt  = bear_momentum?"CONFIRMED":"WEAK"
+stoch_now     = str.tostring(math.round(k,1))+" / "+str.tostring(math.round(d,1))
+stoch_clr     = k>stoch_ob?color.new(#FF4C6A,0):k<stoch_os?color.new(#00E5A0,0):color.new(#F5C842,0)
+tp1_math      = str.tostring(math.round(sl_mult*rr_tp1,2))+"x ATR  SL="+str.tostring(sl_mult)+"x"
+
+var table sig = table.new(position.top_right, 2, 27, bgcolor=#0D1117, border_color=#252A35, border_width=1, frame_color=#F5C842, frame_width=1)
+
+if show_signal_table
+    table.cell(sig,0,0,  "XAU/USD SCALPER",    text_color=color.new(#F5C842,0), text_size=size.small, bgcolor=#1A1E28)
+    table.cell(sig,1,0,  "INDIA IST v15F",        text_color=color.new(#F5C842,0), text_size=size.small, bgcolor=#1A1E28)
+    table.cell(sig,0,1,  "SESSION",              text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,1,  session_name,            text_color=session_clr,          text_size=size.small)
+    table.cell(sig,0,2,  "TRADE NOW?",            text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,2,  trade_now_txt,           text_color=trade_now_clr,        text_size=size.small)
+    table.cell(sig,0,3,  "ATR SPIKE",             text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,3,  atr_spike_cooldown?"CLEAR":"BLOCKED 3 bars", text_color=atr_spike_cooldown?color.new(#00E5A0,0):color.new(#FF4C6A,0), text_size=size.small)
+    table.cell(sig,0,4,  "CONSOLIDATION",         text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,4,  consol_txt,              text_color=consol_clr,           text_size=size.small)
+    table.cell(sig,0,5,  "COOLDOWN",              text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,5,  cooldown_txt,            text_color=cooldown_clr,         text_size=size.small)
+    table.cell(sig,0,6,  "SIGNAL",                text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,6,  sig_type,                text_color=sig_clr,              text_size=size.small)
+    table.cell(sig,0,7,  "BULL SCORE",            text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,7,  score_bar(score_bull),   text_color=score_color(score_bull), text_size=size.small)
+    table.cell(sig,0,8,  "BEAR SCORE",            text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,8,  score_bar(score_bear),   text_color=score_color(score_bear), text_size=size.small)
+    table.cell(sig,0,9,  "TRADE PHASE",           text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,9,  phase_txt,               text_color=phase_clr,            text_size=size.small)
+    table.cell(sig,0,10, "LIVE TRAIL SL",         text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,10, trail_txt,               text_color=trade_phase==1?color.new(#FF4C6A,0):color.new(#FF9800,0), text_size=size.small)
+    table.cell(sig,0,11, "TP1 vs SL",             text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,11, tp1_math,                text_color=color.new(#00C853,0), text_size=size.small)
+    table.cell(sig,0,12, "VOLUME",                text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,12, vol_txt,                 text_color=vol_clr,              text_size=size.small)
+    table.cell(sig,0,13, "EMA EXTENSION",         text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,13, ext_txt,                 text_color=ext_clr,              text_size=size.small)
+    table.cell(sig,0,14, "EMA21 SLOPE",           text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,14, ema21_slope_bull?"RISING BULL":ema21_slope_bear?"FALLING BEAR":"FLAT", text_color=ema21_slope_bull?color.new(#00E5A0,0):ema21_slope_bear?color.new(#FF4C6A,0):color.new(#F5C842,0), text_size=size.small)
+    table.cell(sig,0,15, "STOCH AGREE",           text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,15, sagree_txt,              text_color=sagree_clr,           text_size=size.small)
+    table.cell(sig,0,16, "BULL MOMENTUM",         text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,16, mom_bull_txt,            text_color=bull_momentum?color.new(#00E5A0,0):color.new(#FF4C6A,0), text_size=size.small)
+    table.cell(sig,0,17, "BEAR MOMENTUM",         text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,17, mom_bear_txt,            text_color=bear_momentum?color.new(#00E5A0,0):color.new(#FF4C6A,0), text_size=size.small)
+    table.cell(sig,0,18, "EMA 200",               text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,18, above_200?"ABOVE BULL":"BELOW BEAR", text_color=above_200?color.new(#00E5A0,0):color.new(#FF4C6A,0), text_size=size.small)
+    table.cell(sig,0,19, "EMA STACK",             text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,19, stack_txt,               text_color=stack_clr,            text_size=size.small)
+    table.cell(sig,0,20, "VWAP",                  text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,20, vwap_above?"ABOVE BULL":"BELOW BEAR", text_color=vwap_above?color.new(#00E5A0,0):color.new(#FF4C6A,0), text_size=size.small)
+    table.cell(sig,0,21, "OBV",                   text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,21, obv_bull?"BUYING":"SELLING", text_color=obv_bull?color.new(#00E5A0,0):color.new(#FF4C6A,0), text_size=size.small)
+    table.cell(sig,0,22, "MFI",                   text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,22, mfi_ob?"OVERBOUGHT":mfi_os?"OVERSOLD":str.tostring(math.round(mfi,1)), text_color=mfi_ob?color.new(#FF4C6A,0):mfi_os?color.new(#00E5A0,0):color.new(#F5C842,0), text_size=size.small)
+    table.cell(sig,0,23, "STOCHASTIC K/D",        text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,23, stoch_now,               text_color=stoch_clr,            text_size=size.small)
+    table.cell(sig,0,24, "RSI",                   text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,24, rsi>rsi_ob?"OVERBOUGHT":rsi<rsi_os?"OVERSOLD":rsi>50?"BULLISH":"BEARISH", text_color=rsi>50?color.new(#00E5A0,0):color.new(#FF4C6A,0), text_size=size.small)
+    table.cell(sig,0,25, "RSI SLOPE",             text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,25, str.tostring(math.round(rsi_slope,1)), text_color=rsi_slope>min_rsi_slope?color.new(#00E5A0,0):rsi_slope<(-min_rsi_slope)?color.new(#FF4C6A,0):color.new(#F5C842,0), text_size=size.small)
+    table.cell(sig,0,26, "ATR",                   text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(sig,1,26, str.tostring(math.round(atr,2)), text_color=color.new(#F5C842,0), text_size=size.small)
+
+// ═══════════════════════════════════════════════════════════
+//  WIN/LOSS SCOREBOARD — BOTTOM RIGHT
+// ═══════════════════════════════════════════════════════════
+var table score = table.new(position.bottom_right, 2, 9, bgcolor=#0D1117, border_color=#252A35, border_width=1, frame_color=#F5C842, frame_width=1)
+
+if show_score_table
+    table.cell(score,0,0, "SCOREBOARD",               text_color=color.new(#F5C842,0), text_size=size.small, bgcolor=#1A1E28)
+    table.cell(score,1,0, "XAU/USD v15F",               text_color=color.new(#F5C842,0), text_size=size.small, bgcolor=#1A1E28)
+    table.cell(score,0,1, "TP1 Hit (50% close)",       text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(score,1,1, str.tostring(cnt_tp1),       text_color=color.new(#00C853,0), text_size=size.small)
+    table.cell(score,0,2, "TP2 Hit (full close)",      text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(score,1,2, str.tostring(cnt_tp2),       text_color=color.new(#00E676,0), text_size=size.small)
+    table.cell(score,0,3, "Trail Exit (TP1 banked)",   text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(score,1,3, str.tostring(cnt_trail_win), text_color=color.new(#00C853,0), text_size=size.small)
+    table.cell(score,0,4, "SL Hit (before TP1)",       text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(score,1,4, str.tostring(cnt_sl),        text_color=color.new(#FF1744,0), text_size=size.small)
+    table.cell(score,0,5, "Total Trades",              text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(score,1,5, str.tostring(total_closed),  text_color=color.new(#E8EAF0,0), text_size=size.small)
+    table.cell(score,0,6, "Wins / Losses",             text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(score,1,6, str.tostring(total_wins)+" / "+str.tostring(total_losses), text_color=color.new(#E8EAF0,0), text_size=size.small)
+    table.cell(score,0,7, "True Win Rate",             text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(score,1,7, str.tostring(live_win_rate)+"%", text_color=live_win_rate>=80?color.new(#00E5A0,0):live_win_rate>=70?color.new(#F5C842,0):color.new(#FF4C6A,0), text_size=size.small)
+    table.cell(score,0,8, "True Losses only",          text_color=color.new(#5A6070,0), text_size=size.small)
+    table.cell(score,1,8, str.tostring(cnt_sl)+" SL hits", text_color=color.new(#FF1744,0), text_size=size.small)
+
+// ═══════════════════════════════════════════════════════════
+//  IST SESSION TABLE — BOTTOM LEFT
+// ═══════════════════════════════════════════════════════════
+c_bg(b,c) => b ? color.new(c,50) : color.new(#0D1117,0)
+c_tx(b,c) => b ? color.new(c, 0) : color.new(#3A4050,0)
+
+var table ist = table.new(position.bottom_left, 4, 10, bgcolor=#0D1117, border_color=#252A35, border_width=1, frame_color=#F5C842, frame_width=1)
+
+if show_ist_table
+    table.cell(ist,0,0,"SESSION",    text_color=color.new(#F5C842,0),text_size=size.tiny,bgcolor=#1A1E28)
+    table.cell(ist,1,0,"IST TIME",   text_color=color.new(#F5C842,0),text_size=size.tiny,bgcolor=#1A1E28)
+    table.cell(ist,2,0,"ACTION",     text_color=color.new(#F5C842,0),text_size=size.tiny,bgcolor=#1A1E28)
+    table.cell(ist,3,0,"WHY",        text_color=color.new(#F5C842,0),text_size=size.tiny,bgcolor=#1A1E28)
+    bool r1=is_dead
+    table.cell(ist,0,1,"Dead Zone",  text_color=c_tx(r1,#5A6070),text_size=size.tiny,bgcolor=c_bg(r1,#2C2C2C))
+    table.cell(ist,1,1,"02:30-05:30",text_color=c_tx(r1,#5A6070),text_size=size.tiny,bgcolor=c_bg(r1,#2C2C2C))
+    table.cell(ist,2,1,"SLEEP",      text_color=c_tx(r1,#5A6070),text_size=size.tiny,bgcolor=c_bg(r1,#2C2C2C))
+    table.cell(ist,3,1,"No volume",  text_color=c_tx(r1,#5A6070),text_size=size.tiny,bgcolor=c_bg(r1,#2C2C2C))
+    bool r2=is_asian and not is_london_full
+    table.cell(ist,0,2,"Asian",      text_color=c_tx(r2,#4B79A1),text_size=size.tiny,bgcolor=c_bg(r2,#1A3A5C))
+    table.cell(ist,1,2,"05:30-12:30",text_color=c_tx(r2,#4B79A1),text_size=size.tiny,bgcolor=c_bg(r2,#1A3A5C))
+    table.cell(ist,2,2,"WATCH ONLY", text_color=c_tx(r2,#4B79A1),text_size=size.tiny,bgcolor=c_bg(r2,#1A3A5C))
+    table.cell(ist,3,2,"Low volume", text_color=c_tx(r2,#4B79A1),text_size=size.tiny,bgcolor=c_bg(r2,#1A3A5C))
+    bool r3=is_london_prime and not is_overlap
+    table.cell(ist,0,3,"London Prime",text_color=c_tx(r3,#2979FF),text_size=size.tiny,bgcolor=c_bg(r3,#1565C0))
+    table.cell(ist,1,3,"12:30-14:30", text_color=c_tx(r3,#2979FF),text_size=size.tiny,bgcolor=c_bg(r3,#1565C0))
+    table.cell(ist,2,3,"SCALP OK",    text_color=c_tx(r3,#2979FF),text_size=size.tiny,bgcolor=c_bg(r3,#1565C0))
+    table.cell(ist,3,3,"London open", text_color=c_tx(r3,#2979FF),text_size=size.tiny,bgcolor=c_bg(r3,#1565C0))
+    bool r4=is_news1
+    table.cell(ist,0,4,"News Warn",  text_color=c_tx(r4,#FF6600),text_size=size.tiny,bgcolor=c_bg(r4,#FF6600))
+    table.cell(ist,1,4,"~14:00 IST", text_color=c_tx(r4,#FF6600),text_size=size.tiny,bgcolor=c_bg(r4,#FF6600))
+    table.cell(ist,2,4,"YOUR CALL",  text_color=c_tx(r4,#FF6600),text_size=size.tiny,bgcolor=c_bg(r4,#FF6600))
+    table.cell(ist,3,4,"EU data",    text_color=c_tx(r4,#FF6600),text_size=size.tiny,bgcolor=c_bg(r4,#FF6600))
+    bool r5=is_london_only and not is_london_prime
+    table.cell(ist,0,5,"London",     text_color=c_tx(r5,#1976D2),text_size=size.tiny,bgcolor=c_bg(r5,#1565C0))
+    table.cell(ist,1,5,"14:30-18:30",text_color=c_tx(r5,#1976D2),text_size=size.tiny,bgcolor=c_bg(r5,#1565C0))
+    table.cell(ist,2,5,"SCALP OK",   text_color=c_tx(r5,#1976D2),text_size=size.tiny,bgcolor=c_bg(r5,#1565C0))
+    table.cell(ist,3,5,"Good vol",   text_color=c_tx(r5,#1976D2),text_size=size.tiny,bgcolor=c_bg(r5,#1565C0))
+    bool r6=is_overlap
+    table.cell(ist,0,6,"OVERLAP",    text_color=c_tx(r6,#F5C842),text_size=size.tiny,bgcolor=c_bg(r6,#F5C842))
+    table.cell(ist,1,6,"18:30-21:30",text_color=c_tx(r6,#F5C842),text_size=size.tiny,bgcolor=c_bg(r6,#F5C842))
+    table.cell(ist,2,6,"BEST TIME",  text_color=c_tx(r6,#F5C842),text_size=size.tiny,bgcolor=c_bg(r6,#F5C842))
+    table.cell(ist,3,6,"Max volume", text_color=c_tx(r6,#F5C842),text_size=size.tiny,bgcolor=c_bg(r6,#F5C842))
+    bool r7=is_news2
+    table.cell(ist,0,7,"News Warn",  text_color=c_tx(r7,#FF6600),text_size=size.tiny,bgcolor=c_bg(r7,#FF6600))
+    table.cell(ist,1,7,"~19:00 IST", text_color=c_tx(r7,#FF6600),text_size=size.tiny,bgcolor=c_bg(r7,#FF6600))
+    table.cell(ist,2,7,"YOUR CALL",  text_color=c_tx(r7,#FF6600),text_size=size.tiny,bgcolor=c_bg(r7,#FF6600))
+    table.cell(ist,3,7,"US data",    text_color=c_tx(r7,#FF6600),text_size=size.tiny,bgcolor=c_bg(r7,#FF6600))
+    bool r8=is_ny_only
+    table.cell(ist,0,8,"NY / Close", text_color=c_tx(r8,#E65100),text_size=size.tiny,bgcolor=c_bg(r8,#BF360C))
+    table.cell(ist,1,8,"21:30-02:30",text_color=c_tx(r8,#E65100),text_size=size.tiny,bgcolor=c_bg(r8,#BF360C))
+    table.cell(ist,2,8,"REDUCE SIZE",text_color=c_tx(r8,#E65100),text_size=size.tiny,bgcolor=c_bg(r8,#BF360C))
+    table.cell(ist,3,8,"Fading vol", text_color=c_tx(r8,#E65100),text_size=size.tiny,bgcolor=c_bg(r8,#BF360C))
+    bool r9=is_news3
+    table.cell(ist,0,9,"News Warn",  text_color=c_tx(r9,#FF6600),text_size=size.tiny,bgcolor=c_bg(r9,#FF6600))
+    table.cell(ist,1,9,"~23:15 IST", text_color=c_tx(r9,#FF6600),text_size=size.tiny,bgcolor=c_bg(r9,#FF6600))
+    table.cell(ist,2,9,"YOUR CALL",  text_color=c_tx(r9,#FF6600),text_size=size.tiny,bgcolor=c_bg(r9,#FF6600))
+    table.cell(ist,3,9,"Fed data",   text_color=c_tx(r9,#FF6600),text_size=size.tiny,bgcolor=c_bg(r9,#FF6600))
+
+// ═══════════════════════════════════════════════════════════
+//  ALERTS — alertcondition() for manual TradingView alerts
+// ═══════════════════════════════════════════════════════════
+alertcondition(long_trend     and not is_news, "BUY TREND",      "XAU/USD BUY TREND — Session bias confirmed")
+alertcondition(long_reentry   and not is_news, "BUY REENTRY",    "XAU/USD BUY REENTRY — EMA bounce confirmed")
+alertcondition(long_reversal  and not is_news, "BUY REVERSAL",   "XAU/USD BUY REVERSAL — Extreme stoch near EMA")
+alertcondition(short_trend    and not is_news, "SELL TREND",     "XAU/USD SELL TREND — Session bias confirmed")
+alertcondition(short_reentry  and not is_news, "SELL REENTRY",   "XAU/USD SELL REENTRY — EMA rejection confirmed")
+alertcondition(short_reversal and not is_news, "SELL REVERSAL",  "XAU/USD SELL REVERSAL — Extreme stoch near EMA")
+alertcondition(any_long  and is_news,          "BUY NEWS RISK",  "XAU/USD BUY — NEWS risk your call")
+alertcondition(any_short and is_news,          "SELL NEWS RISK", "XAU/USD SELL — NEWS risk your call")
+alertcondition(tp1_long_hit or tp1_short_hit,  "TP1 HIT",        "TP1 hit — Close 50% SL to breakeven")
+alertcondition(tp2_long_hit or tp2_short_hit,  "TP2 HIT",        "TP2 hit — Full close")
+alertcondition(phase1_sl_long or phase1_sl_short, "SL HIT",      "SL hit before TP1 — Full loss")
+alertcondition(phase2_sl_long or phase2_sl_short, "EXIT",        "Trail exit — TP1 was banked profit secured")
+alertcondition(big_run,                        "BIG RUN",        "Trail SL moved 1+ ATR — hold position")
+alertcondition(consol_open,                    "CONSOLIDATION",  "Consolidation — avoid trading")
+alertcondition(golden_cross,                   "GOLDEN CROSS",   "Bull market confirmed")
+alertcondition(death_cross,                    "DEATH CROSS",    "Bear market confirmed")
+alertcondition(is_overlap_open,                "Overlap 18:30",  "OVERLAP open — Best scalps now")
+alertcondition(is_news_open,                   "NEWS TIME",      "News window open")
+
+// ═══════════════════════════════════════════════════════════
+//  WEBHOOK ALERTS — alert() with full JSON payload
+//
+//  These fire automatically on each entry signal and send
+//  exact SL/TP1/TP2 values to the MiroTrade webhook server.
+//
+//  HOW TO USE:
+//  1. Create ONE alert in TradingView
+//  2. Condition: "Any alert() function call"
+//  3. Webhook URL: https://your-ngrok-url.ngrok.io/webhook
+//  4. Message box: leave BLANK — Pine sends the JSON
+//  5. Expiry: Open-ended
+//
+//  Signal-specific TP2 multipliers (matches MiroTrade Python):
+//    TREND    = 3.0R  (big runner)
+//    REENTRY  = 1.5R  (reduced — lower conviction setup)
+//    REVERSAL = 1.2R  (tight — counter-trend)
+// ═══════════════════════════════════════════════════════════
+
+// Detect fresh entry on current bar
+_just_entered_long  = trade_phase == 1 and     is_long_trade and snap_entry_bar == bar_index
+_just_entered_short = trade_phase == 1 and not is_long_trade and snap_entry_bar == bar_index
+
+// BUY entry alerts
+if _just_entered_long
+    _p   = str.tostring(math.round(close, 2))
+    _sl  = str.tostring(math.round(close - atr * sl_mult, 2))
+    _tp1 = str.tostring(math.round(close + atr * sl_mult * rr_tp1, 2))
+    if long_trend
+        _tp2 = str.tostring(math.round(close + atr * sl_mult * 3.0, 2))
+        alert('{"action":"BUY","signal_type":"BUY_TREND","price":' + _p + ',"sl":' + _sl + ',"tp1":' + _tp1 + ',"tp2":' + _tp2 + ',"indicator":"v15F","secret":"mirotrade2026"}', alert.freq_once_per_bar)
+    else if long_reentry
+        _tp2 = str.tostring(math.round(close + atr * sl_mult * 1.5, 2))
+        alert('{"action":"BUY","signal_type":"BUY_REENTRY","price":' + _p + ',"sl":' + _sl + ',"tp1":' + _tp1 + ',"tp2":' + _tp2 + ',"indicator":"v15F","secret":"mirotrade2026"}', alert.freq_once_per_bar)
+    else if long_reversal
+        _tp2 = str.tostring(math.round(close + atr * sl_mult * 1.2, 2))
+        alert('{"action":"BUY","signal_type":"BUY_REVERSAL","price":' + _p + ',"sl":' + _sl + ',"tp1":' + _tp1 + ',"tp2":' + _tp2 + ',"indicator":"v15F","secret":"mirotrade2026"}', alert.freq_once_per_bar)
+
+// SELL entry alerts
+if _just_entered_short
+    _p   = str.tostring(math.round(close, 2))
+    _sl  = str.tostring(math.round(close + atr * sl_mult, 2))
+    _tp1 = str.tostring(math.round(close - atr * sl_mult * rr_tp1, 2))
+    if short_trend
+        _tp2 = str.tostring(math.round(close - atr * sl_mult * 3.0, 2))
+        alert('{"action":"SELL","signal_type":"SELL_TREND","price":' + _p + ',"sl":' + _sl + ',"tp1":' + _tp1 + ',"tp2":' + _tp2 + ',"indicator":"v15F","secret":"mirotrade2026"}', alert.freq_once_per_bar)
+    else if short_reentry
+        _tp2 = str.tostring(math.round(close - atr * sl_mult * 1.5, 2))
+        alert('{"action":"SELL","signal_type":"SELL_REENTRY","price":' + _p + ',"sl":' + _sl + ',"tp1":' + _tp1 + ',"tp2":' + _tp2 + ',"indicator":"v15F","secret":"mirotrade2026"}', alert.freq_once_per_bar)
+    else if short_reversal
+        _tp2 = str.tostring(math.round(close - atr * sl_mult * 1.2, 2))
+        alert('{"action":"SELL","signal_type":"SELL_REVERSAL","price":' + _p + ',"sl":' + _sl + ',"tp1":' + _tp1 + ',"tp2":' + _tp2 + ',"indicator":"v15F","secret":"mirotrade2026"}', alert.freq_once_per_bar)

@@ -1,11 +1,11 @@
 {
-  "action": "BUY",
+  "action": "SELL",
   "symbol": "XAUUSD",
-  "entry": 4765.0,
-  "sl": 4750.7,
-  "tp": 4793.59,
-  "lots": 0.01,
-  "source": "TEST",
-  "timestamp": "2026-04-13 03:30:13.200261",
+  "entry": 4788.925,
+  "sl": 4813.63,
+  "tp": 4714.8,
+  "lots": 0.38,
+  "source": "XAU Scalper v15",
+  "timestamp": "2026-04-17 02:12:12.441518",
   "status": "pending"
 }

@@ -19,19 +19,11 @@ Setup:
 3. Copy ngrok URL into TradingView alert webhook URL
 4. Set alert message format (see ALERT FORMAT below)
 
-ALERT FORMAT (paste into TradingView alert message):
-{
-  "action": "{{strategy.order.action}}",
-  "symbol": "{{ticker}}",
-  "price": {{close}},
-  "volume": {{volume}},
-  "time": "{{time}}",
-  "indicator": "XAU Scalper v15"
-}
+ALERT FORMAT — use alert() in Pine Script to embed exact SL/TP1/TP2:
+The Pine Script uses alert() with dynamic values so SL/TP match the chart exactly.
+No need to set a message in TradingView alert dialog — Pine handles the full JSON.
 
-For manual alerts use:
-{"action": "BUY", "symbol": "XAUUSD", "price": {{close}}, "indicator": "XAU Scalper v15"}
-{"action": "SELL", "symbol": "XAUUSD", "price": {{close}}, "indicator": "XAU Scalper v15"}
+If SL/TP are missing from payload, server falls back to ATR recalculation from MT5.
 """
 
 from flask import Flask, request, jsonify
@@ -54,10 +46,15 @@ RISK_FILE     = "agents/risk_manager/risk_state.json"
 ORCH_FILE     = "agents/orchestrator/last_decision.json"
 MTF_FILE      = "agents/market_analyst/mtf_bias.json"
 
+# MT5 Common Files — SignalBridgeEA reads from here
+_appdata      = os.getenv("APPDATA", "")
+MT5_COMMON    = os.path.join(_appdata, "MetaQuotes", "Terminal", "Common", "Files")
+SIGNAL_COMMON = os.path.join(MT5_COMMON, "mirotrade_signal.json")
+
 # --- Settings ---
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "mirotrade2026")
-DEFAULT_SL_PCT = 0.003   # 0.3% SL if not provided
-DEFAULT_TP_PCT = 0.006   # 0.6% TP (1:2 RR)
+ATR_SL_MULT    = 1.5     # SL = ATR * 1.5  (matches v15F)
+ATR_TP_MULT    = 4.5     # TP = ATR * 4.5  (3R, matches v15F TP2)
 RISK_PCT       = 0.01    # 1% risk per trade
 
 
@@ -143,32 +140,128 @@ def check_mtf(signal):
     return True, "Aligned"
 
 
-def calculate_sl_tp(action, price):
-    """Calculate SL and TP from price."""
+def _get_mt5_balance():
+    """Read live account balance from MT5. Falls back to 10000 if unavailable."""
+    try:
+        import MetaTrader5 as mt5
+        if mt5.initialize():
+            acc = mt5.account_info()
+            mt5.shutdown()
+            if acc and acc.balance > 0:
+                return float(acc.balance)
+    except Exception as e:
+        print("[WEBHOOK] MT5 balance fetch failed: {}".format(e))
+    return 10000.0
+
+
+def check_existing_position():
+    """
+    Check if any XAUUSD position is already open in MT5.
+    Returns (has_position, direction, count)
+    Prevents stacking multiple trades on the same symbol.
+    """
+    try:
+        import MetaTrader5 as mt5
+        if mt5.initialize():
+            positions = mt5.positions_get(symbol="XAUUSD")
+            mt5.shutdown()
+            if positions and len(positions) > 0:
+                direction = "BUY" if positions[0].type == 0 else "SELL"
+                return True, direction, len(positions)
+    except Exception as e:
+        print("[WEBHOOK] Position check failed: {}".format(e))
+    return False, None, 0
+
+
+def get_atr():
+    """Fetch current H1 ATR(14) from MT5 for SL/TP calculation."""
+    try:
+        import MetaTrader5 as mt5
+        import pandas as pd
+        if mt5.initialize():
+            rates = mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_H1, 0, 50)
+            if rates is not None:
+                df = pd.DataFrame(rates)
+                tr = pd.concat([
+                    df["high"] - df["low"],
+                    (df["high"] - df["close"].shift()).abs(),
+                    (df["low"]  - df["close"].shift()).abs()
+                ], axis=1).max(axis=1)
+                atr = float(tr.rolling(14).mean().iloc[-1])
+                mt5.shutdown()
+                return atr
+    except Exception as e:
+        print("[WEBHOOK] ATR fetch failed: {}".format(e))
+    return None
+
+
+def _rr_tp2_for_type(signal_type):
+    """Signal-specific TP2 — matches scalper_v15.rr_tp2_for_type."""
+    if "REENTRY"  in signal_type: return 1.5
+    if "REVERSAL" in signal_type: return 1.2
+    return 3.0   # TREND or unknown
+
+
+def calculate_sl_tp(action, price, signal_type=""):
+    """
+    Precise v15F ATR fallback — only used when Pine Script does NOT send sl/tp1/tp2.
+    Matches EXACTLY the same formula used in scalper_v15.py:
+      SL  = entry ± ATR * sl_mult (1.5)
+      TP1 = entry ± ATR * sl_mult * 0.5   (0.5R)
+      TP2 = entry ± ATR * sl_mult * rr_tp2 (TREND=3R, REENTRY=1.5R, REVERSAL=1.2R)
+    Returns (sl, tp1, tp2) or raises if ATR unavailable.
+    """
+    rr_tp2 = _rr_tp2_for_type(signal_type)
+    atr    = get_atr()
+    if not atr or atr <= 0:
+        raise ValueError(
+            "ATR unavailable — cannot calculate SL/TP safely. "
+            "Pine Script must send sl/tp1/tp2 in the alert payload."
+        )
     if action == "BUY":
-        sl = round(price * (1 - DEFAULT_SL_PCT), 2)
-        tp = round(price * (1 + DEFAULT_TP_PCT), 2)
+        sl  = round(price - atr * ATR_SL_MULT,           2)
+        tp1 = round(price + atr * ATR_SL_MULT * 0.5,     2)
+        tp2 = round(price + atr * ATR_SL_MULT * rr_tp2,  2)
     else:
-        sl = round(price * (1 + DEFAULT_SL_PCT), 2)
-        tp = round(price * (1 - DEFAULT_TP_PCT), 2)
-    return sl, tp
+        sl  = round(price + atr * ATR_SL_MULT,           2)
+        tp1 = round(price - atr * ATR_SL_MULT * 0.5,     2)
+        tp2 = round(price - atr * ATR_SL_MULT * rr_tp2,  2)
+    print("[WEBHOOK] ATR fallback | ATR:{:.2f} SL_mult:{} | SL:{} TP1:{} TP2:{} [{}]".format(
+        atr, ATR_SL_MULT, sl, tp1, tp2, signal_type or "TREND"))
+    return sl, tp1, tp2
 
 
-def write_signal(action, price, sl, tp, lots, source):
-    """Write signal for EA to pick up."""
+def write_signal(action, price, sl, tp1, tp2, lots, source, signal_type=""):
+    """Write signal to local file AND MT5 Common Files for SignalBridgeEA.
+    tp  sent to MT5 EA = tp2 (hard full-close target).
+    tp1 stored for Python TP1 manager (partial close + SL to breakeven).
+    """
     signal = {
-        "action"    : action,
-        "symbol"    : "XAUUSD",
-        "entry"     : price,
-        "sl"        : sl,
-        "tp"        : tp,
-        "lots"      : lots,
-        "source"    : source,
-        "timestamp" : str(datetime.now()),
-        "status"    : "pending"
+        "action"      : action,
+        "symbol"      : "XAUUSD",
+        "entry"       : price,
+        "sl"          : sl,
+        "tp1"         : tp1,
+        "tp"          : tp2,    # MT5 EA uses "tp" field — set to TP2
+        "tp2"         : tp2,
+        "lots"        : lots,
+        "source"      : source,
+        "signal_type" : signal_type,
+        "timestamp"   : str(datetime.now()),
+        "status"      : "pending"
     }
+    # Local copy (for Python bridge / logging)
     with open(SIGNAL_FILE, "w") as f:
         json.dump(signal, f, indent=2)
+
+    # MT5 Common Files copy — SignalBridgeEA reads this via FILE_COMMON
+    try:
+        os.makedirs(MT5_COMMON, exist_ok=True)
+        with open(SIGNAL_COMMON, "w") as f:
+            json.dump(signal, f, indent=2)
+    except Exception as e:
+        print("[WEBHOOK] Warning: MT5 common write failed: {}".format(e))
+
     return signal
 
 
@@ -232,9 +325,15 @@ def webhook():
         if action in ["SHORT", "short"]: action = "SELL"
         action = action.upper()
 
-        price     = float(data.get("price", 0))
-        indicator = data.get("indicator", "TradingView")
-        symbol    = data.get("symbol", "XAUUSD")
+        price       = float(data.get("price", 0))
+        indicator   = data.get("indicator", "TradingView")
+        symbol      = data.get("symbol", "XAUUSD")
+        signal_type = data.get("signal_type", "")
+
+        # SL/TP from Pine Script alert() — exact chart values
+        tv_sl  = data.get("sl")
+        tv_tp1 = data.get("tp1")
+        tv_tp2 = data.get("tp2")
 
         if price <= 0:
             log_webhook(data, "REJECTED", "Invalid price")
@@ -285,43 +384,94 @@ def webhook():
                 "filters": filters
             })
 
-        # ── Execute signal ──────────────────────────────────
-        sl, tp = calculate_sl_tp(action, price)
+        # ── Position awareness — log existing positions, allow scaling ──
+        # Multiple same-direction adds are allowed (scaling in).
+        # Only block if signal is OPPOSITE to existing direction (counter-trend add).
+        has_pos, pos_dir, pos_count = check_existing_position()
+        if has_pos:
+            if pos_dir and pos_dir != action:
+                conflict_reason = "Opposite direction — {} open, signal is {} — skipping".format(
+                    pos_dir, action)
+                log_webhook(data, "SKIPPED", conflict_reason)
+                print("[WEBHOOK] SKIPPED: {}".format(conflict_reason))
+                send_telegram(
+                    "<b>TV SIGNAL SKIPPED</b>\n"
+                    "{} {} @ ${}\n"
+                    "Reason: {}".format(action, symbol, price, conflict_reason)
+                )
+                return jsonify({"status": "skipped", "reason": conflict_reason})
+            else:
+                print("[WEBHOOK] Scaling in — {} {} positions already open, adding {}".format(
+                    pos_count, pos_dir, action))
 
-        # Calculate lot size
-        balance    = 10000  # Default, update from state if available
-        try:
-            state_file = "paper_trading/logs/state.json"
-            if os.path.exists(state_file):
-                with open(state_file) as f:
-                    state = json.load(f)
-                balance = state.get("balance", 10000)
-        except:
-            pass
+        # ── SL/TP — Pine Script values are authoritative ────────────
+        # Priority 1: exact values from Pine alert() — always preferred
+        # Priority 2: v15F ATR formula (same math as the strategy)
+        # No fixed-% fallback — we never guess SL/TP
+        if tv_sl and tv_tp1 and tv_tp2:
+            sl  = round(float(tv_sl),  2)
+            tp1 = round(float(tv_tp1), 2)
+            tp2 = round(float(tv_tp2), 2)
+            # Sanity check — reject signals where SL is on wrong side of price
+            sl_wrong  = (action == "BUY"  and sl >= price) or \
+                        (action == "SELL" and sl <= price)
+            tp2_wrong = (action == "BUY"  and tp2 <= price) or \
+                        (action == "SELL" and tp2 >= price)
+            if sl_wrong or tp2_wrong:
+                reason = "SL/TP sanity fail — SL:{} TP2:{} vs entry:{} {}".format(
+                    sl, tp2, price, action)
+                log_webhook(data, "REJECTED", reason)
+                print("[WEBHOOK] REJECTED: {}".format(reason))
+                return jsonify({"status": "rejected", "reason": reason}), 400
+            sl_src = "TV_EXACT"
+            print("[WEBHOOK] Pine SL/TP | SL:{} TP1:{} TP2:{} ({})".format(sl, tp1, tp2, sl_src))
+        else:
+            try:
+                sl, tp1, tp2 = calculate_sl_tp(action, price, signal_type)
+                sl_src = "ATR_V15F"
+            except ValueError as ve:
+                log_webhook(data, "REJECTED", str(ve))
+                print("[WEBHOOK] REJECTED: {}".format(ve))
+                send_telegram("<b>TV SIGNAL REJECTED</b>\n{} — {}".format(action, str(ve)))
+                return jsonify({"status": "rejected", "reason": str(ve)}), 400
 
+        # ── Calculate lot size from LIVE MT5 account balance ────────
+        # Never use paper state — paper and live are separate accounts
+        balance = _get_mt5_balance()
         risk_amount = balance * risk_pct
         sl_distance = abs(price - sl)
+        if sl_distance <= 0:
+            log_webhook(data, "REJECTED", "SL distance is zero")
+            return jsonify({"status": "rejected", "reason": "SL distance is zero"}), 400
+        # XAUUSD: 1 lot = 100 oz, $1 move = $100/lot
         lots = round(max(0.01, min(risk_amount / (sl_distance * 100), 5.0)), 2)
+        print("[WEBHOOK] Sizing | Balance:${:.0f} Risk:${:.0f} SL_dist:{:.2f}pts → {:.2f}L".format(
+            balance, risk_amount, sl_distance, lots))
 
-        signal = write_signal(action, price, sl, tp, lots, indicator)
+        signal = write_signal(action, price, sl, tp1, tp2, lots, indicator, signal_type)
 
-        log_webhook(data, "EXECUTED", "Signal written")
-        print("[WEBHOOK] EXECUTED: {} {} @ {} | SL:{} TP:{} Lots:{}".format(
-            action, symbol, price, sl, tp, lots))
+        log_webhook(data, "EXECUTED", "Signal written [SL src: {}]".format(sl_src))
+        print("[WEBHOOK] EXECUTED: {} {} @ {} | SL:{} TP1:{} TP2:{} Lots:{} [{}]".format(
+            action, symbol, price, sl, tp1, tp2, lots, sl_src))
 
         # Send Telegram
         mtf_note = "" if mtf_ok else "\nMTF: {} (advisory)".format(mtf_reason)
+        st_note  = "\nType: {}".format(signal_type) if signal_type else ""
         send_telegram(
             "<b>TV SIGNAL RECEIVED</b>\n"
             "================================\n"
-            "<b>Action:</b> {} {}\n"
-            "<b>Price:</b> ${}\n"
-            "<b>SL:</b> ${} | <b>TP:</b> ${}\n"
-            "<b>Lots:</b> {}\n"
-            "<b>Source:</b> {}\n"
+            "<b>{} {}</b> @ ${}\n"
+            "<b>SL:</b>  ${}\n"
+            "<b>TP1:</b> ${} (+0.5R)\n"
+            "<b>TP2:</b> ${} (+3R)\n"
+            "<b>Lots:</b> {} | Risk: ${}\n"
+            "<b>SL source:</b> {}{}{}\n"
             "================================\n"
-            "<i>Signal sent to MT5 EA</i>{}".format(
-                action, symbol, price, sl, tp, lots, indicator, mtf_note
+            "<i>Signal sent to MT5 EA</i>".format(
+                action, symbol, price,
+                sl, tp1, tp2,
+                lots, round(risk_amount, 2),
+                sl_src, st_note, mtf_note
             )
         )
 
@@ -361,32 +511,34 @@ def status():
 
 @app.route("/test", methods=["POST", "GET"])
 def test():
-    """Test endpoint - send a fake signal."""
+    """Test endpoint — logs and responds but does NOT write to MT5 Common Files.
+    Safe to call at any time without risking real trade execution."""
     action = request.args.get("action", "BUY")
     price  = float(request.args.get("price", "4765.0"))
 
-    fake_data = {
+    sl, tp1, tp2 = calculate_sl_tp(action, price)
+    # Write to local file only (not MT5 Common Files) so EA never sees this
+    signal = {
         "action"    : action,
         "symbol"    : "XAUUSD",
-        "price"     : price,
-        "indicator" : "TEST",
-        "secret"    : WEBHOOK_SECRET
+        "entry"     : price,
+        "sl"        : sl,
+        "tp1"       : tp1,
+        "tp"        : tp2,
+        "tp2"       : tp2,
+        "lots"      : 0.01,
+        "source"    : "TEST",
+        "timestamp" : str(datetime.now()),
+        "status"    : "disabled"   # EA ignores anything that isn't "pending"
     }
+    with open(SIGNAL_FILE, "w") as f:
+        json.dump(signal, f, indent=2)
 
-    with app.test_request_context(
-        "/webhook",
-        method="POST",
-        json=fake_data
-    ):
-        from flask import request as test_req
-        # Just write signal directly for test
-        sl, tp = calculate_sl_tp(action, price)
-        signal = write_signal(action, price, sl, tp, 0.01, "TEST")
-        send_telegram(
-            "<b>TEST SIGNAL</b>\n"
-            "{} @ ${}\nSL:{} TP:{}".format(action, price, sl, tp)
-        )
-        return jsonify({"status": "test_executed", "signal": signal})
+    send_telegram(
+        "<b>TEST SIGNAL (no trade placed)</b>\n"
+        "{} @ ${}\nSL:{} TP:{}".format(action, price, sl, tp)
+    )
+    return jsonify({"status": "test_only — EA not triggered", "signal": signal})
 
 
 if __name__ == "__main__":

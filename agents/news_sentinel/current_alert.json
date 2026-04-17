@@ -1,6 +1,6 @@
 {
-  "block_trading": true,
-  "reason": "Multiple high-impact events detected (10)",
-  "set_at": "2026-04-14T02:37:54.721944",
-  "expires": "2026-04-14T03:37:54.721950"
+  "block_trading": false,
+  "reason": "Clear",
+  "set_at": "2026-04-17 10:50:32.220387",
+  "expires": null
 }

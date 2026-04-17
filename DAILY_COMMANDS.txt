@@ -1,0 +1,245 @@
+============================================================
+  MIROTRADE FRAMEWORK — DAILY STARTUP & OPERATIONS GUIDE
+  XAUUSD Autonomous Trading System
+  Last updated: 2026-04-17
+============================================================
+
+PREREQUISITES (one-time, already done)
+---------------------------------------
+- MetaTrader 5 desktop app must be OPEN and LOGGED IN before running anything
+- .env file must exist at: D:\Trading Project\MiroTrade-Framework\.env
+- Python environment must have all packages installed
+
+------------------------------------------------------------
+STEP 1 — OPEN MT5 FIRST
+------------------------------------------------------------
+Open MetaTrader 5 manually and log in to your broker account.
+Make sure XAUUSD is visible in the market watch window.
+Keep MT5 running in the background. Do NOT close it.
+
+------------------------------------------------------------
+STEP 2 — OPEN A TERMINAL (Command Prompt or PowerShell)
+------------------------------------------------------------
+Press Win+R → type cmd → Enter
+OR open VS Code terminal
+
+Navigate to the project:
+  cd "D:\Trading Project\MiroTrade-Framework"
+
+------------------------------------------------------------
+STEP 3 — START THE FULL SYSTEM
+------------------------------------------------------------
+Run this ONE command. It starts all 31 agents automatically:
+
+  python launch.py
+
+You will see all agents launch one by one and get a startup
+summary. Keep this terminal OPEN and RUNNING all day.
+
+Expected startup output:
+  Paper Trader     : STARTING
+  News Sentinel    : STARTING (AI-powered Claude / Rule-based)
+  Risk Manager     : STARTING
+  Orchestrator     : STARTING
+  ...all 31 threads...
+  All 31 agents launched!
+  Dashboard → http://localhost:5055
+
+------------------------------------------------------------
+STEP 4 — OPEN THE DASHBOARD
+------------------------------------------------------------
+Open your browser and go to:
+  http://localhost:5055
+
+This shows everything:
+  - Paper account balance and performance
+  - Live confluence ring (9 factors)
+  - Orchestrator GO/NO-GO status
+  - All agent health (green = active, red = offline)
+  - Open trades, equity curve, recent trades
+  - Market narrative, news brain, DXY/yields
+  - Deployment readiness checklist
+
+------------------------------------------------------------
+STEP 5 — START THE TRADINGVIEW WEBHOOK (OPTIONAL)
+------------------------------------------------------------
+Only needed if you are using TradingView Pine Script alerts.
+Open a SECOND terminal:
+
+  cd "D:\Trading Project\MiroTrade-Framework"
+  python tradingview/bridge_launcher.py
+
+Webhook listens at: http://localhost:5056/webhook
+Keep this terminal open separately.
+
+------------------------------------------------------------
+DAILY HEALTH CHECK (do this once after startup)
+------------------------------------------------------------
+Look at the dashboard System Status Bar at the top:
+
+  NEWS  → should say OK or SAFE (not BLOCK)
+  RISK  → should show a score like 8/10 or 9/10
+  ORCH  → should say GO (means all systems green)
+  MTF   → should say BUY or SELL (not NEUTRAL)
+  MT5   → should say LIVE (means MT5 is connected)
+
+If ORCH says NO-GO, check the Orchestrator section on the
+dashboard to see which check is failing.
+
+------------------------------------------------------------
+IF SOMETHING CRASHES / SYSTEM RESTARTS
+------------------------------------------------------------
+Just run:  python launch.py   again from Step 3.
+All state is saved to JSON files — nothing is lost on restart.
+The system picks up where it left off.
+
+------------------------------------------------------------
+INDIVIDUAL AGENT COMMANDS (for debugging only)
+------------------------------------------------------------
+Run a single agent in isolation (open a separate terminal):
+
+  Paper Trader only:
+    python paper_trading/simulator/paper_trader.py
+
+  Orchestrator only:
+    python agents/orchestrator/orchestrator.py
+
+  News Sentinel only:
+    python agents/news_sentinel/news_sentinel.py
+
+  Dashboard only:
+    python agents/master_trader/miro_dashboard_server.py
+
+  Run optimizer now (don't wait for midnight):
+    python agents/orchestrator/strategy_optimizer.py quick
+    python agents/orchestrator/strategy_optimizer.py full   (takes longer)
+
+  Run backtest on current v15F parameters:
+    python strategies/scalper_v15/backtest_mt5.py --timeframe H1 --bars 3000
+    python strategies/scalper_v15/backtest_mt5.py --timeframe M5 --bars 5000
+
+------------------------------------------------------------
+TELEGRAM COMMANDS (from your phone)
+------------------------------------------------------------
+Send these to your Telegram bot to control MIRO remotely:
+
+  /status     — full system status report
+  /balance    — current paper account balance
+  /positions  — list of open paper trades
+  /pause      — pause all trading (MIRO stops opening trades)
+  /resume     — resume trading after pause
+
+------------------------------------------------------------
+PORTS IN USE (do not run other programs on these)
+------------------------------------------------------------
+  5055  — MIRO Unified Dashboard (Flask)
+  5056  — TradingView Webhook Receiver (Flask)
+  (MT5 uses its own internal ports — do not touch)
+
+------------------------------------------------------------
+WHAT RUNS AUTOMATICALLY (you don't need to do anything)
+------------------------------------------------------------
+  Every 60 seconds   → Orchestrator makes GO/NO-GO decision
+  Every 60 seconds   → Paper Trader checks open trades for SL/TP
+  Every 5 minutes    → H1 scan for new trade signals
+  Every 60 seconds   → M5 scan for new trade signals
+  Every 5 seconds    → Price feed updates live_price.json
+  Every 30 minutes   → News Brain fetches headlines (NewsAPI)
+  Every 15 seconds   → Scale Out checks for partial close triggers
+  Every 15 seconds   → Breakeven Guard checks for SL moves
+  Every 3 seconds    → Dashboard refreshes all data
+
+  03:30 IST daily    → Morning briefing sent to Telegram
+  16:30 IST daily    → Evening summary sent to Telegram
+  18:30 IST daily    → Nightly optimizer runs (30 combos, ~5-10min)
+                        Best params auto-applied if improvement ≥3% WR
+
+------------------------------------------------------------
+ENABLING LIVE TRADING (Option B — Python v15F → MT5)
+------------------------------------------------------------
+When you are ready to trade real money with the v15F signals:
+
+1. Add this line to your .env file:
+     LIVE_MODE=true
+
+2. Restart:  python launch.py
+
+That's it. The paper trader will now mirror every v15F paper signal
+to MT5 via the bridge. Lot size is calculated from your real MT5
+account balance (not the $10k paper balance).
+
+IMPORTANT: Do NOT enable until ALL go-live conditions below are met.
+When live, the paper account still tracks everything — you can compare
+paper vs live performance side by side on the dashboard.
+
+------------------------------------------------------------
+GO-LIVE CONDITIONS (DO NOT GO LIVE UNTIL ALL PASS)
+------------------------------------------------------------
+Check deployment readiness at: http://localhost:5055 (left column)
+
+  [ ] Paper trades completed:   need 20+   (currently 0 — reset today)
+  [ ] Paper trading days:        need 14    (currently 0)
+  [ ] Win rate on paper:         need 50%+  (on 20+ trades minimum)
+  [ ] Profit factor:             need 1.5+  (on 20+ trades minimum)
+  [ ] Max drawdown:              need <10%
+  [ ] Risk manager score:        need 7+/10
+  [ ] Orchestrator:              need GO
+  [ ] Backtest return:           need 50%+  (DONE: 246%)
+  [ ] Backtest win rate:         need 50%+  (DONE: 54.95%)
+  [ ] EA demo days:              need 7     (currently 2)
+
+  Estimated time to go live: ~14 days of paper trading
+
+------------------------------------------------------------
+IMPORTANT FILES & LOCATIONS
+------------------------------------------------------------
+  Paper trade state:    paper_trading/logs/state.json
+  Orchestrator log:     agents/orchestrator/orchestrator_log.json
+  Last decision:        agents/orchestrator/last_decision.json
+  Optimizer results:    agents/orchestrator/improvement_log.json
+  Applied params:       agents/orchestrator/applied_params.json
+  News alert:           agents/news_sentinel/current_alert.json
+  Risk state:           agents/risk_manager/risk_state.json
+  Agent statuses:       paper_trading/logs/agents_status.json
+  System map (visual):  SYSTEM_MAP.html  (open in browser)
+  Environment vars:     .env
+
+------------------------------------------------------------
+IF MT5 DISCONNECTS DURING THE DAY
+------------------------------------------------------------
+1. Re-open MetaTrader 5 and log in
+2. In the MIRO terminal, press Ctrl+C to stop launch.py
+3. Run python launch.py again
+4. The paper trading state is saved — no trades are lost
+
+------------------------------------------------------------
+NIGHTLY OPTIMIZER REPORT (via Telegram at ~18:30 IST)
+------------------------------------------------------------
+You will receive a message like:
+
+  ✅ MIRO NIGHTLY OPTIMIZER
+  Combos tested: 30 | Bars: H1 × 3000
+
+  Before (baseline):   WR: 54% | PF: 1.62 | DD: 8%
+  Best Found:          WR: 58% | PF: 1.84 | DD: 7%
+  Param Changes:
+    sl_mult: 1.5 → 1.2
+    min_score: 5 → 6
+
+  Decision: AUTO-APPLIED — git committed
+
+If it says NOT APPLIED, the improvement was too small.
+Current params are kept. No action needed from you.
+
+============================================================
+  QUICK REFERENCE
+============================================================
+
+  START EVERYTHING:   cd "D:\Trading Project\MiroTrade-Framework" && python launch.py
+  DASHBOARD:          http://localhost:5055
+  WEBHOOK (TV):       python tradingview/bridge_launcher.py  (separate terminal)
+  QUICK OPTIMIZER:    python agents/orchestrator/strategy_optimizer.py quick
+  RESET PAPER STATE:  (only if needed — wipes all paper trades)
+                      python -c "import json; open('paper_trading/logs/state.json','w').write(json.dumps({'balance':10000,'peak_balance':10000,'open_trades':[],'closed_trades':[],'trade_id':1,'today_pnl':0,'paper_days':0,'ea_days':0,'signal_score':{}}))"
+
+============================================================

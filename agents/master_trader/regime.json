@@ -1,0 +1,21 @@
+{
+  "regime": "RANGING",
+  "confidence": 75,
+  "vol_ratio": 0.84,
+  "atr_now": 13.38,
+  "atr_avg": 15.89,
+  "direction_pct": -0.2,
+  "ema_stack": "MIXED",
+  "updated": "2026-04-17 10:50:53.386328",
+  "allowed_setups": [
+    "REVERSAL",
+    "SCALP"
+  ],
+  "size_mult": 0.8,
+  "min_confidence": 7,
+  "sl_mult": 1.0,
+  "avoid": [
+    "BREAKOUT"
+  ],
+  "note": "Fade extremes. Tight targets. Quick exits."
+}

@@ -29,18 +29,28 @@ SIGNAL_FILE    = "live_execution/bridge/signal.json"
 RESULT_FILE    = "live_execution/bridge/result.json"
 BRIDGE_LOG     = "live_execution/bridge/bridge_log.json"
 STATE_FILE     = "paper_trading/logs/state.json"
+TP1_STATE_FILE = "live_execution/bridge/tp1_state.json"
+
+# MT5 Common Files folder — EA reads signal from here via FILE_COMMON flag
+_appdata       = os.getenv("APPDATA", "")
+MT5_COMMON     = os.path.join(_appdata, "MetaQuotes", "Terminal", "Common", "Files")
+SIGNAL_COMMON  = os.path.join(MT5_COMMON, "mirotrade_signal.json")
+RESULT_COMMON  = os.path.join(MT5_COMMON, "mirotrade_result.json")
 
 # --- MT5 settings ---
 SYMBOL         = "XAUUSD"
-MAGIC          = 20260413
+MAGIC          = 20260410   # Must match SignalBridgeEA MagicNumber input
 
 
 class MT5Bridge:
 
     def __init__(self):
         os.makedirs("live_execution/bridge", exist_ok=True)
-        self.connected  = False
-        self.last_signal = None
+        self.connected    = False
+        self.last_signal  = None
+        self._pending_tp1 = None          # holds tp1 info between send_signal → check_result
+        self.tp1_tracker  = {}            # {ticket: {entry, tp1, signal, tp1_hit, ...}}
+        self._load_tp1_state()
         print("MT5 Bridge initialized")
         print("Signal file : {}".format(SIGNAL_FILE))
         print("Result file : {}".format(RESULT_FILE))
@@ -65,6 +75,164 @@ class MT5Bridge:
         print("MT5 Bridge connected | Account: {} | Balance: ${}".format(
             info.login, round(info.balance, 2)))
         return True
+
+    # ── TP1 Manager ───────────────────────────────────────────────
+
+    def _load_tp1_state(self):
+        if os.path.exists(TP1_STATE_FILE):
+            try:
+                with open(TP1_STATE_FILE) as f:
+                    raw = json.load(f)
+                self.tp1_tracker = {int(k): v for k, v in raw.items()}
+            except:
+                self.tp1_tracker = {}
+
+    def _save_tp1_state(self):
+        try:
+            with open(TP1_STATE_FILE, "w") as f:
+                json.dump(self.tp1_tracker, f, indent=2, default=str)
+        except Exception as e:
+            print("[TP1 MGR] Could not save state: {}".format(e))
+
+    def register_tp1(self, ticket, entry, tp1, signal, atr=0):
+        """Register a live MT5 position for TP1 monitoring."""
+        self.tp1_tracker[int(ticket)] = {
+            "entry"      : entry,
+            "tp1"        : tp1,
+            "signal"     : signal,
+            "atr"        : atr,
+            "tp1_hit"    : False,
+            "registered" : datetime.now().isoformat()
+        }
+        self._save_tp1_state()
+        print("[TP1 MGR] Tracking #{} {} TP1={}".format(ticket, signal, tp1))
+
+    def check_tp1_hits(self):
+        """
+        Scan all tracked live positions.
+        When TP1 is hit:
+          - Close 50% of the position at market
+          - Move SL to entry (breakeven)
+        Uses the existing MT5 TP (TP2) as the final full-close target.
+        Also auto-registers new positions that have no tp1 entry using SL distance.
+        """
+        if not self.connected:
+            return
+
+        tick = mt5.symbol_info_tick(SYMBOL)
+        if tick is None:
+            return
+        bid = tick.bid
+        ask = tick.ask
+
+        positions = mt5.positions_get(symbol=SYMBOL)
+        if not positions:
+            # Clean up state for closed positions
+            self.tp1_tracker = {}
+            self._save_tp1_state()
+            return
+
+        pos_map = {p.ticket: p for p in positions}
+
+        # Auto-register new MiroTrade positions not yet tracked
+        for p in positions:
+            if p.magic != MAGIC:
+                continue
+            if p.ticket in self.tp1_tracker:
+                continue
+            if p.sl == 0.0:
+                continue   # no SL set, can't derive tp1
+            entry    = p.price_open
+            sl_dist  = abs(entry - p.sl)
+            is_buy   = (p.type == mt5.ORDER_TYPE_BUY)
+            tp1      = round(entry + sl_dist * 0.5, 2) if is_buy else round(entry - sl_dist * 0.5, 2)
+            signal   = "BUY" if is_buy else "SELL"
+            self.register_tp1(p.ticket, entry, tp1, signal)
+
+        # Check each tracked position
+        to_delete = []
+        for ticket, info in list(self.tp1_tracker.items()):
+            if ticket not in pos_map:
+                to_delete.append(ticket)
+                continue
+            if info.get("tp1_hit"):
+                continue
+
+            pos    = pos_map[ticket]
+            signal = info["signal"]
+            tp1    = info["tp1"]
+            entry  = info["entry"]
+            price  = bid if signal == "BUY" else ask
+
+            tp1_reached = (signal == "BUY"  and price >= tp1) or \
+                          (signal == "SELL" and price <= tp1)
+            if not tp1_reached:
+                continue
+
+            print("[TP1 MGR] TP1 HIT #{} {} @ {} (TP1={})".format(
+                ticket, signal, price, tp1))
+
+            # Partial close: half the lots (min 0.01)
+            half_lots   = round(pos.volume / 2, 2)
+            half_lots   = max(0.01, half_lots)
+            close_type  = mt5.ORDER_TYPE_SELL if signal == "BUY" else mt5.ORDER_TYPE_BUY
+            close_price = bid if signal == "BUY" else ask
+
+            req_close = {
+                "action"      : mt5.TRADE_ACTION_DEAL,
+                "symbol"      : SYMBOL,
+                "volume"      : half_lots,
+                "type"        : close_type,
+                "position"    : ticket,
+                "price"       : close_price,
+                "magic"       : MAGIC,
+                "comment"     : "MiroTrade TP1 partial",
+                "type_time"   : mt5.ORDER_TIME_GTC,
+                "type_filling": mt5.ORDER_FILLING_FOK,
+            }
+            res = mt5.order_send(req_close)
+            if res is None or res.retcode != mt5.TRADE_RETCODE_DONE:
+                err = res.comment if res else "no response"
+                print("[TP1 MGR] Partial close FAILED: {} ({})".format(
+                    err, res.retcode if res else "?"))
+                continue
+
+            print("[TP1 MGR] Partial close OK — {} lots @ {}".format(half_lots, close_price))
+
+            # Move SL to breakeven with 0.3 ATR buffer (not exact entry — avoids noise stops)
+            atr_now  = info.get("atr") or abs(entry - pos.sl) / 1.5   # derive from sl if no atr stored
+            buf      = round(atr_now * 0.3, 2)
+            be_sl    = round(entry - buf, 2) if signal == "BUY" else round(entry + buf, 2)
+            req_sltp = {
+                "action"  : mt5.TRADE_ACTION_SLTP,
+                "symbol"  : SYMBOL,
+                "position": ticket,
+                "sl"      : be_sl,
+                "tp"      : pos.tp,
+            }
+            res2 = mt5.order_send(req_sltp)
+            if res2 and res2.retcode == mt5.TRADE_RETCODE_DONE:
+                print("[TP1 MGR] SL → BE buffer @ {} (entry={})".format(be_sl, round(entry,2)))
+            else:
+                err = res2.comment if res2 else "no response"
+                print("[TP1 MGR] SL move FAILED: {}".format(err))
+
+            self.tp1_tracker[ticket]["tp1_hit"]    = True
+            self.tp1_tracker[ticket]["hit_time"]   = datetime.now().isoformat()
+            self.tp1_tracker[ticket]["hit_price"]  = price
+            self.tp1_tracker[ticket]["lots_closed"] = half_lots
+            self.log_event("TP1_HIT", {
+                "ticket": ticket, "signal": signal,
+                "entry": entry, "tp1": tp1,
+                "price": price, "half_lots": half_lots
+            })
+
+        for t in to_delete:
+            del self.tp1_tracker[t]
+
+        self._save_tp1_state()
+
+    # ─────────────────────────────────────────────────────────────
 
     def get_account_info(self):
         """Get current account info."""
@@ -104,17 +272,29 @@ class MT5Bridge:
             })
         return result
 
-    def send_signal(self, signal, entry_price, sl, tp, lot_size, source="python"):
+    def send_signal(self, signal, entry_price, sl, tp, lot_size, source="python", tp1=None):
         """
         Write a trade signal to the signal file.
         MQL5 EA reads this file and executes the trade.
+        tp  = TP2 level (sent to MT5 as the hard TP)
+        tp1 = TP1 level (monitored by Python for partial close + SL to BE)
         """
+        # Derive tp1 from sl distance if not provided (matching Pine 0.5R)
+        if tp1 is None:
+            sl_dist = abs(entry_price - sl)
+            tp1 = round(entry_price + sl_dist * 0.5, 2) if signal == "BUY" \
+                  else round(entry_price - sl_dist * 0.5, 2)
+
+        # Store pending so check_result() can register after EA confirms ticket
+        atr_est = abs(entry_price - sl) / 1.5 if sl else 0   # derive ATR from SL distance
+        self._pending_tp1 = {"signal": signal, "entry": entry_price, "tp1": tp1, "atr": atr_est}
+
         signal_data = {
             "action"     : signal,       # BUY or SELL
             "symbol"     : SYMBOL,
             "entry"      : entry_price,
             "sl"         : sl,
-            "tp"         : tp,
+            "tp"         : tp,           # TP2 — MT5 auto-close level
             "lots"       : lot_size,
             "magic"      : MAGIC,
             "source"     : source,
@@ -124,6 +304,14 @@ class MT5Bridge:
 
         with open(SIGNAL_FILE, "w") as f:
             json.dump(signal_data, f, indent=2)
+
+        # Also write to MT5 Common Files so SignalBridgeEA can read it
+        try:
+            os.makedirs(MT5_COMMON, exist_ok=True)
+            with open(SIGNAL_COMMON, "w") as f:
+                json.dump(signal_data, f, indent=2)
+        except Exception as e:
+            print("[BRIDGE] Warning: could not write to MT5 common files: {}".format(e))
 
         print("[BRIDGE] Signal sent: {} @ {} | SL:{} TP:{} Lots:{}".format(
             signal, entry_price, sl, tp, lot_size))
@@ -144,9 +332,14 @@ class MT5Bridge:
             result = json.load(f)
 
         if result.get("status") == "executed":
-            print("[BRIDGE] Trade executed by EA: ticket #{}".format(
-                result.get("ticket", "?")))
+            ticket = result.get("ticket")
+            print("[BRIDGE] Trade executed by EA: ticket #{}".format(ticket or "?"))
             self.log_event("TRADE_EXECUTED", result)
+            # Register TP1 monitoring for this ticket
+            if ticket and self._pending_tp1:
+                pt = self._pending_tp1
+                self.register_tp1(ticket, pt["entry"], pt["tp1"], pt["signal"], pt.get("atr", 0))
+                self._pending_tp1 = None
             return result
 
         elif result.get("status") == "rejected":
@@ -208,6 +401,11 @@ class MT5Bridge:
                 "time"    : datetime.now().isoformat()
             }
             self.log_event("DIRECT_EXECUTION", exec_data)
+            # Register TP1 monitoring immediately (we have the ticket now)
+            if self._pending_tp1:
+                pt = self._pending_tp1
+                self.register_tp1(result.order, pt["entry"], pt["tp1"], pt["signal"], pt.get("atr", 0))
+                self._pending_tp1 = None
             return exec_data
         else:
             print("[BRIDGE] Direct execution FAILED: {} | Code: {}".format(
@@ -221,7 +419,7 @@ class MT5Bridge:
 
         positions = self.get_open_positions()
         for pos in positions:
-            if pos["magic"] == MAGIC:
+            if pos["magic"] == MAGIC:  # 20260410 — SignalBridgeEA trades only
                 tick = mt5.symbol_info_tick(SYMBOL)
                 if pos["type"] == "BUY":
                     price = tick.bid
@@ -298,12 +496,13 @@ class MT5Bridge:
             json.dump(logs, f, indent=2, default=str)
 
     def run_sync_loop(self, interval=30):
-        """Continuously sync MT5 data to dashboard."""
+        """Continuously sync MT5 data to dashboard and manage TP1 hits."""
         print("[BRIDGE] Sync loop running every {}s".format(interval))
         while True:
             try:
                 if self.connected:
                     self.sync_to_dashboard()
+                    self.check_tp1_hits()   # partial close + SL to BE when TP1 hit
             except Exception as e:
                 print("[BRIDGE] Sync error: {}".format(e))
             time.sleep(interval)

@@ -28,24 +28,28 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BOT_TOKEN   = os.getenv("TELEGRAM_BOT_TOKEN", "")
-CHAT_ID     = os.getenv("TELEGRAM_CHAT_ID", "")
-STATE_FILE  = "paper_trading/logs/state.json"
-SENT_FILE   = "agents/telegram/sent_alerts.json"
-NEWS_FILE   = "agents/news_sentinel/news_log.json"
-RISK_FILE   = "agents/risk_manager/risk_state.json"
-ORCH_FILE   = "agents/orchestrator/last_decision.json"
+BOT_TOKEN    = os.getenv("TELEGRAM_BOT_TOKEN", "")
+CHAT_ID      = os.getenv("TELEGRAM_CHAT_ID", "")
+STATE_FILE   = "paper_trading/logs/state.json"
+SENT_FILE    = "agents/telegram/sent_alerts.json"
+NEWS_FILE    = "agents/news_sentinel/news_log.json"
+RISK_FILE    = "agents/risk_manager/risk_state.json"
+ORCH_FILE    = "agents/orchestrator/last_decision.json"
+RESULT_FILE  = os.path.join(os.getenv("APPDATA",""),
+               "MetaQuotes","Terminal","Common","Files","mirotrade_result.json")
 
 
 class TelegramAlertAgent:
 
     def __init__(self):
         os.makedirs("agents/telegram", exist_ok=True)
-        self.bot_token = BOT_TOKEN
-        self.chat_id   = CHAT_ID
-        self.sent      = self.load_sent()
+        self.bot_token        = BOT_TOKEN
+        self.chat_id          = CHAT_ID
+        self.sent             = self.load_sent()
         self.last_trade_count = 0
         self.last_open_count  = 0
+        self.last_result_ts   = ""   # last EA result timestamp seen
+        self.known_tickets    = set() # live MT5 tickets already alerted
 
         if not self.bot_token or not self.chat_id:
             print("WARNING: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set in .env")
@@ -280,36 +284,121 @@ class TelegramAlertAgent:
         if self.send_message(msg):
             print("Telegram: Daily summary sent")
 
+    def alert_live_trade(self, ticket, action, entry, sl, tp, lots):
+        """Alert when SignalBridgeEA executes a real MT5 trade."""
+        msg = (
+            "<b>LIVE TRADE OPENED</b>\n"
+            "================================\n"
+            "<b>Ticket:</b> #{}\n"
+            "<b>Action:</b> {} XAUUSD\n"
+            "<b>Entry:</b> ${}\n"
+            "<b>SL:</b> ${} | <b>TP:</b> ${}\n"
+            "<b>Lots:</b> {}\n"
+            "<b>Time:</b> {}\n"
+            "================================\n"
+            "<i>Real order placed in MT5</i>"
+        ).format(
+            ticket, action, entry, sl, tp, lots,
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        )
+        self.send_message(msg)
+
+    def check_ea_result(self):
+        """Check if SignalBridgeEA wrote a new execution result."""
+        try:
+            if not os.path.exists(RESULT_FILE):
+                return
+            with open(RESULT_FILE) as f:
+                result = json.load(f)
+            ts     = result.get("time", "")
+            status = result.get("status", "")
+            ticket = result.get("ticket", 0)
+            if ts == self.last_result_ts:
+                return   # already seen this result
+            self.last_result_ts = ts
+            if status == "executed" and ticket:
+                sl = result.get("sl", 0)
+                tp = result.get("tp", 0)
+                msg = (
+                    "<b>MT5 ORDER CONFIRMED</b>\n"
+                    "================================\n"
+                    "<b>Ticket:</b> #{}\n"
+                    "<b>SL:</b> ${} | <b>TP:</b> ${}\n"
+                    "<b>Time:</b> {}\n"
+                    "================================\n"
+                    "<i>SignalBridgeEA execution confirmed</i>"
+                ).format(ticket, sl, tp, ts)
+                self.send_message(msg)
+                print("Telegram: EA execution alert sent | Ticket #{}".format(ticket))
+            elif status == "failed":
+                msg = (
+                    "<b>MT5 ORDER FAILED</b>\n"
+                    "Reason: {}\n"
+                    "Time: {}".format(result.get("message",""), ts)
+                )
+                self.send_message(msg)
+        except Exception as e:
+            print("[TELEGRAM] Result check error: {}".format(e))
+
+    def check_live_positions(self):
+        """Alert on new live MT5 positions (ticket-based, from mt5_bridge sync)."""
+        try:
+            if not os.path.exists(STATE_FILE):
+                return
+            with open(STATE_FILE) as f:
+                state = json.load(f)
+            if state.get("source") != "MT5_LIVE":
+                return
+            for pos in state.get("open_trades", []):
+                ticket = pos.get("ticket")
+                if ticket and ticket not in self.known_tickets:
+                    self.known_tickets.add(ticket)
+                    self.alert_live_trade(
+                        ticket,
+                        pos.get("type", ""),
+                        pos.get("open_price", 0),
+                        pos.get("sl", 0),
+                        pos.get("tp", 0),
+                        pos.get("volume", 0)
+                    )
+                    print("Telegram: Live position alert sent | Ticket #{}".format(ticket))
+        except Exception as e:
+            print("[TELEGRAM] Live position check error: {}".format(e))
+
     def check_and_alert(self):
         """
         Main monitoring function.
         Checks for new trades and sends alerts.
         Call this every 30 seconds.
         """
+        # ── Live MT5 trades (SignalBridgeEA) ───────────────────
+        self.check_ea_result()        # EA execution confirmation
+        self.check_live_positions()   # New MT5 positions from bridge sync
+
         if not os.path.exists(STATE_FILE):
             return
 
         with open(STATE_FILE, "r") as f:
             state = json.load(f)
 
-        closed     = state.get("closed_trades", [])
-        open_trades = state.get("open_trades", [])
+        # ── Paper trades (paper_trader.py) ─────────────────────
+        if state.get("source") != "MT5_LIVE":
+            closed      = state.get("closed_trades", [])
+            open_trades = state.get("open_trades", [])
 
-        # Check for new closed trades
-        for trade in closed:
-            trade_id   = trade.get("id", 0)
-            close_key  = "close_{}".format(trade_id)
-            if close_key not in self.sent["trade_ids"]:
-                self.alert_trade_closed(trade)
+            for trade in closed:
+                trade_id  = trade.get("id", 0)
+                close_key = "close_{}".format(trade_id)
+                if close_key not in self.sent["trade_ids"]:
+                    self.alert_trade_closed(trade)
 
-        # Check for new open trades
-        for trade in open_trades:
-            trade_id = trade.get("id", 0)
-            open_key = "open_{}".format(trade_id)
-            if open_key not in self.sent["trade_ids"]:
-                self.alert_trade_opened(trade)
+            for trade in open_trades:
+                trade_id = trade.get("id", 0)
+                open_key = "open_{}".format(trade_id)
+                if open_key not in self.sent["trade_ids"]:
+                    self.alert_trade_opened(trade)
 
-        # Check risk warnings
+        # ── Risk warnings ──────────────────────────────────────
         if os.path.exists(RISK_FILE):
             with open(RISK_FILE, "r") as f:
                 risk = json.load(f)

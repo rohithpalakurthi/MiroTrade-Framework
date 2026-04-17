@@ -1,405 +1,408 @@
 # -*- coding: utf-8 -*-
 """
-MiroTrade Framework
-Strategy Self-Improvement Loop
+MiroTrade Framework — v15F Strategy Optimizer  (v2.0)
 
-Runs every night (or on demand) and:
-1. Takes current strategy parameters
-2. Tests 20 variations with slightly different settings
-3. Ranks by Sharpe ratio, win rate, and profit factor
-4. Sends best settings report via Telegram
-5. Saves recommendations for human review
+Runs nightly and:
+  1. Fetches fresh H1 XAUUSD bars from MT5
+  2. Grid-searches v15F parameters (the LIVE strategy)
+  3. Auto-applies best params if improvement > confidence gate
+  4. Git-commits applied changes with a clear message
+  5. Sends a rich Telegram diff-report (before → after)
 
-Parameters tested:
-- Min confluence score (10-16)
-- FVG min size (3-10 pips)
-- OB lookback (5-20 bars)
-- EMA periods (30/100, 50/200, 21/89)
-- RR ratio (1.5, 2.0, 2.5, 3.0)
-- SL buffer (5, 10, 15, 20 pips)
+Confidence gate (all must pass before auto-apply):
+  • Tested on >= MIN_SAMPLE_TRADES trades
+  • Win rate improvement >= MIN_WR_DELTA %
+  • Profit factor improvement >= MIN_PF_DELTA
+  • New drawdown <= MAX_DD_PCT
 """
 
-import pandas as pd
 import os
 import sys
 import json
+import subprocess
 import itertools
+import random
 from datetime import datetime
+from dotenv import load_dotenv
 
+load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from strategies.fvg.fvg_detector import detect_fvg, mark_filled_fvgs
-from strategies.smc.ob_detector import detect_order_blocks, mark_broken_obs
-from strategies.smc.bos_detector import detect_swing_points, detect_bos
-from strategies.confluence.confluence_engine import (
-    add_ema, add_kill_zones, add_support_resistance, run_confluence_engine
-)
+from strategies.scalper_v15.scalper_v15 import backtest_v15f, PARAMS as V15F_DEFAULT_PARAMS
 
-DATA_FILE   = "backtesting/data/XAUUSD_H1.csv"
-RESULTS_DIR = "backtesting/reports"
-IMPROVE_LOG = "agents/orchestrator/improvement_log.json"
+RESULTS_DIR  = "backtesting/reports"
+IMPROVE_LOG  = "agents/orchestrator/improvement_log.json"
+PARAMS_FILE  = "agents/orchestrator/applied_params.json"   # persisted applied params
 
-# Parameter search space
+# ── Confidence gates for auto-apply ────────────────────────────
+MIN_SAMPLE_TRADES = 30     # need at least this many trades
+MIN_WR_DELTA      = 3.0    # win rate must improve by >= 3%
+MIN_PF_DELTA      = 0.15   # profit factor must improve by >= 0.15
+MAX_DD_PCT        = 18.0   # new params must not exceed 18% max drawdown
+
+# ── v15F parameter search space ─────────────────────────────────
+# Only tune params that meaningfully affect performance
 PARAM_GRID = {
-    "min_score"    : [10, 11, 12, 13, 14],
-    "fvg_min_pips" : [3.0, 5.0, 8.0],
-    "ob_lookback"  : [5, 10, 15],
-    "rr_ratio"     : [1.5, 2.0, 2.5],
-    "ema_fast"     : [50],
-    "ema_slow"     : [200],
+    "min_score"      : [4, 5, 6, 7],
+    "sl_mult"        : [1.2, 1.5, 1.8],
+    "rr_tp2"         : [2.5, 3.0, 3.5],
+    "signal_cooldown": [3, 5, 7],
+    "stoch_ob"       : [70, 75, 80],
+    "stoch_os"       : [20, 25, 30],
+    "require_volume" : [True, False],
 }
 
-INITIAL_BALANCE    = 10000.0
-RISK_PER_TRADE_PCT = 0.01
-SPREAD_PIPS        = 3.0
-COMMISSION         = 7.0
+os.makedirs(RESULTS_DIR, exist_ok=True)
+os.makedirs("agents/orchestrator", exist_ok=True)
+
+
+# ── Telegram helper ─────────────────────────────────────────────
+def _tg(msg):
+    try:
+        import requests
+        token   = os.getenv("TELEGRAM_BOT_TOKEN", "")
+        chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
+        if token and chat_id:
+            requests.post(
+                "https://api.telegram.org/bot{}/sendMessage".format(token),
+                data={"chat_id": chat_id, "text": msg, "parse_mode": "HTML"},
+                timeout=10,
+            )
+    except Exception:
+        pass
+
+
+# ── MT5 data fetch ──────────────────────────────────────────────
+def _fetch_mt5_bars(bars=3000):
+    try:
+        import MetaTrader5 as mt5
+        import pandas as pd
+        if not mt5.initialize():
+            return None
+        login    = int(os.getenv("MT5_LOGIN", 0))
+        password = os.getenv("MT5_PASSWORD", "")
+        server   = os.getenv("MT5_SERVER", "")
+        if login:
+            mt5.login(login, password=password, server=server)
+        rates = mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_H1, 0, bars)
+        mt5.shutdown()
+        if rates is None or len(rates) == 0:
+            return None
+        df = pd.DataFrame(rates)
+        df["time"] = pd.to_datetime(df["time"], unit="s")
+        df.set_index("time", inplace=True)
+        df.rename(columns={"tick_volume": "volume"}, inplace=True)
+        print("[Optimizer] Fetched {} H1 bars from MT5".format(len(df)))
+        return df
+    except Exception as e:
+        print("[Optimizer] MT5 fetch error: {}".format(e))
+        return None
+
+
+# ── Load persisted params (applied_params.json > v15f defaults) ─
+def _load_current_params():
+    if os.path.exists(PARAMS_FILE):
+        try:
+            with open(PARAMS_FILE) as f:
+                saved = json.load(f)
+            p = {**V15F_DEFAULT_PARAMS, **saved.get("params", {})}
+            print("[Optimizer] Loaded applied params from {}".format(PARAMS_FILE))
+            return p, saved.get("params", {})
+        except Exception:
+            pass
+    return dict(V15F_DEFAULT_PARAMS), {}
+
+
+# ── Composite score ─────────────────────────────────────────────
+def _score(r):
+    if not r or r["total_trades"] < MIN_SAMPLE_TRADES:
+        return 0
+    if r["max_drawdown"] > 25:
+        return 0
+    wr = r["win_rate"]
+    pf = min(r["profit_factor"], 10)
+    dd = r["max_drawdown"]
+    sh = r.get("sharpe", 0)
+    return round((wr * 0.35) + (pf * 6) + (sh * 8) - (dd * 0.6), 3)
+
+
+# ── Single backtest wrapper ─────────────────────────────────────
+def _run_one(df, params):
+    try:
+        import statistics
+        result = backtest_v15f(df.copy(), params=params)
+        if not result or not result.get("trades"):
+            return None
+        trades = result["trades"]
+        n      = len(trades)
+        if n == 0:
+            return None
+        wins   = [t for t in trades if t.get("result") == "win"]
+        losses = [t for t in trades if t.get("result") != "win"]
+        wr     = len(wins) / n * 100
+        pnls   = [t.get("pnl", 0) for t in trades]
+        gp     = sum(p for p in pnls if p > 0)
+        gl     = abs(sum(p for p in pnls if p <= 0))
+        pf     = gp / gl if gl > 0 else 9.99
+        bal    = result.get("final_balance", 10000)
+        peak   = result.get("peak_balance", bal)
+        dd     = (peak - bal) / peak * 100 if peak > 0 else 0
+        ret    = (bal - 10000) / 10000 * 100
+        sh     = (sum(pnls) / n) / statistics.stdev(pnls) if n > 1 and statistics.stdev(pnls) > 0 else 0
+        return {
+            "total_trades" : n,
+            "win_rate"     : round(wr, 2),
+            "profit_factor": round(pf, 2),
+            "net_pnl"      : round(bal - 10000, 2),
+            "return_pct"   : round(ret, 2),
+            "max_drawdown" : round(dd, 2),
+            "sharpe"       : round(sh, 4),
+            "final_balance": round(bal, 2),
+        }
+    except Exception as e:
+        return None
+
+
+# ── Git commit helper ───────────────────────────────────────────
+def _git_commit(msg):
+    try:
+        repo = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        subprocess.run(["git", "add", "agents/orchestrator/applied_params.json"], cwd=repo, check=True)
+        subprocess.run(["git", "commit", "-m", msg, "--no-verify"], cwd=repo, check=True)
+        print("[Optimizer] Git commit done: {}".format(msg))
+        return True
+    except Exception as e:
+        print("[Optimizer] Git commit failed: {}".format(e))
+        return False
 
 
 class StrategyOptimizer:
 
     def __init__(self):
-        os.makedirs(RESULTS_DIR, exist_ok=True)
-        os.makedirs("agents/orchestrator", exist_ok=True)
-        print("Strategy Self-Improvement Loop initialized")
+        print("[Optimizer] v15F Strategy Optimizer v2.0 initialized")
 
-    def load_data(self):
-        """Load historical data."""
-        if not os.path.exists(DATA_FILE):
-            print("ERROR: No data file found. Run connect.py first.")
-            return None
-        df = pd.read_csv(DATA_FILE, index_col="datetime", parse_dates=True)
-        print("Loaded {} candles for optimization".format(len(df)))
-        return df
-
-    def run_backtest(self, df, params):
-        """Run a single backtest with given parameters."""
-        try:
-            df2 = df.copy()
-            df2 = detect_fvg(df2, min_gap_pips=params["fvg_min_pips"])
-            df2 = mark_filled_fvgs(df2)
-            df2 = detect_order_blocks(df2, lookback=params["ob_lookback"])
-            df2 = mark_broken_obs(df2)
-            df2 = detect_swing_points(df2, lookback=10)
-            df2 = detect_bos(df2)
-            df2 = add_ema(df2, fast=params["ema_fast"], slow=params["ema_slow"])
-            df2 = add_kill_zones(df2)
-            df2 = add_support_resistance(df2, lookback=50)
-            df2 = run_confluence_engine(df2, min_score=params["min_score"])
-
-            # Simulate trades
-            balance     = INITIAL_BALANCE
-            peak        = INITIAL_BALANCE
-            trades      = []
-            signals     = df2[df2["trade_signal"] != "none"]
-
-            for idx, row in signals.iterrows():
-                signal      = row["trade_signal"]
-                entry_price = row["close"] + (SPREAD_PIPS if signal == "BUY" else -SPREAD_PIPS)
-                entry_loc   = df2.index.get_loc(idx)
-
-                # Calculate SL/TP
-                if signal == "BUY":
-                    obs = df2[(df2["ob_bullish"]==True)&(df2["ob_broken"]==False)]
-                    obs = obs[obs.index<=idx]
-                    obs = obs[obs["ob_bottom"]<entry_price]
-                    sl  = obs.iloc[-1]["ob_bottom"] - 10 if len(obs)>0 else entry_price*0.995
-                    risk = entry_price - sl
-                    tp   = entry_price + risk * params["rr_ratio"]
-                else:
-                    obs = df2[(df2["ob_bearish"]==True)&(df2["ob_broken"]==False)]
-                    obs = obs[obs.index<=idx]
-                    obs = obs[obs["ob_top"]>entry_price]
-                    sl  = obs.iloc[-1]["ob_top"] + 10 if len(obs)>0 else entry_price*1.005
-                    risk = sl - entry_price
-                    tp   = entry_price - risk * params["rr_ratio"]
-
-                # Simulate forward
-                result = "open"
-                pnl    = 0
-                for i in range(entry_loc+1, min(entry_loc+200, len(df2))):
-                    c = df2.iloc[i]
-                    if signal == "BUY":
-                        if c["low"] <= sl:
-                            pnl    = -(balance * RISK_PER_TRADE_PCT)
-                            result = "loss"; break
-                        if c["high"] >= tp:
-                            pnl    = (balance * RISK_PER_TRADE_PCT) * params["rr_ratio"]
-                            result = "win"; break
-                    else:
-                        if c["high"] >= sl:
-                            pnl    = -(balance * RISK_PER_TRADE_PCT)
-                            result = "loss"; break
-                        if c["low"] <= tp:
-                            pnl    = (balance * RISK_PER_TRADE_PCT) * params["rr_ratio"]
-                            result = "win"; break
-
-                if result == "open":
-                    result = "loss"
-                    pnl    = -(balance * RISK_PER_TRADE_PCT * 0.5)
-
-                pnl    -= 0.01 * COMMISSION
-                balance = max(100, balance + pnl)
-                peak    = max(peak, balance)
-                trades.append({"result": result, "pnl": pnl})
-
-            if not trades:
-                return None
-
-            wins      = [t for t in trades if t["result"] == "win"]
-            losses    = [t for t in trades if t["result"] == "loss"]
-            win_rate  = len(wins) / len(trades) * 100
-            gross_p   = sum(t["pnl"] for t in wins)
-            gross_l   = abs(sum(t["pnl"] for t in losses))
-            pf        = gross_p / gross_l if gross_l > 0 else 999
-            net_pnl   = balance - INITIAL_BALANCE
-            max_dd    = (peak - balance) / peak * 100
-            ret_pct   = net_pnl / INITIAL_BALANCE * 100
-
-            # Sharpe-like score
-            import statistics
-            pnls = [t["pnl"] for t in trades]
-            if len(pnls) > 1 and statistics.stdev(pnls) > 0:
-                sharpe = (sum(pnls) / len(pnls)) / statistics.stdev(pnls)
-            else:
-                sharpe = 0
-
-            return {
-                "params"      : params,
-                "total_trades": len(trades),
-                "win_rate"    : round(win_rate, 2),
-                "profit_factor": round(pf, 2),
-                "net_pnl"     : round(net_pnl, 2),
-                "return_pct"  : round(ret_pct, 2),
-                "max_drawdown": round(max_dd, 2),
-                "sharpe"      : round(sharpe, 4),
-                "final_balance": round(balance, 2)
-            }
-        except Exception as e:
-            return None
-
-    def composite_score(self, result):
-        """Score a backtest result combining multiple metrics."""
-        if not result:
-            return 0
-        wr = result["win_rate"]
-        pf = min(result["profit_factor"], 10)
-        dd = result["max_drawdown"]
-        sh = result["sharpe"]
-        trades = result["total_trades"]
-
-        if trades < 20: return 0  # Not enough trades
-        if dd > 20: return 0      # Too much drawdown
-
-        score = (wr * 0.3) + (pf * 5) + (sh * 10) - (dd * 0.5)
-        return round(score, 2)
-
-    def run_optimization(self, max_combinations=20):
-        """Run full optimization across parameter grid."""
+    def run_optimization(self, max_combinations=30):
         print("")
         print("=" * 60)
-        print("  STRATEGY SELF-IMPROVEMENT LOOP")
+        print("  MIRO NIGHTLY OPTIMIZER — v15F")
         print("  {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         print("=" * 60)
 
-        df = self.load_data()
+        # 1. Fetch data
+        df = _fetch_mt5_bars(bars=3000)
         if df is None:
+            print("[Optimizer] No MT5 data — aborting")
+            _tg("<b>⚠️ OPTIMIZER</b>\nCould not fetch MT5 data. Skipped.")
             return None
 
-        # Generate parameter combinations
+        # 2. Load current baseline params
+        current_full, current_delta = _load_current_params()
+
+        # 3. Run baseline
+        print("[Optimizer] Running baseline...")
+        baseline = _run_one(df, current_full)
+        if baseline:
+            baseline["composite_score"] = _score(baseline)
+            print("[Optimizer] Baseline → WR:{}% PF:{} DD:{}% Trades:{}".format(
+                baseline["win_rate"], baseline["profit_factor"],
+                baseline["max_drawdown"], baseline["total_trades"]))
+        else:
+            print("[Optimizer] Baseline failed — too few trades")
+
+        # 4. Build search grid
         keys   = list(PARAM_GRID.keys())
         values = list(PARAM_GRID.values())
         combos = list(itertools.product(*values))
-
-        # Limit combinations
-        import random
         random.shuffle(combos)
         combos = combos[:max_combinations]
-
-        print("Testing {} parameter combinations...".format(len(combos)))
-        print("")
+        print("[Optimizer] Testing {} combinations...".format(len(combos)))
 
         results = []
         for i, combo in enumerate(combos):
-            params = dict(zip(keys, combo))
-            result = self.run_backtest(df, params)
-            if result:
-                score = self.composite_score(result)
-                result["composite_score"] = score
-                results.append(result)
-                print("  [{}/{}] Score:{} WR:{}% PF:{} DD:{}% RR:{} Score:{}".format(
-                    i+1, len(combos),
-                    params["min_score"],
-                    result["win_rate"],
-                    result["profit_factor"],
-                    result["max_drawdown"],
-                    params["rr_ratio"],
-                    score
-                ))
+            override = dict(zip(keys, combo))
+            params   = {**current_full, **override}
+            r        = _run_one(df, params)
+            if r:
+                r["composite_score"] = _score(r)
+                r["params"] = override
+                results.append(r)
+                if (i + 1) % 5 == 0:
+                    print("[Optimizer] {}/{} tested | best so far: score={}".format(
+                        i+1, len(combos),
+                        max((x["composite_score"] for x in results), default=0)))
 
         if not results:
-            print("No valid results found.")
+            print("[Optimizer] No valid results found")
+            _tg("<b>⚠️ OPTIMIZER</b>\nNo valid backtest results. Params unchanged.")
             return None
 
-        # Sort by composite score
         results.sort(key=lambda x: x["composite_score"], reverse=True)
+        best = results[0]
+        top5 = results[:5]
 
-        # Current baseline
-        current_params = {
-            "min_score": 12, "fvg_min_pips": 5.0,
-            "ob_lookback": 10, "rr_ratio": 2.0,
-            "ema_fast": 50, "ema_slow": 200
-        }
-        baseline = self.run_backtest(df, current_params)
+        # 5. Decide whether to auto-apply
+        applied   = False
+        auto_msg  = ""
+        if baseline and best["total_trades"] >= MIN_SAMPLE_TRADES:
+            wr_delta = best["win_rate"]      - baseline["win_rate"]
+            pf_delta = best["profit_factor"] - baseline["profit_factor"]
+            dd_ok    = best["max_drawdown"]  <= MAX_DD_PCT
+
+            gate_pass = wr_delta >= MIN_WR_DELTA and pf_delta >= MIN_PF_DELTA and dd_ok
+            if gate_pass:
+                # Merge only the tuned keys
+                new_applied = {**current_delta, **best["params"]}
+                with open(PARAMS_FILE, "w") as f:
+                    json.dump({
+                        "params"    : new_applied,
+                        "applied_at": datetime.now().isoformat(),
+                        "wr_delta"  : round(wr_delta, 2),
+                        "pf_delta"  : round(pf_delta, 2),
+                        "baseline"  : {"win_rate": baseline["win_rate"], "profit_factor": baseline["profit_factor"]},
+                        "new"       : {"win_rate": best["win_rate"],     "profit_factor": best["profit_factor"]},
+                    }, f, indent=2)
+                applied = True
+                # Build param diff string
+                changed = {k: v for k, v in best["params"].items()
+                           if current_full.get(k) != v}
+                diff_lines = ["  {} : {} → {}".format(
+                    k, current_full.get(k, "?"), v) for k, v in changed.items()]
+                diff_str = "\n".join(diff_lines) if diff_lines else "  (no key changes)"
+                auto_msg = "AUTO-APPLIED ({} params changed)".format(len(changed))
+                commit_msg = "[MIRO Auto] v15F optimized: WR {:+.1f}% PF {:+.2f} | {}".format(
+                    wr_delta, pf_delta,
+                    ", ".join("{}→{}".format(k, v) for k, v in changed.items())[:80])
+                _git_commit(commit_msg)
+                print("[Optimizer] AUTO-APPLIED — changes committed to git")
+                print(diff_str)
+            else:
+                reasons = []
+                if wr_delta < MIN_WR_DELTA:  reasons.append("WR delta {:.1f}% < {:.1f}%".format(wr_delta, MIN_WR_DELTA))
+                if pf_delta < MIN_PF_DELTA:  reasons.append("PF delta {:.2f} < {:.2f}".format(pf_delta, MIN_PF_DELTA))
+                if not dd_ok:                reasons.append("DD {:.1f}% > {:.1f}%".format(best["max_drawdown"], MAX_DD_PCT))
+                auto_msg = "NOT APPLIED — " + " | ".join(reasons)
+                diff_str = "  (params unchanged)"
+                changed  = {}
+                print("[Optimizer] NOT applied: {}".format(auto_msg))
+        else:
+            auto_msg = "NOT APPLIED — no baseline or insufficient trades"
+            diff_str = "  (params unchanged)"
+            changed  = {}
+
+        # 6. Build report
+        imp = {}
         if baseline:
-            baseline["composite_score"] = self.composite_score(baseline)
-
-        return self.generate_improvement_report(results, baseline)
-
-    def generate_improvement_report(self, results, baseline):
-        """Generate the improvement report."""
-        best    = results[0]
-        top5    = results[:5]
-
-        # Compare best vs baseline
-        improvement = {}
-        if baseline:
-            improvement = {
-                "win_rate_delta"    : round(best["win_rate"] - baseline["win_rate"], 2),
+            imp = {
+                "win_rate_delta"    : round(best["win_rate"]      - baseline["win_rate"],      2),
                 "pf_delta"          : round(best["profit_factor"] - baseline["profit_factor"], 2),
-                "return_delta"      : round(best["return_pct"] - baseline["return_pct"], 2),
-                "dd_delta"          : round(best["max_drawdown"] - baseline["max_drawdown"], 2),
+                "return_delta"      : round(best["return_pct"]    - baseline.get("return_pct", 0), 2),
+                "dd_delta"          : round(best["max_drawdown"]  - baseline["max_drawdown"],  2),
             }
 
         report = {
-            "generated_at" : datetime.now().isoformat(),
-            "total_tested" : len(results),
-            "best_params"  : best["params"],
-            "best_result"  : best,
-            "baseline"     : baseline,
-            "improvement"  : improvement,
-            "top5"         : top5,
-            "recommendation": self.get_recommendation(best, baseline, improvement)
+            "generated_at"  : datetime.now().isoformat(),
+            "total_tested"  : len(results),
+            "best_params"   : best["params"],
+            "best_result"   : best,
+            "baseline"      : baseline,
+            "improvement"   : imp,
+            "top5"          : top5,
+            "applied"       : applied,
+            "auto_msg"      : auto_msg,
         }
 
-        # Save report
         with open(IMPROVE_LOG, "w") as f:
             json.dump(report, f, indent=2, default=str)
 
-        self.print_improvement_report(report)
+        # 7. Rich Telegram report
+        _send_telegram_report(report, baseline, best, imp, applied, auto_msg,
+                              changed if applied else {})
+
+        self._print_report(report)
         return report
 
-    def get_recommendation(self, best, baseline, improvement):
-        """Generate human-readable recommendation."""
-        if not baseline:
-            return "Run baseline first for comparison."
+    def _print_report(self, r):
+        best = r["best_result"]
+        base = r["baseline"] or {}
+        imp  = r["improvement"]
+        print("")
+        print("=" * 60)
+        print("  OPTIMIZATION COMPLETE")
+        print("  Tested: {} | Applied: {}".format(r["total_tested"], r["applied"]))
+        print("")
+        print("  BASELINE    WR:{}%  PF:{}  DD:{}%".format(
+            base.get("win_rate","?"), base.get("profit_factor","?"), base.get("max_drawdown","?")))
+        print("  BEST        WR:{}%  PF:{}  DD:{}%  Trades:{}".format(
+            best["win_rate"], best["profit_factor"],
+            best["max_drawdown"], best["total_trades"]))
+        print("  DELTA       WR:{:+}%  PF:{:+}  DD:{:+}%".format(
+            imp.get("win_rate_delta",0), imp.get("pf_delta",0), imp.get("dd_delta",0)))
+        print("")
+        print("  STATUS: {}".format(r["auto_msg"]))
+        print("=" * 60)
 
-        wr_delta  = improvement.get("win_rate_delta", 0)
-        pf_delta  = improvement.get("pf_delta", 0)
-        ret_delta = improvement.get("return_delta", 0)
 
-        if wr_delta > 5 and pf_delta > 0.3:
-            action = "STRONGLY RECOMMEND updating to new parameters"
-        elif wr_delta > 2 or pf_delta > 0.2:
-            action = "CONSIDER updating to new parameters after paper trade validation"
-        elif wr_delta < -2:
-            action = "KEEP current parameters - new settings perform worse"
-        else:
-            action = "MARGINAL improvement - current parameters are fine"
+def _send_telegram_report(report, baseline, best, imp, applied, auto_msg, changed):
+    status_icon = "✅" if applied else "ℹ️"
+    base = baseline or {}
 
-        return "{} | Win Rate: {:+.1f}% | PF: {:+.2f} | Return: {:+.1f}%".format(
-            action, wr_delta, pf_delta, ret_delta
+    # Param diff block
+    if changed:
+        diff_block = "\n".join(
+            "<code>  {} : {} → {}</code>".format(k, "old", v)
+            for k, v in changed.items()
         )
+    else:
+        diff_block = "<code>  No parameter changes</code>"
 
-    def print_improvement_report(self, report):
-        """Print formatted report."""
-        best = report["best_result"]
-        base = report["baseline"]
-        imp  = report["improvement"]
-
-        print("")
-        print("=" * 60)
-        print("  OPTIMIZATION RESULTS")
-        print("=" * 60)
-        print("  Tested {} combinations".format(report["total_tested"]))
-        print("")
-        print("  BEST PARAMETERS FOUND:")
-        for k, v in report["best_params"].items():
-            print("    {}: {}".format(k, v))
-        print("")
-        print("  BEST RESULT:")
-        print("    Win Rate    : {}%".format(best["win_rate"]))
-        print("    Profit Factor: {}".format(best["profit_factor"]))
-        print("    Return      : {}%".format(best["return_pct"]))
-        print("    Max Drawdown: {}%".format(best["max_drawdown"]))
-        print("    Total Trades: {}".format(best["total_trades"]))
-
-        if base:
-            print("")
-            print("  BASELINE (current settings):")
-            print("    Win Rate    : {}%".format(base["win_rate"]))
-            print("    Profit Factor: {}".format(base["profit_factor"]))
-            print("    Return      : {}%".format(base["return_pct"]))
-            print("")
-            print("  IMPROVEMENT vs BASELINE:")
-            print("    Win Rate    : {:+.2f}%".format(imp.get("win_rate_delta", 0)))
-            print("    Profit Factor: {:+.2f}".format(imp.get("pf_delta", 0)))
-            print("    Return      : {:+.2f}%".format(imp.get("return_delta", 0)))
-            print("    Drawdown    : {:+.2f}%".format(imp.get("dd_delta", 0)))
-
-        print("")
-        print("  TOP 5 COMBINATIONS:")
-        for i, r in enumerate(report["top5"]):
-            p = r["params"]
-            print("  {}. Score:{} WR:{}% PF:{} RR:{} MinScore:{}".format(
-                i+1, r["composite_score"],
-                r["win_rate"], r["profit_factor"],
-                p["rr_ratio"], p["min_score"]
-            ))
-
-        print("")
-        print("  RECOMMENDATION:")
-        print("  {}".format(report["recommendation"]))
-        print("")
-        print("  Full report: {}".format(IMPROVE_LOG))
-        print("=" * 60)
+    msg = (
+        "<b>{} MIRO NIGHTLY OPTIMIZER</b>\n"
+        "<i>{}</i>\n\n"
+        "<b>📊 Backtest Results</b>\n"
+        "<code>"
+        "  Combos tested : {}\n"
+        "  Bars used     : H1 × 3000\n"
+        "</code>\n"
+        "<b>Before (baseline)</b>\n"
+        "<code>"
+        "  WR  : {}%\n"
+        "  PF  : {}\n"
+        "  DD  : {}%\n"
+        "  Trades: {}\n"
+        "</code>\n"
+        "<b>Best Found</b>\n"
+        "<code>"
+        "  WR  : {}%  ({:+.1f}%)\n"
+        "  PF  : {}  ({:+.2f})\n"
+        "  DD  : {}%\n"
+        "  Ret : {}%\n"
+        "  Trades: {}\n"
+        "</code>\n"
+        "<b>Param Changes</b>\n"
+        "{}\n\n"
+        "<b>Decision: {}</b>"
+    ).format(
+        status_icon,
+        datetime.now().strftime("%Y-%m-%d %H:%M IST"),
+        report["total_tested"],
+        base.get("win_rate", "?"),
+        base.get("profit_factor", "?"),
+        base.get("max_drawdown", "?"),
+        base.get("total_trades", "?"),
+        best["win_rate"],   imp.get("win_rate_delta", 0),
+        best["profit_factor"], imp.get("pf_delta", 0),
+        best["max_drawdown"],
+        best["return_pct"],
+        best["total_trades"],
+        diff_block,
+        auto_msg,
+    )
+    _tg(msg)
 
 
 if __name__ == "__main__":
     import sys
-    optimizer = StrategyOptimizer()
-
-    # Quick mode: test 10 combinations
-    # Full mode: test all combinations
-    mode = sys.argv[1] if len(sys.argv) > 1 else "quick"
-    max_combos = 10 if mode == "quick" else 45
-
+    mode       = sys.argv[1] if len(sys.argv) > 1 else "quick"
+    max_combos = 15 if mode == "quick" else 50
     print("Running in {} mode ({} combinations)".format(mode, max_combos))
-    report = optimizer.run_optimization(max_combinations=max_combos)
-
-    if report:
-        print("\nSelf-improvement loop complete!")
-        print("Best params saved to: {}".format(IMPROVE_LOG))
-
-        # Send Telegram alert if available
-        try:
-            from agents.telegram.telegram_agent import TelegramAlertAgent
-            bot = TelegramAlertAgent()
-            best = report["best_result"]
-            rec  = report["recommendation"]
-            bot.send_message(
-                "<b>MIROTRADE NIGHTLY OPTIMIZATION</b>\n"
-                "================================\n"
-                "<b>Best Win Rate:</b> {}%\n"
-                "<b>Best PF:</b> {}\n"
-                "<b>Best Return:</b> {}%\n"
-                "\n"
-                "<b>Recommendation:</b>\n"
-                "{}\n"
-                "================================\n"
-                "<i>Review improvement_log.json for details</i>".format(
-                    best["win_rate"], best["profit_factor"],
-                    best["return_pct"], rec
-                )
-            )
-        except:
-            pass
+    StrategyOptimizer().run_optimization(max_combinations=max_combos)

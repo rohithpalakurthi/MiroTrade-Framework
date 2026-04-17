@@ -1,6 +1,8 @@
 {
   "trade_ids": [
-    "open_0"
+    "open_0",
+    "open_1",
+    "close_1"
   ],
   "signal_ids": []
 }

@@ -1,0 +1,93 @@
+{
+  "generated_at": "2026-04-16T11:35:50.147839",
+  "period": "Since inception",
+  "summary": {
+    "total_trades": 1,
+    "wins": 1,
+    "losses": 0,
+    "open_trades": 2,
+    "win_rate": 100.0,
+    "profit_factor": 999,
+    "net_pnl": 2831.63,
+    "gross_profit": 2831.63,
+    "gross_loss": 0,
+    "balance": 94309.92,
+    "peak_balance": 97219.37,
+    "drawdown_pct": 2.99,
+    "return_pct": 843.1,
+    "avg_win": 2831.63,
+    "avg_loss": 0,
+    "max_consec_wins": 1,
+    "max_consec_losses": 0,
+    "today_pnl": 0
+  },
+  "best_trade": {
+    "id": 1,
+    "signal": "SELL",
+    "signal_type": "SELL_TREND",
+    "strategy": "v15F_M5",
+    "entry_price": 4805.69,
+    "entry_time": "2026-04-15 14:40:02.557577",
+    "sl": 4811.24,
+    "tp": 4789.03,
+    "lot_size": 1.7,
+    "risk_amount": 943.88,
+    "status": "closed",
+    "exit_price": 4788.76,
+    "exit_time": "2026-04-16 02:18:36.575777",
+    "reason": "TP",
+    "pnl": 2831.63,
+    "result": "win",
+    "balance_after": 97219.37
+  },
+  "worst_trade": {
+    "id": 1,
+    "signal": "SELL",
+    "signal_type": "SELL_TREND",
+    "strategy": "v15F_M5",
+    "entry_price": 4805.69,
+    "entry_time": "2026-04-15 14:40:02.557577",
+    "sl": 4811.24,
+    "tp": 4789.03,
+    "lot_size": 1.7,
+    "risk_amount": 943.88,
+    "status": "closed",
+    "exit_price": 4788.76,
+    "exit_time": "2026-04-16 02:18:36.575777",
+    "reason": "TP",
+    "pnl": 2831.63,
+    "result": "win",
+    "balance_after": 97219.37
+  },
+  "daily_pnl": {
+    "2026-04-15": 2831.63
+  },
+  "open_trades": [
+    {
+      "ticket": 1173857287,
+      "symbol": "XAUUSD",
+      "type": "BUY",
+      "volume": 0.37,
+      "open_price": 4795.23,
+      "current": 4823.58,
+      "sl": 4770.15,
+      "tp": 4870.46,
+      "profit": 1048.95,
+      "magic": 20260410,
+      "time": "2026-04-16 06:33:36"
+    },
+    {
+      "ticket": 1173858375,
+      "symbol": "XAUUSD",
+      "type": "BUY",
+      "volume": 0.37,
+      "open_price": 4797.63,
+      "current": 4823.58,
+      "sl": 4772.61,
+      "tp": 4872.92,
+      "profit": 960.15,
+      "magic": 20260410,
+      "time": "2026-04-16 06:33:55"
+    }
+  ]
+}

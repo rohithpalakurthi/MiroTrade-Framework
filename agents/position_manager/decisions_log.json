@@ -1,0 +1,9 @@
+[
+  {
+    "time": "2026-04-17 04:13:00.400894",
+    "ticket": 1178635965,
+    "action": "CLOSE_FULL",
+    "reasoning": "Hard rule: trade stale 240min with only 0.3R \u2014 freeing capital",
+    "result": "OK Closed at 4795.19"
+  }
+]

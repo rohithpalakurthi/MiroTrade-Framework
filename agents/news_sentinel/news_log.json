@@ -1,73 +1,7 @@
 {
-  "scan_time": "2026-04-14T02:37:54.722409",
-  "total_articles": 16,
-  "high_impact_count": 10,
-  "high_impact_events": [
-    {
-      "title": "Bitcoin clings to monthly gains, historic losing streak still in play",
-      "source": "CoinDesk",
-      "sentiment": "bullish",
-      "published": "2026-03-23T10:46:59Z"
-    },
-    {
-      "title": "Bond Traders Snap Back to Inflation as Higher-for-Longer Sets In",
-      "source": "Financial Post",
-      "sentiment": "neutral",
-      "published": "2026-04-12T19:21:46Z"
-    },
-    {
-      "title": "Can $300 monthly investing really reach $1 million? Warren Buffett proven compounding strategy and the S&P 500 fast-track to financial freedom in 2026",
-      "source": "The Times of India",
-      "sentiment": "bullish",
-      "published": "2026-04-11T18:29:50Z"
-    },
-    {
-      "title": "BofA\u2019s Hartnett Sees the Surge in Commodities Lasting for Years",
-      "source": "Financial Post",
-      "sentiment": "bullish",
-      "published": "2026-04-10T10:47:05Z"
-    },
-    {
-      "title": "Tokenized perpetual swaps hit $31 billion weekly volume on commodities volatility",
-      "source": "CoinDesk",
-      "sentiment": "bullish",
-      "published": "2026-04-09T12:00:00Z"
-    },
-    {
-      "title": "3 things investors learned from the market's latest TACO-trade bonanza",
-      "source": "Business Insider",
-      "sentiment": "bullish",
-      "published": "2026-04-09T09:50:03Z"
-    },
-    {
-      "title": "France Completes Withdrawal of Gold Holdings from New York Federal Reserve",
-      "source": "Naturalnews.com",
-      "sentiment": "neutral",
-      "published": "2026-04-09T06:00:00Z"
-    },
-    {
-      "title": "Bitcoin price falls under $71K as US-Iran war tensions spark sell-off",
-      "source": "Cointelegraph",
-      "sentiment": "bullish",
-      "published": "2026-04-12T19:56:12Z"
-    },
-    {
-      "title": "Inconclusive US-Iran talks, oil prices, inflation data to dictate investors' sentiment: Analysts",
-      "source": "BusinessLine",
-      "sentiment": "neutral",
-      "published": "2026-04-12T09:26:32Z"
-    },
-    {
-      "title": "US inflation surges to 3.3% as impact of Iran war bites",
-      "source": "New Zealand Herald",
-      "sentiment": "bullish",
-      "published": "2026-04-11T01:57:37Z"
-    }
-  ],
-  "sentiment": {
-    "bullish": 7,
-    "bearish": 0,
-    "neutral": 9
-  },
-  "trading_blocked": true
+  "scan_time": "2026-04-17 10:50:32.220614",
+  "blocked": false,
+  "reason": "No scheduled events - market clear",
+  "utc_hour": 5,
+  "utc_day": 4
 }

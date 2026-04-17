@@ -23,7 +23,11 @@ from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from agents.news_sentinel.news_sentinel import NewsSentinelAgent
+import os as _os
+if _os.getenv("ANTHROPIC_API_KEY"):
+    from agents.news_sentinel.news_sentinel_ai import AINewsSentinel as NewsSentinelAgent
+else:
+    from agents.news_sentinel.news_sentinel import NewsSentinelAgent
 
 # --- Paths ---
 STATE_FILE    = "paper_trading/logs/state.json"
@@ -176,18 +180,21 @@ class OrchestratorAgent:
                 decision["reasons"].append("CAPACITY: Max open trades reached")
 
         # --- Check 5: MTF Bias ---
+        # Pass if overall direction set OR H1+H4 both agree
         mtf_aligned = True
         try:
             if os.path.exists("agents/market_analyst/mtf_bias.json"):
                 with open("agents/market_analyst/mtf_bias.json") as f:
                     mtf = json.load(f)
                 direction = mtf.get("direction", "neutral")
-                aligned   = mtf.get("aligned", False)
-                mtf_aligned = direction != "neutral"
+                h1_bias   = mtf.get("h1_bias", direction)
+                h4_bias   = mtf.get("h4_bias", direction)
+                mtf_aligned = (direction != "neutral") or (h1_bias == h4_bias and h1_bias != "neutral")
                 decision["checks"]["mtf"] = {
-                    "direction" : direction,
-                    "aligned"   : aligned,
-                    "passed"    : mtf_aligned
+                    "direction": direction,
+                    "h1": h1_bias,
+                    "h4": h4_bias,
+                    "passed": mtf_aligned
                 }
                 if not mtf_aligned:
                     decision["reasons"].append("MTF: Neutral - timeframes not aligned")
