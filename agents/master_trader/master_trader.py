@@ -39,6 +39,7 @@ ORCH_STALE_SECS    = 180     # treat orchestrator verdict as stale after 3 minut
 TP1_MAX_PTS        = 15.0    # TP1 capped at 15 points from entry — smart exit decides trail or close
 MIN_SL_PTS         = 10.0    # minimum SL distance — rejects entries with SL tighter than 10pts
 MAX_DAILY_TRADES   = 5       # max new entries per calendar day
+TP1_REENTRY_COOLDOWN = 900  # 15 minutes — block same-direction re-entry after TP1 partial close
 
 TRADING_CONFIG_FILE = "agents/master_trader/trading_config.json"
 _TRADING_DEFAULTS = {
@@ -51,6 +52,7 @@ _TRADING_DEFAULTS = {
     "news_block_enabled"       : True,
     "orchestrator_gate_enabled": True,
     "session_filter_enabled"   : True,
+    "tp1_cooldown_enabled"     : True,
     "max_daily_trades"         : 5,
     "min_sl_pts"               : 10.0,
 }
@@ -77,6 +79,10 @@ DXY_FILE         = "agents/master_trader/dxy_yields.json"
 GUARD_FILE       = "agents/master_trader/risk_guard.json"
 BRAIN_FILE       = "agents/master_trader/multi_brain.json"
 CALENDAR_FILE    = "agents/master_trader/calendar_state.json"
+PATTERNS_FILE    = "agents/master_trader/patterns.json"
+COT_FILE         = "agents/master_trader/cot_data.json"
+SENTIMENT_FILE   = "agents/master_trader/sentiment.json"
+MULTISYM_FILE    = "agents/master_trader/multi_symbol.json"
 
 SYSTEM_PROMPT = """You are MIRO — an elite autonomous XAUUSD (Gold) trading AI with the combined expertise of:
 
@@ -119,6 +125,7 @@ class MasterTraderAgent:
         self._session_losses     = 0
         self._daily_trades       = 0     # entries today
         self._daily_trade_date   = None  # date string for reset
+        self._tp1_cooldown       = {}    # direction -> ISO timestamp of last TP1 hit
         self._load_state()
         print("[MasterTrader] MIRO AI initialized — autonomous XAUUSD trading brain")
         print("[MasterTrader] Max positions: {} | Risk/trade: {}% | Min confidence: {}/10".format(
@@ -136,6 +143,7 @@ class MasterTraderAgent:
                 self._session_losses     = s.get("session_losses", 0)
                 self._daily_trades       = s.get("daily_trades", 0)
                 self._daily_trade_date   = s.get("daily_trade_date")
+                self._tp1_cooldown       = s.get("tp1_cooldown", {})
         except:
             pass
 
@@ -148,6 +156,7 @@ class MasterTraderAgent:
                     "session_losses"    : self._session_losses,
                     "daily_trades"      : self._daily_trades,
                     "daily_trade_date"  : self._daily_trade_date,
+                    "tp1_cooldown"      : self._tp1_cooldown,
                 }, f, indent=2)
         except:
             pass
@@ -353,6 +362,10 @@ class MasterTraderAgent:
         guard    = _load(GUARD_FILE)
         brain    = _load(BRAIN_FILE)
         calendar = _load(CALENDAR_FILE)
+        patterns = _load(PATTERNS_FILE)
+        cot      = _load(COT_FILE)
+        sentiment= _load(SENTIMENT_FILE)
+        ms       = _load(MULTISYM_FILE)
 
         # ── Regime ──────────────────────────────────────────────────────
         regime_block = "Regime: not yet computed"
@@ -477,22 +490,76 @@ class MasterTraderAgent:
                 calendar.get("upcoming_event", "?"),
                 calendar.get("event_time", "?"))
 
+        # ── Pattern Recognition ──────────────────────────────────────────
+        pattern_block = "Patterns: not yet scanned"
+        if patterns.get("patterns") is not None:
+            plist = patterns.get("patterns", [])
+            if plist:
+                pattern_block = "Patterns H4: {} | {}".format(
+                    patterns.get("summary_bias", "NEUTRAL"),
+                    " | ".join("{} {} conf{}".format(
+                        p["type"], p["bias"], p["confidence"]) for p in plist[:3])
+                )
+            else:
+                pattern_block = "Patterns H4: no patterns detected"
+
+        # ── COT ──────────────────────────────────────────────────────────
+        cot_block = "COT: not yet fetched"
+        if cot.get("institutional_bias"):
+            cot_block = "COT ({date}): {bias} | NC Net: {net:,} (chg: {chg:+,})".format(
+                date=cot.get("report_date", "?"),
+                bias=cot.get("institutional_bias", "?"),
+                net=cot.get("noncomm_net", 0),
+                chg=cot.get("noncomm_net_change", 0),
+            )
+
+        # ── Composite Sentiment ──────────────────────────────────────────
+        sentiment_block = "Sentiment: not computed"
+        sentiment_buy_adj = 0.0
+        sentiment_sell_adj = 0.0
+        if sentiment.get("composite_score") is not None:
+            sentiment_block = "Sentiment: {}/10 → {} | Components: {}".format(
+                sentiment.get("composite_score", "?"),
+                sentiment.get("bias", "?"),
+                " | ".join("{} {:.1f}".format(k, v["score"])
+                           for k, v in sentiment.get("components", {}).items())
+            )
+            sentiment_buy_adj  = sentiment.get("buy_confidence_adj", 0)
+            sentiment_sell_adj = sentiment.get("sell_confidence_adj", 0)
+
+        # ── Multi-Symbol Context ─────────────────────────────────────────
+        ms_block = "Multi-symbol: not computed"
+        if ms.get("risk_sentiment"):
+            sym_str = " | ".join(
+                "{} {}{}%".format(s, d.get("bias", "?"), d.get("change_24h", 0))
+                for s, d in (ms.get("symbols") or {}).items()
+            )
+            ms_block = "Markets: {} | Risk: {} | USD: {} | Gold implication: {}".format(
+                sym_str, ms.get("risk_sentiment", "?"),
+                ms.get("usd_strength", "?"), ms.get("gold_implication", "?"))
+
         return {
-            "regime_block"     : regime_block,
-            "fib_block"        : fib_block,
-            "sd_block"         : sd_block,
-            "dxy_block"        : dxy_block,
-            "kelly_block"      : kelly_block,
-            "brain_block"      : brain_block,
-            "calendar_block"   : calendar_block,
-            "regime_size_mult" : regime_size_mult,
-            "regime_min_conf"  : regime_min_conf,
-            "kelly_risk_pct"   : kelly_risk_pct,
-            "brain_action"     : brain_action,
-            "brain_conf"       : brain_conf,
-            "in_recovery"      : in_recovery,
-            "calendar_paused"  : calendar.get("paused", False),
-            "allowed_setups"   : regime.get("allowed_setups", []),
+            "regime_block"      : regime_block,
+            "fib_block"         : fib_block,
+            "sd_block"          : sd_block,
+            "dxy_block"         : dxy_block,
+            "kelly_block"       : kelly_block,
+            "brain_block"       : brain_block,
+            "calendar_block"    : calendar_block,
+            "pattern_block"     : pattern_block,
+            "cot_block"         : cot_block,
+            "sentiment_block"   : sentiment_block,
+            "ms_block"          : ms_block,
+            "regime_size_mult"  : regime_size_mult,
+            "regime_min_conf"   : regime_min_conf,
+            "kelly_risk_pct"    : kelly_risk_pct,
+            "brain_action"      : brain_action,
+            "brain_conf"        : brain_conf,
+            "in_recovery"       : in_recovery,
+            "calendar_paused"   : calendar.get("paused", False),
+            "allowed_setups"    : regime.get("allowed_setups", []),
+            "sentiment_buy_adj" : sentiment_buy_adj,
+            "sentiment_sell_adj": sentiment_sell_adj,
         }
 
     def get_adaptive_min_confidence(self, setup_type=""):
@@ -710,6 +777,10 @@ class MasterTraderAgent:
                 intel.get("dxy_block", ""),
                 intel.get("kelly_block", ""),
                 intel.get("brain_block", ""),
+                intel.get("pattern_block", ""),
+                intel.get("cot_block", ""),
+                intel.get("sentiment_block", ""),
+                intel.get("ms_block", ""),
             ]
             if intel.get("calendar_block"):
                 parts.append(intel["calendar_block"])
@@ -1141,6 +1212,19 @@ RULES:
         elapsed = (datetime.now() - datetime.fromisoformat(self._last_entry_time)).total_seconds()
         return elapsed >= ENTRY_COOLDOWN
 
+    def _tp1_reentry_ok(self, direction):
+        """Block same-direction entry for 15min after a TP1 partial close."""
+        ts = self._tp1_cooldown.get(direction)
+        if not ts:
+            return True
+        elapsed = (datetime.now() - datetime.fromisoformat(ts)).total_seconds()
+        return elapsed >= TP1_REENTRY_COOLDOWN
+
+    def mark_tp1_cooldown(self, direction):
+        """Called by scale_out or position_manager after a TP1 partial close."""
+        self._tp1_cooldown[direction] = datetime.now().isoformat()
+        self._save_state()
+
     def _position_cooldown_ok(self, ticket):
         last = self._position_decisions.get(str(ticket))
         if not last:
@@ -1316,6 +1400,13 @@ RULES:
                 continue
             if direction == "SELL" and sells >= max_dir:
                 print("[MasterTrader] Already {} SELLs — skipping".format(sells))
+                continue
+
+            if cfg.get("tp1_cooldown_enabled", True) and not self._tp1_reentry_ok(direction):
+                ts = self._tp1_cooldown.get(direction, "")
+                elapsed = int((datetime.now() - datetime.fromisoformat(ts)).total_seconds())
+                print("[MasterTrader] TP1 re-entry cooldown {} {}/{}s".format(
+                    direction, elapsed, TP1_REENTRY_COOLDOWN))
                 continue
 
             ok = self.execute_entry(entry, account, intel)

@@ -198,14 +198,13 @@ def rule_based_model(snap, regime, fib, dxy, news, sd):
     elif reg_name == "HIGH_VOLATILITY":
         score = int(score * 0.5); reasons.append("HIGH_VOL — halved score")
 
-    # DXY / yields
-    gs = (dxy or {}).get("gold_signal", {})
-    dxy_buy  = gs.get("buy_confidence_adj", 0)
-    dxy_sell = gs.get("sell_confidence_adj", 0)
+    # DXY / yields (flat fields in dxy_yields.json)
+    dxy_buy  = (dxy or {}).get("buy_confidence_adj", 0)
+    dxy_sell = (dxy or {}).get("sell_confidence_adj", 0)
     if dxy_buy > 0:
         score += min(2, dxy_buy); reasons.append("DXY/Yields bullish gold by {}".format(dxy_buy))
     elif dxy_sell > 0:
-        score -= min(2, dxy_sell); reasons.append("DXY/Yields bearish gold by {}".format(dxy_sell))
+        score -= min(2, abs(dxy_sell)); reasons.append("DXY/Yields bearish gold by {}".format(dxy_sell))
 
     # News brain
     news_bias = (news or {}).get("analysis", {}).get("gold_bias", "NEUTRAL")
@@ -291,7 +290,7 @@ Respond ONLY as JSON:
             above_e50=snap["above_e50"], above_e200=snap["above_e200"],
             regime=(regime or {}).get("regime","UNKNOWN"),
             news_bias=(news or {}).get("analysis",{}).get("gold_bias","NEUTRAL"),
-            dxy_signal=(dxy or {}).get("gold_signal",{}).get("bias","NEUTRAL"),
+            dxy_signal=(dxy or {}).get("gold_bias","NEUTRAL"),
             fib_summary=str({k:v for k,v in (((fib or {}).get("timeframes",{}).get("H1",{}) or {}).get("key_levels",{})).items()})
         )
 
@@ -338,11 +337,11 @@ Respond ONLY as JSON:
             above_e50=snap["above_e50"],
             regime=(regime or {}).get("regime","UNKNOWN"),
             news_bias=(news or {}).get("analysis",{}).get("gold_bias","NEUTRAL"),
-            dxy_signal=(dxy or {}).get("gold_signal",{}).get("bias","NEUTRAL"),
+            dxy_signal=(dxy or {}).get("gold_bias","NEUTRAL"),
         )
 
         resp = client.messages.create(
-            model="claude-haiku-4-5-20251001",  # fast + cheap for second opinion
+            model="claude-sonnet-4-6",
             max_tokens=120,
             messages=[{"role": "user", "content": msg_text}]
         )

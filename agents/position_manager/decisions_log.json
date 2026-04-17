@@ -1,2322 +1,5 @@
 [
   {
-    "time": "2026-04-17 19:00:18.341249",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:00:51.843014",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:01:25.408910",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:01:59.684127",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:02:33.536523",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:03:07.776532",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:03:41.565201",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:04:15.545922",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:04:49.280190",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:05:22.919246",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:05:56.642307",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:06:30.392128",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:07:04.148537",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:07:38.007755",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:08:11.709068",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:08:45.320055",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:09:18.963194",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:09:52.641364",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:10:26.270689",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:10:59.921265",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:11:33.686272",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:12:07.267742",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:12:41.592578",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:13:14.993664",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:13:48.720714",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:14:22.356067",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:14:55.998323",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:15:16.954553",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:15:48.715444",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:16:20.949729",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:16:52.621444",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:17:24.720781",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:17:56.457404",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:18:28.694762",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:19:00.399857",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:19:32.140634",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:19:32.149479",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:20:04.019050",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:20:04.027517",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:20:35.899043",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:20:35.912554",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:20:35.927160",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:21:07.707533",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:21:07.725006",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:21:07.732445",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:21:39.696889",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:21:39.707666",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:21:39.716876",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:22:11.572475",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:22:11.580444",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:22:11.587815",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:22:43.362751",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:22:43.370663",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:22:43.378288",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:23:15.529174",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:23:15.539944",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:23:15.548649",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:23:47.332885",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:23:47.342196",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:23:47.352971",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:24:19.091569",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:24:19.100093",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:24:19.107859",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:24:50.940401",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:24:50.949170",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:24:50.957331",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:25:22.754129",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:25:22.764162",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:25:22.773270",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:25:55.486756",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:25:55.493965",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:25:55.501897",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:26:27.754241",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:26:27.762031",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:26:27.770514",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:26:59.492566",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:26:59.499904",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:26:59.508610",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:27:31.235382",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:27:31.243954",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:27:31.253220",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:28:03.012739",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:28:03.021894",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:28:03.031232",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:28:35.258850",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:28:35.268518",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:28:35.278735",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:29:07.104259",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:29:07.115817",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:29:07.128124",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:29:38.873555",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:29:38.882045",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:29:38.890031",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:30:10.678607",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:30:10.687328",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:30:10.694857",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:30:42.478496",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.8R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:30:42.487034",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.8R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:30:42.494649",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:31:14.290776",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.8R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:31:14.300513",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.8R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:31:14.309581",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:31:45.958854",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.9R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:31:45.970668",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.8R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:31:45.979607",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:32:17.700775",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.8R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:32:17.716168",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:32:17.724485",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:32:49.439932",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:32:49.448278",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:32:49.456815",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:33:21.231385",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:33:21.240116",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:33:21.248963",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:33:52.873225",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:33:52.882077",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:33:52.890822",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:34:24.798961",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:34:24.812425",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:34:24.822747",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:34:56.532913",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:34:56.542435",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:34:56.550869",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:35:28.959183",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:35:28.970644",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:35:28.980065",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:36:01.588974",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:36:01.600297",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:36:01.609512",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:36:34.671157",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:36:34.681505",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:36:34.691143",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:37:06.963269",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:37:06.975251",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:37:06.984795",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:37:39.663691",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:37:39.673650",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:37:39.683680",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:38:12.098342",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:38:12.106877",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:38:12.115377",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:38:44.574548",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:38:44.584549",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:38:44.595515",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:39:17.010412",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:39:17.021017",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:39:17.030491",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:39:49.372347",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:39:49.381030",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:39:49.390295",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:39:49.398830",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:40:22.193163",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:40:22.204984",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:40:22.218012",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:40:22.232091",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:40:54.690267",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:40:54.699267",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:40:54.708628",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:40:54.717562",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:41:27.566874",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:41:27.576401",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:41:27.585042",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:41:27.593845",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:42:00.145529",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:42:00.154483",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:42:00.163741",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:42:00.173636",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:42:32.741451",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:42:32.751081",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:42:32.759889",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:42:32.769200",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:43:05.182306",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:43:05.192565",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:43:05.202547",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:43:05.211519",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:43:37.539715",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:43:37.549368",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:43:37.559837",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:43:37.569555",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:44:10.041641",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:44:10.053725",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:44:10.063432",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:44:10.073603",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:44:42.600395",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:44:42.609592",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:44:42.618472",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:44:42.627491",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:45:15.020529",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:45:15.031134",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:45:15.041453",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:45:15.050962",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:45:47.643562",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:45:47.653359",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:45:47.662232",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:45:47.671873",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:46:20.254850",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:46:20.264768",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:46:20.273872",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:46:20.283146",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:46:52.647537",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:46:52.658422",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:46:52.668631",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:46:52.679228",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:47:25.227833",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:47:25.237413",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:47:25.247171",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:47:25.256473",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:47:57.822361",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:47:57.832745",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:47:57.842509",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:47:57.852831",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:48:30.200716",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:48:30.210959",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:48:30.220378",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:48:30.229438",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:49:02.678633",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:49:02.688886",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:49:02.698212",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:49:02.707509",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:49:35.152804",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:49:35.163116",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:49:35.172496",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:49:35.181670",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:50:07.694121",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:50:07.704036",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:50:07.723019",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:50:07.733176",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:50:40.374413",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:50:40.384489",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:50:40.393948",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:50:40.403478",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:12.956109",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:12.967485",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:12.978649",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:12.989527",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:45.437011",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:45.448157",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:45.458578",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:45.469310",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:51:45.479670",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:18.021458",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:18.035094",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:18.047913",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:18.060053",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:18.072084",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:50.437999",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:50.449095",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:50.460040",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:50.470510",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:52:50.481699",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:23.123870",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:23.134693",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:23.145195",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:23.155919",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:23.166530",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:55.567653",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:55.578922",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:55.591308",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:55.602650",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:53:55.614158",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:54:28.057764",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:54:28.070325",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:54:28.082161",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:54:28.095353",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:54:28.107506",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:00.631460",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:00.642746",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:00.653905",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:00.665399",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:00.676537",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:33.239324",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:33.250746",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:33.262771",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:33.273702",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:55:33.284384",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:05.746301",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:05.758131",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:05.770215",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:05.782404",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:05.797171",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:38.378952",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:38.390972",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:38.402838",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:38.413579",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:56:38.426345",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:11.109154",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:11.122975",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:11.137073",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:11.150644",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:11.163983",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:43.823522",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:43.838983",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:43.854675",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:43.869882",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:57:43.886083",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:16.468568",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:16.480870",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:16.492187",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:16.504365",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:16.516185",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:48.980666",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:48.996187",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:49.008962",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:49.022554",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:58:49.037189",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:22.005156",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:22.017973",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:22.030183",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:22.042461",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:22.057062",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:54.560247",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:54.571722",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:54.582924",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:54.594725",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 19:59:54.605933",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:00:27.490290",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:00:27.513457",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:00:27.530327",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:00:27.542341",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:00:27.554180",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:00.091527",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:00.103348",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:00.114970",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:00.127089",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:00.138381",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:32.799072",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:32.810155",
-    "ticket": 1184312503,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:32.821961",
-    "ticket": 1184322923,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:32.833321",
-    "ticket": 1184522693,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:01:32.845591",
-    "ticket": 1184633632,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
-    "result": ""
-  },
-  {
-    "time": "2026-04-17 20:02:05.318164",
-    "ticket": 1183998036,
-    "action": "HOLD",
-    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
-    "result": ""
-  },
-  {
     "time": "2026-04-17 20:02:05.329995",
     "ticket": 1184312503,
     "action": "HOLD",
@@ -3498,5 +1181,2322 @@
     "action": "HOLD",
     "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
     "result": ""
+  },
+  {
+    "time": "2026-04-17 20:20:32.413346",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:20:32.427263",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:20:32.441082",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:20:32.454881",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:20:32.468884",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:04.954291",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:04.969841",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:04.985295",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:04.999057",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:05.013392",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:37.492907",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:37.506180",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:37.519304",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:37.532277",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:21:37.545189",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:09.970718",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:09.988270",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:10.003417",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:10.022417",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:10.036914",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:42.548533",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:42.562376",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:42.576872",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:42.590434",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:22:42.605073",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:15.125151",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:15.141176",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:15.156304",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:15.173615",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:15.189116",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:47.639207",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:47.654977",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:47.670333",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:47.685171",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:23:47.699663",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:20.069419",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:20.086577",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:20.102171",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:20.117891",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:20.135605",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:52.525963",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:52.540184",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:52.553528",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:52.569853",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:24:52.583337",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:25.008313",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:25.023310",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:25.040014",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:25.054965",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:25.074940",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:57.517811",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:57.532368",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:57.546594",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:57.560442",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:25:57.574771",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:26:30.130652",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:26:30.145898",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:26:30.159967",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:26:30.174926",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:26:30.189453",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:02.503042",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:02.522440",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:02.536469",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:02.550128",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:02.564177",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:34.960607",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:34.975862",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:34.992724",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:35.011748",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:27:35.027671",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:07.546413",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:07.560347",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:07.574135",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:07.587769",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:07.601991",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:40.218452",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:40.233348",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:40.247193",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:40.261347",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:28:40.275730",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:12.954158",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:12.969893",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:12.984952",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:12.999172",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:13.013723",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:45.423729",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:45.439014",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:45.453143",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:45.467866",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:29:45.483505",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:17.959713",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:17.974753",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:17.990023",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:18.005055",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:18.020199",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:50.302527",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:50.316038",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:50.329810",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:50.343428",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:30:50.356652",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:22.831791",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:22.847018",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:22.863035",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:22.878685",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:22.892437",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:55.324535",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:55.339152",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:55.355028",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:55.371018",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:31:55.385601",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:32:27.876067",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:32:27.890289",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:32:27.905005",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:32:27.920164",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:32:27.934418",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:00.443381",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:00.458056",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:00.473088",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:00.487144",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:00.501073",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:33.055102",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:33.074217",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:33.088544",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:33.106302",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:33:33.122074",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:05.614967",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:05.629084",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:05.642703",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:05.655600",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:05.668984",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:38.127523",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:38.141955",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:38.154842",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:38.168165",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:34:38.181159",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:10.545790",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:10.559287",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:10.572486",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:10.585485",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:10.598766",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:44.219041",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:44.238168",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:44.252835",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:44.267066",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:35:44.281126",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:16.838342",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:16.852287",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:16.865377",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:16.879055",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:16.893405",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:49.290507",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:49.304544",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:49.317988",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:49.330915",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:36:49.344501",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:21.904660",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:21.918511",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:21.931638",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:21.945096",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:21.959961",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:54.505257",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.7R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:54.518558",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.6R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:54.532211",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.5R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:54.546572",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:37:54.560415",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:27.144815",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:27.158844",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:27.172481",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:27.185794",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:27.200052",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:59.620998",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:59.635121",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:59.648101",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:59.662228",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:38:59.676387",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:39:32.282623",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:39:32.297228",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:39:32.311622",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:39:32.326023",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:39:32.339813",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:04.882990",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:04.897528",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:04.911296",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:04.924745",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:04.937955",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:37.575283",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:37.588844",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:37.604101",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:37.618355",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:40:37.632257",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:10.098098",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:10.113117",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:10.127976",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:10.141802",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:10.154990",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:42.518160",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:42.532066",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:42.555964",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:42.571572",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:41:42.586514",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:14.923005",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:14.936989",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:14.950275",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:14.965761",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:14.980613",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:47.574761",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:47.588793",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:47.602031",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:47.626270",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:42:47.639276",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:20.169363",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:20.184109",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:20.198560",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:20.213426",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:20.228353",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:52.637360",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:52.650700",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:52.663849",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:52.677498",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:43:52.691266",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:25.259348",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:25.275125",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:25.288803",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:25.302311",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:25.315332",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:57.741287",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:57.754523",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:57.768122",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:57.781240",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:44:57.795583",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:45:30.276546",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:45:30.292303",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:45:30.306072",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:45:30.318692",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:45:30.331808",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:02.771513",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:02.785232",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:02.798576",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:02.813138",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:02.827702",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:35.389758",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:35.404485",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:35.417686",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:35.430617",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:46:35.445189",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:07.965122",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:07.987394",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:08.039384",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:08.058976",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:08.077312",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:40.640922",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:40.655436",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:40.671212",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:40.686808",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:47:40.702542",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:13.305515",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:13.323309",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:13.343295",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:13.358041",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:13.373275",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:45.784243",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:45.800706",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:45.816190",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:45.834679",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:48:45.851364",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:18.440431",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:18.456026",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:18.470403",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:18.485370",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:18.500613",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:51.133198",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:51.149780",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:51.165228",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:51.180100",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:49:51.194689",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:23.489480",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:23.503433",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:23.517571",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:23.532608",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:23.550123",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:55.989625",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:56.003949",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:56.018392",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:56.032441",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:50:56.047652",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:51:28.542381",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:51:28.557188",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:51:28.573858",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:51:28.592947",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:51:28.607956",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:01.319804",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:01.335603",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:01.349710",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:01.364872",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:01.378802",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:33.761602",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:33.783596",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:33.797248",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:33.810720",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:52:33.833751",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:06.241230",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:06.255435",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:06.268587",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.0R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:06.282283",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:06.295562",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:38.814158",
+    "ticket": 1183998036,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.4R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:38.832450",
+    "ticket": 1184312503,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.3R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:38.847790",
+    "ticket": 1184322923,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at 0.2R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:38.863409",
+    "ticket": 1184522693,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:53:38.878046",
+    "ticket": 1184633632,
+    "action": "HOLD",
+    "reasoning": "Rule-based fallback: no action criteria met at -0.1R",
+    "result": ""
+  },
+  {
+    "time": "2026-04-17 20:57:09.550176",
+    "ticket": 1183998036,
+    "action": "TIGHTEN_SL",
+    "reasoning": "Largest profit position in strong bull trend \u2014 tighten SL to above entry to lock in gains while allowing continuation, given bearish momentum is a risk. | new_sl=4855.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 20:57:10.909229",
+    "ticket": 1184312503,
+    "action": "TIGHTEN_SL",
+    "reasoning": "Solid profit with SL still far from entry \u2014 move SL closer to protect gains while keeping position alive for potential bull continuation. | new_sl=4853.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 20:57:12.236396",
+    "ticket": 1184322923,
+    "action": "TIGHTEN_SL",
+    "reasoning": "Small profit with bearish momentum developing \u2014 tighten SL near entry to minimize risk of giving back gains if price pulls back further. | new_sl=4856.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 21:27:45.201189",
+    "ticket": 1184312503,
+    "action": "TIGHTEN_SL",
+    "reasoning": "Position is +0.68R in profit during OVERLAP session with bearish momentum diverging against the strong bull trend \u2014 tightening SL just below entry to lock in near breakeven-plus while allowing room to run toward TP. | new_sl=4863.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 21:51:04.003071",
+    "ticket": 1185501185,
+    "action": "TIGHTEN_SL",
+    "reasoning": "This position is in profit and is the oldest \u2014 tightening SL to above breakeven protects gains while allowing upside continuation given the strong bull trend, countering the bearish momentum signal on RSI which suggests mild pullback risk. | new_sl=4855.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 21:56:34.868263",
+    "ticket": 1185501185,
+    "action": "TIGHTEN_SL",
+    "reasoning": "This position has a tight original SL at 4855 but is now only 14.75pts away with bearish short-term momentum \u2014 tightening SL to 4862 reduces risk while keeping the trade alive for the bull continuation, cutting max loss significantly. | new_sl=4862.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 22:02:19.101837",
+    "ticket": 1185501185,
+    "action": "TIGHTEN_SL",
+    "reasoning": "This position has a tight SL already at 8.81pts distance and is nearly breakeven (-$7.56), so tightening the SL closer to entry reduces risk while the bull trend remains intact \u2014 protects against a deeper flush without premature closure. | new_sl=4865.5",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 22:05:49.682469",
+    "ticket": 1185528656,
+    "action": "TIGHTEN_SL",
+    "reasoning": "This is the only profitable position and the oldest; tightening SL from 4839.05 to 4855.00 locks in partial downside protection while keeping room for the bull trend to resume, without cutting the trade prematurely. | new_sl=4855.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 22:07:54.071690",
+    "ticket": 1185501185,
+    "action": "TIGHTEN_SL",
+    "reasoning": "This position is profitable at +0.15R but the SL at 4865.50 is only 6.42pts away and barely protects anything \u2014 moving SL to 4869.50 locks in near breakeven and protects against the current bearish momentum spike while keeping the trade open for the bullish run. | new_sl=4869.5",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 22:07:55.471442",
+    "ticket": 1185506200,
+    "action": "TIGHTEN_SL",
+    "reasoning": "Position is effectively at breakeven with a very wide SL at 4839.72; tightening to 4865.00 reduces risk exposure while still giving the trade room to breathe through the current bearish momentum pullback. | new_sl=4865.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 22:11:16.011607",
+    "ticket": 1185528656,
+    "action": "TIGHTEN_SL",
+    "reasoning": "This position has the tightest SL at only 15.81pts away and smallest loss (-0.03R), but the original SL at 4855.00 is too close to the 8 EMA at 4847 \u2014 tightening to 4862.00 keeps it above recent structure while giving the trade room to recover during the NY session pullback. | new_sl=4862.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 22:13:16.037656",
+    "ticket": 1185506200,
+    "action": "CLOSE_FULL",
+    "reasoning": "Only 4.22pts from SL with bearish momentum on M5, RSI at 85.7 showing overbought conditions and price continuing to drift lower \u2014 closing now to avoid near-certain stop-out and preserve capital.",
+    "result": "OK Closed at 4868.88"
+  },
+  {
+    "time": "2026-04-17 22:16:39.592233",
+    "ticket": 1185528656,
+    "action": "CLOSE_FULL",
+    "reasoning": "Only 5.85pts from SL with bearish momentum on M5 (-3.62pts over 3 bars) and RSI at overbought 85.5 showing potential exhaustion \u2014 the risk/reward no longer justifies holding as a stop-out is imminent and recovery is unlikely before the SL is hit.",
+    "result": "OK Closed at 4868.19"
+  },
+  {
+    "time": "2026-04-17 22:30:22.525520",
+    "ticket": 1184522693,
+    "action": "CLOSE_FULL",
+    "reasoning": "London close 17:00 UTC \u2014 closing flat -0.1R position before dead zone",
+    "result": "OK Closed at 4869.14"
+  },
+  {
+    "time": "2026-04-17 22:30:23.825018",
+    "ticket": 1184633632,
+    "action": "CLOSE_FULL",
+    "reasoning": "London close 17:00 UTC \u2014 closing flat -0.1R position before dead zone",
+    "result": "OK Closed at 4869.24"
+  },
+  {
+    "time": "2026-04-17 23:05:33.528989",
+    "ticket": 1185881173,
+    "action": "CLOSE_FULL",
+    "reasoning": "This SELL position is fighting a STRONG BULL trend with all EMAs stacked bullish, RSI at 82.9 indicating sustained buying pressure, and price moving against the position \u2014 recovery is unlikely and the risk of the trade running to the 4892.66 SL far outweighs the small current loss of $27.",
+    "result": "OK Closed at 4861.2"
+  },
+  {
+    "time": "2026-04-17 23:06:43.083863",
+    "ticket": 1185884614,
+    "action": "TIGHTEN_SL",
+    "reasoning": "SELL is marginally in profit with bearish momentum confirming direction, but the strong bull trend and RSI at 81.7 (overbought but in a ripping bull) pose reversal risk \u2014 tightening SL to 4870 locks in breakeven+ protection while allowing the position to run toward TP if bearish momentum accelerates. | new_sl=4870.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 23:07:22.690517",
+    "ticket": 1185888786,
+    "action": "CLOSE_FULL",
+    "reasoning": "SELL position is directly against a STRONG BULL trend with price above all EMAs, RSI at 83.3 showing extreme overbought momentum that hasn't reversed, and while momentum reads bearish the structural trend overwhelmingly favors continued upside \u2014 the risk of this position running to the 4891.81 SL is significantly higher than any realistic recovery to TP at 4762.85.",
+    "result": "OK Closed at 4861.9"
+  },
+  {
+    "time": "2026-04-17 23:12:01.748614",
+    "ticket": 1185884614,
+    "action": "TIGHTEN_SL",
+    "reasoning": "Position is in profit with bearish momentum on M5 supporting the SELL, but the strong bull trend and RSI at 79.9 (overbought, potential reversal) warrant tightening SL to just above entry to lock in breakeven-plus while letting the trade run toward TP if bearish momentum continues. | new_sl=4862.0",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 23:17:03.336072",
+    "ticket": 1185884614,
+    "action": "TIGHTEN_SL",
+    "reasoning": "4R+ trail: 4.3R reached \u2014 SL ratcheted to 2.8R floor @ 4858.96 | new_sl=4858.96",
+    "result": "OK"
+  },
+  {
+    "time": "2026-04-17 23:42:13.151679",
+    "ticket": 1186008425,
+    "action": "CLOSE_FULL",
+    "reasoning": "SELL position is fighting a STRONG BULL trend with price above all EMAs, RSI at 81.2 showing overbought but trend momentum remains bullish, SL is only 32pts away versus 97pts to TP creating unfavorable risk, and with no meaningful profit (-$11.76) there is no reason to hold against the dominant trend \u2014 cut the loss now before it accelerates.",
+    "result": "OK Closed at 4861.42"
   }
 ]

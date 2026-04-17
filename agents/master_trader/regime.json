@@ -1,12 +1,12 @@
 {
   "regime": "TRENDING_BULL",
   "confidence": 60,
-  "vol_ratio": 1.25,
-  "atr_now": 21.67,
-  "atr_avg": 17.33,
-  "direction_pct": 1.82,
+  "vol_ratio": 1.29,
+  "atr_now": 22.0,
+  "atr_avg": 17.07,
+  "direction_pct": 0.9,
   "ema_stack": "BULL",
-  "updated": "2026-04-17 20:15:36.845530",
+  "updated": "2026-04-18 03:18:44.153142",
   "allowed_setups": [
     "TREND_CONTINUATION",
     "PULLBACK_TO_EMA"

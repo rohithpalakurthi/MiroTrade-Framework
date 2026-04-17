@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-04-18 03:13:43.952881",
+  "timeframe": "H4",
+  "current_price": 4832.47,
+  "patterns": [
+    {
+      "type": "head_and_shoulders",
+      "bias": "BEARISH",
+      "confidence": 8,
+      "neckline": 4653.02,
+      "target": 4448.42,
+      "head_price": 4857.62,
+      "note": "H&S: L.shoulder=4706.54 Head=4857.62 R.shoulder=4801.14 Neckline=4653.02"
+    }
+  ],
+  "active_count": 1,
+  "summary_bias": "BEARISH"
+}

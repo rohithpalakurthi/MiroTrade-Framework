@@ -36,6 +36,10 @@ FILES = {
     "bridge_status"  : "tradingview/bridge_status.json",
     "agents_status"  : "paper_trading/logs/agents_status.json",
     "paper_state"    : "paper_trading/logs/state.json",
+    "patterns"       : "agents/master_trader/patterns.json",
+    "cot"            : "agents/master_trader/cot_data.json",
+    "sentiment"      : "agents/master_trader/sentiment.json",
+    "multi_symbol"   : "agents/master_trader/multi_symbol.json",
 }
 
 PAUSE_FILE     = "agents/master_trader/miro_pause.json"
@@ -53,6 +57,7 @@ _TRADING_DEFAULTS = {
     "news_block_enabled"       : True,
     "orchestrator_gate_enabled": True,
     "session_filter_enabled"   : True,
+    "tp1_cooldown_enabled"     : True,
 }
 app = Flask(__name__)
 CORS(app)
@@ -352,21 +357,32 @@ def api_trading_config_post():
         "min_confidence"    : (1,     10),
         "max_open_positions": (1,     10),
         "max_same_direction": (1,     5),
+        "max_daily_trades"  : (1,     20),
+        "min_sl_pts"        : (2.0,   30.0),
     }
     for key, (lo, hi) in numeric.items():
         if key in body:
             val = float(body[key])
             if not (lo <= val <= hi):
                 return jsonify({"error": "{} must be between {} and {}".format(key, lo, hi)}), 400
-            cfg[key] = round(val, 4) if key in ("risk_pct","max_lots","min_rr") else int(val)
+            cfg[key] = round(val, 4) if key in ("risk_pct","max_lots","min_rr","min_sl_pts") else int(val)
     # Boolean toggles
-    for key in ("news_block_enabled", "orchestrator_gate_enabled", "session_filter_enabled"):
+    for key in ("news_block_enabled", "orchestrator_gate_enabled", "session_filter_enabled", "tp1_cooldown_enabled"):
         if key in body:
             cfg[key] = bool(body[key])
     os.makedirs("agents/master_trader", exist_ok=True)
     with open(TRADING_CONFIG_FILE, "w") as f:
         json.dump(cfg, f, indent=2)
     return jsonify({"status": "saved", "config": cfg})
+
+@app.route("/api/intel")
+def api_intel():
+    return jsonify({
+        "patterns"   : _load("patterns"),
+        "cot"        : _load("cot"),
+        "sentiment"  : _load("sentiment"),
+        "multi_symbol": _load("multi_symbol"),
+    })
 
 @app.route("/api/health")
 def api_health():
@@ -745,6 +761,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
   <div class="tc-row"><span class="tc-l">Max Positions</span><input class="tc-input" id="tc-maxpos" type="number" step="1" min="1" max="10" value="3"></div>
   <div class="tc-row"><span class="tc-l">Max Same Dir</span><input class="tc-input" id="tc-maxdir" type="number" step="1" min="1" max="5" value="2"></div>
   <div class="tc-row"><span class="tc-l">Max Lots</span><input class="tc-input" id="tc-lots" type="number" step="0.1" min="0.01" max="10" value="2.0"></div>
+  <div class="tc-row"><span class="tc-l">Daily Trade Limit</span><input class="tc-input" id="tc-dailytrades" type="number" step="1" min="1" max="20" value="5"></div>
+  <div class="tc-row"><span class="tc-l">Min SL pts</span><input class="tc-input" id="tc-minsl" type="number" step="0.5" min="2" max="30" value="10"></div>
   <div class="cbtn" style="margin-top:8px" onclick="saveTradingConfig()">SAVE CONFIG</div>
   <div id="tc-msg" style="font-size:9px;margin-top:5px;min-height:12px"></div>
 
@@ -768,6 +786,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div style="display:flex;gap:3px">
       <div class="tg-btn" id="tg-sess-on"  onclick="setToggle('session_filter_enabled',true)">ON</div>
       <div class="tg-btn" id="tg-sess-off" onclick="setToggle('session_filter_enabled',false)">OFF</div>
+    </div>
+  </div>
+  <div class="tc-row" style="margin-bottom:5px">
+    <span class="tc-l" style="font-size:9px">TP1 COOLDOWN</span>
+    <div style="display:flex;gap:3px">
+      <div class="tg-btn" id="tg-tp1-on"  onclick="setToggle('tp1_cooldown_enabled',true)">ON</div>
+      <div class="tg-btn" id="tg-tp1-off" onclick="setToggle('tp1_cooldown_enabled',false)">OFF</div>
     </div>
   </div>
 
@@ -928,6 +953,41 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
   <div class="rp">
     <div class="chart-title">trade journal</div>
     <div id="journal-wrap"><div class="empty">No journal entries yet</div></div>
+  </div>
+
+  <!-- Market Intelligence Panel -->
+  <div class="rp">
+    <div class="chart-title">market intelligence</div>
+    <!-- Sentiment Bar -->
+    <div style="margin-bottom:6px">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:3px">COMPOSITE SENTIMENT</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div id="sent-bar" style="height:100%;width:50%;background:var(--accent);border-radius:4px;transition:width 0.5s"></div>
+        </div>
+        <span id="sent-val" style="font-size:10px;font-weight:700;min-width:30px">5.0</span>
+        <span id="sent-bias" style="font-size:9px;color:var(--muted)">NEUTRAL</span>
+      </div>
+    </div>
+    <!-- COT -->
+    <div style="margin-bottom:5px;font-size:9px">
+      <span style="color:var(--muted)">COT:</span>
+      <span id="cot-bias" style="margin-left:4px;font-weight:700">—</span>
+      <span id="cot-net" style="margin-left:6px;color:var(--muted)"></span>
+    </div>
+    <!-- Multi-Symbol -->
+    <div style="margin-bottom:5px;font-size:9px">
+      <span style="color:var(--muted)">RISK:</span>
+      <span id="ms-risk" style="margin-left:4px;font-weight:700">—</span>
+      <span style="color:var(--muted);margin-left:8px">USD:</span>
+      <span id="ms-usd" style="margin-left:4px;font-weight:700">—</span>
+      <span style="color:var(--muted);margin-left:8px">GOLD→</span>
+      <span id="ms-gold" style="margin-left:4px;font-weight:700">—</span>
+    </div>
+    <div id="ms-symbols" style="font-size:9px;color:var(--muted);margin-bottom:5px"></div>
+    <!-- Patterns -->
+    <div style="font-size:9px;color:var(--muted);margin-bottom:3px">PATTERNS (H4)</div>
+    <div id="patterns-list" style="font-size:9px"></div>
   </div>
 
   <!-- MIRO Agent Health -->
@@ -1340,6 +1400,63 @@ async function refreshAll(){
   }catch(e){
     document.getElementById('last-update').textContent='API offline';
   }
+  loadIntel();
+}
+
+async function loadIntel(){
+  try{
+    const r=await fetch('/api/intel');
+    const d=await r.json();
+
+    // Sentiment bar
+    const sent=d.sentiment||{};
+    const score=+(sent.composite_score||5).toFixed(1);
+    const bias=sent.bias||'NEUTRAL';
+    document.getElementById('sent-val').textContent=score;
+    document.getElementById('sent-bias').textContent=bias;
+    const bar=document.getElementById('sent-bar');
+    bar.style.width=(score/10*100)+'%';
+    const biasColor=bias.includes('BULL')?'var(--green)':bias.includes('BEAR')?'var(--red)':'var(--accent)';
+    bar.style.background=biasColor;
+
+    // COT
+    const cot=d.cot||{};
+    const cotBiasEl=document.getElementById('cot-bias');
+    cotBiasEl.textContent=cot.institutional_bias||'—';
+    cotBiasEl.style.color=(cot.institutional_bias||'').includes('BULL')?'var(--green)':
+                          (cot.institutional_bias||'').includes('BEAR')?'var(--red)':'var(--text)';
+    const net=cot.noncomm_net||0;
+    document.getElementById('cot-net').textContent=
+      'NC Net: '+(net>0?'+':'')+net.toLocaleString()+(cot.report_date?' ('+cot.report_date+')':'');
+
+    // Multi-symbol
+    const ms=d.multi_symbol||{};
+    const riskEl=document.getElementById('ms-risk');
+    riskEl.textContent=ms.risk_sentiment||'—';
+    riskEl.style.color=ms.risk_sentiment==='RISK_OFF'?'var(--green)':
+                       ms.risk_sentiment==='RISK_ON'?'var(--red)':'var(--text)';
+    document.getElementById('ms-usd').textContent=ms.usd_strength||'—';
+    const goldEl=document.getElementById('ms-gold');
+    goldEl.textContent=ms.gold_implication||'—';
+    goldEl.style.color=ms.gold_implication==='BULLISH'?'var(--green)':
+                       ms.gold_implication==='BEARISH'?'var(--red)':'var(--text)';
+    const syms=ms.symbols||{};
+    document.getElementById('ms-symbols').textContent=
+      Object.entries(syms).map(([s,v])=>s+' '+v.bias+' ('+v.change_24h+'%)').join(' | ');
+
+    // Patterns
+    const pats=(d.patterns||{}).patterns||[];
+    const patEl=document.getElementById('patterns-list');
+    if(pats.length===0){
+      patEl.innerHTML='<span style="color:var(--muted)">No patterns detected</span>';
+    } else {
+      patEl.innerHTML=pats.map(p=>{
+        const col=p.bias==='BULLISH'?'var(--green)':'var(--red)';
+        return '<div style="margin-bottom:2px"><span style="color:'+col+';font-weight:700">'+p.type.replace(/_/g,' ').toUpperCase()+'</span>'
+          +' <span style="color:var(--muted)">conf:'+p.confidence+' tgt:'+p.target+'</span></div>';
+      }).join('');
+    }
+  }catch(e){}
 }
 async function pauseMiro(){await fetch('/api/pause',{method:'POST'});refreshAll();}
 async function resumeMiro(){await fetch('/api/resume',{method:'POST'});refreshAll();}
@@ -1367,6 +1484,8 @@ async function loadTradingConfig(){
     document.getElementById('tc-maxpos').value=_tcState.max_open_positions;
     document.getElementById('tc-maxdir').value=_tcState.max_same_direction;
     document.getElementById('tc-lots').value=+(_tcState.max_lots).toFixed(2);
+    document.getElementById('tc-dailytrades').value=_tcState.max_daily_trades||5;
+    document.getElementById('tc-minsl').value=+(_tcState.min_sl_pts||10).toFixed(1);
     _renderToggles(_tcState);
   }catch(e){}
 }
@@ -1374,6 +1493,7 @@ function _renderToggles(cfg){
   _setToggleUI('tg-news', cfg.news_block_enabled);
   _setToggleUI('tg-orch', cfg.orchestrator_gate_enabled);
   _setToggleUI('tg-sess', cfg.session_filter_enabled);
+  _setToggleUI('tg-tp1',  cfg.tp1_cooldown_enabled!==false);
 }
 function _setToggleUI(prefix,val){
   const on=document.getElementById(prefix+'-on');
@@ -1397,12 +1517,15 @@ async function saveTradingConfig(){
   const maxpos=parseInt(document.getElementById('tc-maxpos').value);
   const maxdir=parseInt(document.getElementById('tc-maxdir').value);
   const lots=parseFloat(document.getElementById('tc-lots').value);
+  const dailytrades=parseInt(document.getElementById('tc-dailytrades').value);
+  const minsl=parseFloat(document.getElementById('tc-minsl').value);
   const msg=document.getElementById('tc-msg');
-  if([risk,rr,conf,maxpos,maxdir,lots].some(v=>isNaN(v)||v<=0)){msg.style.color='var(--red)';msg.textContent='Invalid values';return;}
+  if([risk,rr,conf,maxpos,maxdir,lots,dailytrades,minsl].some(v=>isNaN(v)||v<=0)){msg.style.color='var(--red)';msg.textContent='Invalid values';return;}
   try{
     const r=await fetch('/api/trading-config',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({risk_pct:risk/100,min_rr:rr,min_confidence:conf,
-        max_open_positions:maxpos,max_same_direction:maxdir,max_lots:lots})});
+        max_open_positions:maxpos,max_same_direction:maxdir,max_lots:lots,
+        max_daily_trades:dailytrades,min_sl_pts:minsl})});
     const res=await r.json();
     if(res.status==='saved'){msg.style.color='var(--green)';msg.textContent='Saved ✓';}
     else{msg.style.color='var(--red)';msg.textContent=res.error||'Error';}

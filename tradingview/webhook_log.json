@@ -1,379 +1,5 @@
 [
   {
-    "time": "2026-04-14 21:04:10.611660",
-    "data": {
-      "action": "BUY",
-      "symbol": "XAUUSD",
-      "price": 4808.82,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "NEWS: Multiple high-impact events detected (10) | ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-14 21:05:23.105700",
-    "data": {
-      "action": "BUY",
-      "symbol": "XAUUSD",
-      "price": 4809.56,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "NEWS: Multiple high-impact events detected (10) | ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-14 21:10:20.580606",
-    "data": {
-      "action": "BUY",
-      "symbol": "XAUUSD",
-      "price": 4812.245,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "NEWS: Multiple high-impact events detected (10) | ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-14 21:13:18.086285",
-    "data": {
-      "action": "BUY",
-      "symbol": "XAUUSD",
-      "price": 4809.75,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "NEWS: Multiple high-impact events detected (10) | ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-14 21:14:23.089393",
-    "data": {
-      "action": "BUY",
-      "symbol": "XAUUSD",
-      "price": 4809.18,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "NEWS: Multiple high-impact events detected (10) | ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-14 21:20:18.091008",
-    "data": {
-      "action": "BUY",
-      "symbol": "XAUUSD",
-      "price": 4809.29,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "NEWS: Multiple high-impact events detected (10) | ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-14 21:41:13.063444",
-    "data": {
-      "action": "BUY",
-      "symbol": "XAUUSD",
-      "price": 4810.45,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 09:35:42.833249",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4821.065,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 09:38:22.809860",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4820.8,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 09:57:52.784324",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4824.225,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 11:20:07.734650",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4816.685,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 11:21:07.757039",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4818.28,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 11:24:17.773876",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4820.595,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 11:25:07.720341",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4820.79,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 11:47:12.714199",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4818.11,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 11:54:22.723149",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4814.735,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 11:55:12.689958",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4814.485,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 11:58:02.714817",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4814.8,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 12:04:32.743694",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4812.27,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 12:09:17.694200",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4815.08,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 12:10:07.705074",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4815.495,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 12:41:07.664713",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4809.78,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 12:47:07.658501",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4810.595,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 12:54:52.661142",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4810.45,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 13:02:37.649319",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4812.03,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 13:15:22.654705",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4807.865,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 13:17:07.662814",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4807.69,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 13:18:47.740866",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4807.79,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 13:19:47.685866",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4807.05,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 13:20:12.637790",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4806.975,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 13:30:27.680174",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4808.685,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 13:39:42.647608",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4808.115,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "BLOCKED",
-    "reason": "ORCH: NO-GO"
-  },
-  {
-    "time": "2026-04-15 14:46:03.391963",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4802.365,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "EXECUTED",
-    "reason": "Signal written"
-  },
-  {
-    "time": "2026-04-15 14:47:52.582069",
-    "data": {
-      "action": "SELL",
-      "symbol": "XAUUSD",
-      "price": 4802.525,
-      "indicator": "XAU Scalper v15"
-    },
-    "status": "EXECUTED",
-    "reason": "Signal written"
-  },
-  {
     "time": "2026-04-15 14:48:12.622701",
     "data": {
       "action": "SELL",
@@ -2406,5 +2032,431 @@
     },
     "status": "EXECUTED",
     "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-17 20:54:00.647530",
+    "data": {
+      "action": "BUY",
+      "signal_type": "BUY_REENTRY",
+      "price": 4872.46,
+      "sl": 4865.94,
+      "tp1": 4875.72,
+      "tp2": 4882.24,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
+  },
+  {
+    "time": "2026-04-17 21:50:08.020926",
+    "data": {
+      "action": "BUY",
+      "symbol": "XAUUSD",
+      "price": 4871.2,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-17 21:51:01.305561",
+    "data": {
+      "action": "BUY",
+      "signal_type": "BUY_TREND",
+      "price": 4872.7,
+      "sl": 4869.07,
+      "tp1": 4874.51,
+      "tp2": 4883.58,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
+  },
+  {
+    "time": "2026-04-17 21:57:00.461034",
+    "data": {
+      "action": "BUY",
+      "symbol": "XAUUSD",
+      "price": 4871.27,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-17 22:10:20.477489",
+    "data": {
+      "action": "BUY",
+      "symbol": "XAUUSD",
+      "price": 4872.515,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-17 22:11:01.791257",
+    "data": {
+      "action": "BUY",
+      "signal_type": "BUY_TREND",
+      "price": 4872.22,
+      "sl": 4869.24,
+      "tp1": 4873.71,
+      "tp2": 4881.16,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
+  },
+  {
+    "time": "2026-04-17 23:05:07.402225",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4860.74,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-17 23:06:12.400719",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4860.525,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-17 23:07:01.400900",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_TREND",
+      "price": 4859.84,
+      "sl": 4863.77,
+      "tp1": 4857.88,
+      "tp2": 4848.05,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
+  },
+  {
+    "time": "2026-04-17 23:42:01.432633",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_REENTRY",
+      "price": 4861.41,
+      "sl": 4864.08,
+      "tp1": 4860.07,
+      "tp2": 4857.4,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
+  },
+  {
+    "time": "2026-04-18 00:02:02.940887",
+    "data": {
+      "action": "BUY",
+      "symbol": "XAUUSD",
+      "price": 4864.33,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 00:03:01.061377",
+    "data": {
+      "action": "BUY",
+      "signal_type": "BUY_TREND",
+      "price": 4864.5,
+      "sl": 4861.43,
+      "tp1": 4866.04,
+      "tp2": 4873.72,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
+  },
+  {
+    "time": "2026-04-18 00:20:27.367902",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4859.8,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "SKIPPED",
+    "reason": "Opposite direction \u2014 BUY open, signal is SELL \u2014 skipping"
+  },
+  {
+    "time": "2026-04-18 00:21:01.662875",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_TREND",
+      "price": 4858.15,
+      "sl": 4860.98,
+      "tp1": 4856.73,
+      "tp2": 4849.66,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "SKIPPED",
+    "reason": "Opposite direction \u2014 BUY open, signal is SELL \u2014 skipping"
+  },
+  {
+    "time": "2026-04-18 00:29:57.491315",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4858.065,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "SKIPPED",
+    "reason": "Opposite direction \u2014 BUY open, signal is SELL \u2014 skipping"
+  },
+  {
+    "time": "2026-04-18 00:30:03.544714",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_TREND",
+      "price": 4858.11,
+      "sl": 4860.74,
+      "tp1": 4856.79,
+      "tp2": 4850.22,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "SKIPPED",
+    "reason": "Opposite direction \u2014 BUY open, signal is SELL \u2014 skipping"
+  },
+  {
+    "time": "2026-04-18 00:35:07.329326",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4857.3,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "SKIPPED",
+    "reason": "Opposite direction \u2014 BUY open, signal is SELL \u2014 skipping"
+  },
+  {
+    "time": "2026-04-18 00:36:01.701492",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_TREND",
+      "price": 4856.26,
+      "sl": 4858.98,
+      "tp1": 4854.89,
+      "tp2": 4848.09,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "SKIPPED",
+    "reason": "Opposite direction \u2014 BUY open, signal is SELL \u2014 skipping"
+  },
+  {
+    "time": "2026-04-18 00:47:32.358327",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4856.615,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "SKIPPED",
+    "reason": "Opposite direction \u2014 BUY open, signal is SELL \u2014 skipping"
+  },
+  {
+    "time": "2026-04-18 00:48:00.696605",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_TREND",
+      "price": 4856.45,
+      "sl": 4858.93,
+      "tp1": 4855.2,
+      "tp2": 4848.99,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "SKIPPED",
+    "reason": "Opposite direction \u2014 BUY open, signal is SELL \u2014 skipping"
+  },
+  {
+    "time": "2026-04-18 01:30:20.157037",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4852.91,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 01:32:02.348700",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4853.1,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 01:33:17.413962",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4852.795,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 01:46:22.313875",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4845.71,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 01:47:00.913656",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_TREND",
+      "price": 4845.82,
+      "sl": 4848.85,
+      "tp1": 4844.3,
+      "tp2": 4836.73,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
+  },
+  {
+    "time": "2026-04-18 01:52:52.347886",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4849.74,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 01:53:00.853852",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_TREND",
+      "price": 4849.79,
+      "sl": 4852.99,
+      "tp1": 4848.19,
+      "tp2": 4840.18,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
+  },
+  {
+    "time": "2026-04-18 02:04:47.419784",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4845.425,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 02:06:07.377770",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4845.21,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 02:18:17.464830",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4835.105,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 02:19:12.444913",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4835.045,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 02:24:07.451805",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4832.255,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 02:25:42.434770",
+    "data": {
+      "action": "SELL",
+      "symbol": "XAUUSD",
+      "price": 4832.835,
+      "indicator": "XAU Scalper v15"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: ATR_V15F]"
+  },
+  {
+    "time": "2026-04-18 02:26:01.171240",
+    "data": {
+      "action": "SELL",
+      "signal_type": "SELL_TREND",
+      "price": 4832.1,
+      "sl": 4835.62,
+      "tp1": 4830.34,
+      "tp2": 4821.54,
+      "indicator": "v15F",
+      "secret": "mirotrade2026"
+    },
+    "status": "EXECUTED",
+    "reason": "Signal written [SL src: TV_EXACT]"
   }
 ]
