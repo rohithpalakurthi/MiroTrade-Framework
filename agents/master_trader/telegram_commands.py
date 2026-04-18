@@ -427,6 +427,32 @@ def cmd_report():
     send(msg)
 
 
+def cmd_perfchart():
+    send("<b>MIRO Performance Chart</b>\nGenerating chart (fetching MT5 data)...")
+    try:
+        from agents.master_trader.performance_report import generate_report_image, _run_backtest, _load_state
+        state = _load_state()
+        bt_trades, bt_metrics = _run_backtest()
+        if not bt_trades:
+            send("Could not fetch MT5 data for chart.")
+            return
+        buf = generate_report_image(state, bt_trades, bt_metrics)
+        caption = (
+            "<b>MIRO Performance Report</b>\n"
+            "<i>{}</i>\n"
+            "Trades: {} | WR: {}% | PF: {} | Return: {}%"
+        ).format(
+            datetime.now().strftime("%Y-%m-%d"),
+            bt_metrics["total_trades"],
+            bt_metrics["win_rate"],
+            bt_metrics["profit_factor"],
+            bt_metrics["total_return"],
+        )
+        send_photo(buf, caption=caption)
+    except Exception as e:
+        send("Chart error: {}".format(e))
+
+
 def cmd_risk():
     state = {}
     try:
@@ -453,31 +479,33 @@ def cmd_risk():
 def cmd_help():
     send(
         "<b>MIRO COMMANDS</b>\n\n"
-        "/status   — positions + market read\n"
-        "/analyse  — run full analysis now\n"
-        "/chart    — XAUUSD H1 price chart\n"
-        "/intel    — patterns + COT + sentiment\n"
-        "/pause    — stop new entries\n"
-        "/resume   — re-enable entries\n"
-        "/closeall — close all positions\n"
-        "/report   — today's P&L\n"
-        "/risk     — risk settings\n"
-        "/help     — this list"
+        "/status    — positions + market read\n"
+        "/analyse   — run full analysis now\n"
+        "/chart     — XAUUSD H1 price chart\n"
+        "/intel     — patterns + COT + sentiment\n"
+        "/perfchart — full performance chart\n"
+        "/pause     — stop new entries\n"
+        "/resume    — re-enable entries\n"
+        "/closeall  — close all positions\n"
+        "/report    — today's P&L\n"
+        "/risk      — risk settings\n"
+        "/help      — this list"
     )
 
 
 COMMANDS = {
-    "/status"  : cmd_status,
-    "/analyse" : cmd_analyse,
-    "/analyze" : cmd_analyse,
-    "/chart"   : cmd_chart,
-    "/intel"   : cmd_intel,
-    "/pause"   : cmd_pause,
-    "/resume"  : cmd_resume,
-    "/closeall": cmd_closeall,
-    "/report"  : cmd_report,
-    "/risk"    : cmd_risk,
-    "/help"    : cmd_help,
+    "/status"    : cmd_status,
+    "/analyse"   : cmd_analyse,
+    "/analyze"   : cmd_analyse,
+    "/chart"     : cmd_chart,
+    "/intel"     : cmd_intel,
+    "/perfchart" : cmd_perfchart,
+    "/pause"     : cmd_pause,
+    "/resume"    : cmd_resume,
+    "/closeall"  : cmd_closeall,
+    "/report"    : cmd_report,
+    "/risk"      : cmd_risk,
+    "/help"      : cmd_help,
 }
 
 

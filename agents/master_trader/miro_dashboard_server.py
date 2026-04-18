@@ -39,7 +39,9 @@ FILES = {
     "patterns"       : "agents/master_trader/patterns.json",
     "cot"            : "agents/master_trader/cot_data.json",
     "sentiment"      : "agents/master_trader/sentiment.json",
-    "multi_symbol"   : "agents/master_trader/multi_symbol.json",
+    "multi_symbol"        : "agents/master_trader/multi_symbol.json",
+    "session_stats"       : "agents/master_trader/session_stats.json",
+    "multi_sym_state"     : "agents/master_trader/multi_symbol_state.json",
 }
 
 PAUSE_FILE     = "agents/master_trader/miro_pause.json"
@@ -384,9 +386,34 @@ def api_intel():
         "multi_symbol": _load("multi_symbol"),
     })
 
+
+@app.route("/api/multisym")
+def api_multisym():
+    """Multi-symbol paper trader state + session stats."""
+    return jsonify({
+        "state"        : _load("multi_sym_state"),
+        "session_stats": _load("session_stats"),
+    })
+
 @app.route("/api/health")
 def api_health():
     return jsonify({"status": "ok", "time": str(datetime.now())})
+
+
+@app.route("/api/perfchart")
+def api_perfchart():
+    """Return the performance chart as a base64-encoded PNG."""
+    try:
+        import base64
+        from agents.master_trader.performance_report import generate_report_image, _run_backtest, _load_state
+        state     = _load_state()
+        bt_trades, bt_metrics = _run_backtest()
+        buf       = generate_report_image(state, bt_trades, bt_metrics)
+        img_b64   = base64.b64encode(buf.read()).decode("utf-8")
+        return jsonify({"ok": True, "img": img_b64,
+                        "metrics": bt_metrics if bt_metrics else {}})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)})
 
 
 # ── Dashboard HTML ─────────────────────────────────────────────────────────────
@@ -990,6 +1017,41 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div id="patterns-list" style="font-size:9px"></div>
   </div>
 
+  <!-- Session Heatmap -->
+  <div class="rp" id="sess-heatmap-panel">
+    <div class="chart-title">session win rate (v15f backtest)</div>
+    <div id="sess-bars" style="display:flex;gap:4px;align-items:flex-end;height:60px;margin-top:6px"></div>
+    <div id="sess-labels" style="display:flex;gap:4px;margin-top:4px;font-size:8px;color:var(--muted)"></div>
+    <div style="margin-top:6px;font-size:9px;color:var(--muted)" id="sess-meta"></div>
+  </div>
+
+  <!-- Multi-Symbol Paper Trades -->
+  <div class="rp">
+    <div class="chart-title">multi-symbol paper trading</div>
+    <div id="ms-open-positions" style="font-size:9px;margin-bottom:6px"></div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px">
+      <span>Closed trades</span><span id="ms-closed-count">0</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px">
+      <span>Capital</span><span id="ms-capital">$30,000</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted)">
+      <span>Win rate</span><span id="ms-wr">—</span>
+    </div>
+    <div id="ms-recent" style="margin-top:6px;font-size:8px;color:var(--muted)"></div>
+  </div>
+
+  <!-- Performance Chart Button -->
+  <div class="rp">
+    <div class="cbtn" onclick="loadPerfChart()" style="width:100%;text-align:center;padding:8px 0;font-size:11px">
+      PERFORMANCE CHART (v15F BACKTEST)
+    </div>
+    <div id="perf-chart-wrap" style="display:none;margin-top:8px">
+      <img id="perf-chart-img" src="" style="width:100%;border-radius:4px;border:1px solid var(--border)" />
+      <div id="perf-chart-status" style="font-size:9px;color:var(--muted);margin-top:4px;text-align:center"></div>
+    </div>
+  </div>
+
   <!-- MIRO Agent Health -->
   <div class="rp">
     <div class="chart-title">miro specialist agents</div>
@@ -1401,6 +1463,7 @@ async function refreshAll(){
     document.getElementById('last-update').textContent='API offline';
   }
   loadIntel();
+  loadMultiSym();
 }
 
 async function loadIntel(){
@@ -1470,6 +1533,106 @@ async function closeAllPositions(){
   if(d.errors.length>0)lines.push('\nFailed: '+d.errors.map(e=>e.ticket).join(', '));
   alert('Closed '+d.closed.length+' position(s)\nTotal P&L: $'+d.total_pnl+'\n\n'+lines.join('\n'));
   refreshAll();
+}
+
+// ── Session Heatmap + Multi-Symbol ────────────────────────────
+async function loadMultiSym(){
+  try{
+    const r=await fetch('/api/multisym');
+    const d=await r.json();
+    _renderSessionHeatmap(d.session_stats);
+    _renderMultiSymState(d.state);
+  }catch(e){}
+}
+
+function _renderSessionHeatmap(ss){
+  if(!ss||!ss.sessions) return;
+  const bars=document.getElementById('sess-bars');
+  const lbls=document.getElementById('sess-labels');
+  const meta=document.getElementById('sess-meta');
+  if(!bars) return;
+  bars.innerHTML=''; lbls.innerHTML='';
+  const sessions=ss.sessions;
+  const maxT=Math.max(...Object.values(sessions).map(v=>v.t),1);
+  Object.entries(sessions).forEach(([name,v])=>{
+    const wr=v.t>0?Math.round(v.w/v.t*100):0;
+    const h=Math.max(4, Math.round((v.t/maxT)*54));
+    const col=wr>=65?'var(--green)':wr>=50?'var(--warn)':'var(--red)';
+    const bar=document.createElement('div');
+    bar.style.cssText='flex:1;height:'+h+'px;background:'+col+';border-radius:2px 2px 0 0;position:relative;cursor:default';
+    bar.title=name+': '+v.t+'t '+wr+'% WR';
+    // label inside bar
+    if(v.t>0){const lbl=document.createElement('div');lbl.style.cssText='position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:7px;color:var(--text);white-space:nowrap';lbl.textContent=wr+'%';bar.appendChild(lbl);}
+    bars.appendChild(bar);
+    const l=document.createElement('div');l.style.cssText='flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';l.textContent=name.split('/')[0];
+    lbls.appendChild(l);
+  });
+  if(ss.total_trades) meta.textContent=ss.total_trades+'t | WR:'+ss.win_rate+'% | PF:'+ss.profit_factor+' | '+ss.bars+' H1 bars';
+}
+
+function _renderMultiSymState(state){
+  if(!state) return;
+  const cap=document.getElementById('ms-capital');
+  const wr=document.getElementById('ms-wr');
+  const cnt=document.getElementById('ms-closed-count');
+  const pos=document.getElementById('ms-open-positions');
+  const rec=document.getElementById('ms-recent');
+  if(cap) cap.textContent='$'+(state.capital||30000).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
+  const closed=state.closed_trades||[];
+  if(cnt) cnt.textContent=closed.length;
+  if(wr&&closed.length>0){
+    const wins=closed.filter(t=>t.result==='win').length;
+    wr.textContent=Math.round(wins/closed.length*100)+'% ('+wins+'/'+closed.length+')';
+  }
+  // Open positions
+  const open=state.open_positions||{};
+  if(pos){
+    const syms=Object.entries(open);
+    if(syms.length===0){pos.innerHTML='<span style="color:var(--muted)">No open positions</span>';}
+    else{
+      pos.innerHTML=syms.map(([sym,p])=>{
+        const col=p.direction==='BUY'?'var(--green)':'var(--red)';
+        return '<div style="display:flex;justify-content:space-between;margin-bottom:2px">'+
+          '<span style="color:'+col+'">'+sym+' '+p.direction+'</span>'+
+          '<span style="color:var(--muted)">'+p.sig_type+'</span>'+
+          '<span>'+p.entry+'</span></div>';
+      }).join('');
+    }
+  }
+  // Recent trades
+  if(rec&&closed.length>0){
+    const last3=closed.slice(-3).reverse();
+    rec.innerHTML='Recent: '+last3.map(t=>{
+      const icon=t.result==='win'?'✅':t.result==='be'?'⚪':'❌';
+      return icon+' '+t.symbol+' '+(t.pnl>0?'+':'')+t.pnl.toFixed(2);
+    }).join(' | ');
+  }
+}
+
+// ── Performance Chart ─────────────────────────────────────────
+let _perfChartLoaded = false;
+async function loadPerfChart(){
+  const wrap=document.getElementById('perf-chart-wrap');
+  const img=document.getElementById('perf-chart-img');
+  const status=document.getElementById('perf-chart-status');
+  if(_perfChartLoaded){wrap.style.display=wrap.style.display==='none'?'block':'none';return;}
+  wrap.style.display='block';
+  status.textContent='Fetching MT5 data and generating chart...';
+  img.src='';
+  try{
+    const r=await fetch('/api/perfchart');
+    const d=await r.json();
+    if(d.ok){
+      img.src='data:image/png;base64,'+d.img;
+      const m=d.metrics||{};
+      status.textContent='Trades:'+m.total_trades+' WR:'+m.win_rate+'% PF:'+m.profit_factor+' Ret:'+m.total_return+'%';
+      _perfChartLoaded=true;
+    }else{
+      status.textContent='Error: '+d.error;
+    }
+  }catch(e){
+    status.textContent='Chart load failed: '+e.message;
+  }
 }
 
 // ── Trading Config ────────────────────────────────────────────

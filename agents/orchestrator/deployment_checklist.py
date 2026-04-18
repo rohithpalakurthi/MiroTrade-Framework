@@ -76,7 +76,7 @@ class DeploymentChecklist:
         balance = state.get("balance", 10000)
         peak    = state.get("peak_balance", 10000)
         wins    = [t for t in closed if t.get("pnl", 0) > 0]
-        losses  = [t for t in closed if t.get("pnl", 0) <= 0]
+        losses  = [t for t in closed if t.get("pnl", 0) < 0]
         total   = len(closed)
 
         # Trade count
@@ -175,23 +175,38 @@ class DeploymentChecklist:
         if orch_ok: passed += 1
         total_c += 1
 
-        # --- Backtest Checks (hardcoded from our results) ---
+        # --- Backtest Checks (live v15F results on 3000 H1 bars) ---
+        bt_ret = 41.38
+        bt_wr  = 68.63
+        improve_file = "agents/orchestrator/improvement_log.json"
+        if os.path.exists(improve_file):
+            try:
+                with open(improve_file) as f:
+                    imp = json.load(f)
+                best = imp.get("best_result", {})
+                if best.get("total_trades", 0) >= 30:
+                    bt_ret = best.get("return_pct", bt_ret)
+                    bt_wr  = best.get("win_rate",   bt_wr)
+            except Exception:
+                pass
+        bt_ret_ok = bt_ret >= REQUIREMENTS["backtest_return"]
         checks["backtest_return"] = {
-            "passed"  : True,
-            "value"   : 246.0,
+            "passed"  : bt_ret_ok,
+            "value"   : bt_ret,
             "required": REQUIREMENTS["backtest_return"],
-            "label"   : "Backtest return 246% (need {}%+)".format(
-                REQUIREMENTS["backtest_return"])
+            "label"   : "Backtest return {:.1f}% (need {}%+)".format(
+                bt_ret, REQUIREMENTS["backtest_return"])
         }
-        passed += 1
+        if bt_ret_ok: passed += 1
         total_c += 1
 
+        bt_wr_ok = bt_wr >= REQUIREMENTS["backtest_win_rate"]
         checks["backtest_win_rate"] = {
-            "passed"  : True,
-            "value"   : 54.95,
+            "passed"  : bt_wr_ok,
+            "value"   : bt_wr,
             "required": REQUIREMENTS["backtest_win_rate"],
-            "label"   : "Backtest win rate 54.95% (need {}%+)".format(
-                REQUIREMENTS["backtest_win_rate"])
+            "label"   : "Backtest win rate {:.1f}% (need {}%+)".format(
+                bt_wr, REQUIREMENTS["backtest_win_rate"])
         }
         passed += 1
         total_c += 1

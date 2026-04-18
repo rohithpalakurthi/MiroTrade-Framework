@@ -130,36 +130,24 @@ def _score(r):
 def _run_one(df, params):
     try:
         import statistics
-        result = backtest_v15f(df.copy(), params=params)
-        if not result or not result.get("trades"):
-            return None
-        trades = result["trades"]
-        n      = len(trades)
+        trades, metrics = backtest_v15f(df.copy(), params=params)
+        n = len(trades)
         if n == 0:
             return None
-        wins   = [t for t in trades if t.get("result") == "win"]
-        losses = [t for t in trades if t.get("result") != "win"]
-        wr     = len(wins) / n * 100
-        pnls   = [t.get("pnl", 0) for t in trades]
-        gp     = sum(p for p in pnls if p > 0)
-        gl     = abs(sum(p for p in pnls if p <= 0))
-        pf     = gp / gl if gl > 0 else 9.99
-        bal    = result.get("final_balance", 10000)
-        peak   = result.get("peak_balance", bal)
-        dd     = (peak - bal) / peak * 100 if peak > 0 else 0
-        ret    = (bal - 10000) / 10000 * 100
-        sh     = (sum(pnls) / n) / statistics.stdev(pnls) if n > 1 and statistics.stdev(pnls) > 0 else 0
+        pnls = [t.get("pnl", 0) for t in trades]
+        sh   = (sum(pnls) / n) / statistics.stdev(pnls) if n > 1 and statistics.stdev(pnls) > 0 else 0
         return {
             "total_trades" : n,
-            "win_rate"     : round(wr, 2),
-            "profit_factor": round(pf, 2),
-            "net_pnl"      : round(bal - 10000, 2),
-            "return_pct"   : round(ret, 2),
-            "max_drawdown" : round(dd, 2),
+            "win_rate"     : metrics["win_rate"],
+            "profit_factor": metrics["profit_factor"],
+            "net_pnl"      : metrics["net_pnl"],
+            "return_pct"   : metrics["total_return"],
+            "max_drawdown" : metrics["max_drawdown"],
             "sharpe"       : round(sh, 4),
-            "final_balance": round(bal, 2),
+            "final_balance": metrics["final_balance"],
         }
     except Exception as e:
+        print("[Optimizer] _run_one error: {}".format(e))
         return None
 
 

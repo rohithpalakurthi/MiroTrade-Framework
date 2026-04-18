@@ -266,11 +266,14 @@ def run_performance_tracker():
         print("[PERF TRACKER] Fatal: {}".format(e))
 
 def run_performance_report():
-    time.sleep(10)
+    set_status("Reporter", "starting")
+    time.sleep(30)
     try:
-        from agents.orchestrator.performance_reporter import PerformanceReporter
-        PerformanceReporter().run()
+        from agents.master_trader.performance_report import run
+        set_status("Reporter", "running", "Weekly chart report every Sunday 08:00 IST")
+        run()
     except Exception as e:
+        set_status("Reporter", "error", str(e))
         print("[REPORTER] Error: {}".format(e))
 
 # ── MIRO Specialist Agents ──────────────────────────────────────
@@ -444,6 +447,18 @@ def run_multi_symbol():
         set_status("MultiSymbol", "error", str(e))
         print("[MULTI SYM] Fatal: {}".format(e))
 
+
+def run_multi_symbol_trader():
+    set_status("MultiSymTrader", "starting")
+    time.sleep(45)
+    try:
+        from agents.master_trader.multi_symbol_paper_trader import run
+        set_status("MultiSymTrader", "running", "EURUSD/GBPUSD/CL-OIL paper trading every 60s")
+        run()
+    except Exception as e:
+        set_status("MultiSymTrader", "error", str(e))
+        print("[MULTI SYM TRADER] Fatal: {}".format(e))
+
 def run_scheduler():
     set_status("Scheduler", "starting")
     try:
@@ -451,6 +466,7 @@ def run_scheduler():
         schedule.every().day.at("03:30").do(morning_briefing)
         schedule.every().day.at("16:30").do(daily_pnl_summary)   # 22:00 IST
         schedule.every().day.at("18:30").do(nightly_optimization)
+        schedule.every().sunday.at("02:30").do(weekly_performance_report)
         set_status("Scheduler", "running", "9am/10pm/midnight IST")
         while True:
             schedule.run_pending()
@@ -503,17 +519,16 @@ def daily_pnl_summary():
         if not token or not chat_id:
             return
 
-        dec_log = "agents/position_manager/decisions_log.json"
-        trades_today = []
         today = datetime.now().strftime("%Y-%m-%d")
+        dec_log = "agents/position_manager/decisions_{}.json".format(today)
+        trades_today = []
 
         if os.path.exists(dec_log):
             with open(dec_log) as f:
                 logs = json.load(f)
             trades_today = [
                 l for l in logs
-                if l.get("time", "").startswith(today)
-                and l.get("action") in ("CLOSE_FULL", "CLOSE_PARTIAL")
+                if l.get("action") in ("CLOSE_FULL", "CLOSE_PARTIAL")
                 and "OK" in l.get("result", "")
             ]
 
@@ -570,14 +585,75 @@ def daily_pnl_summary():
         print("[SCHEDULER] Daily summary error: {}".format(e))
 
 
+def weekly_performance_report():
+    print("\n[SCHEDULER] Sending weekly performance report...")
+    try:
+        from agents.master_trader.performance_report import send_weekly_report
+        send_weekly_report()
+    except Exception as e:
+        print("[SCHEDULER] Report error: {}".format(e))
+
+
 def nightly_optimization():
     print("\n[SCHEDULER] Running nightly v15F optimization (30 combos)...")
     try:
         from agents.orchestrator.strategy_optimizer import StrategyOptimizer
-        # Telegram report is sent inside run_optimization — no duplicate needed
         StrategyOptimizer().run_optimization(max_combinations=30)
     except Exception as e:
         print("[SCHEDULER] Optimization error: {}".format(e))
+    # Refresh session stats after optimization (new backtest data)
+    try:
+        import json, pandas as pd
+        import MetaTrader5 as mt5
+        from strategies.scalper_v15.scalper_v15 import backtest_v15f, PARAMS
+        mt5.initialize()
+        mt5.login(int(os.getenv("MT5_LOGIN", 0)), password=os.getenv("MT5_PASSWORD", ""), server=os.getenv("MT5_SERVER", ""))
+        rates = mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_H1, 0, 3000)
+        mt5.shutdown()
+        if rates is not None and len(rates) > 200:
+            df = pd.DataFrame(rates)
+            df["time"] = pd.to_datetime(df["time"], unit="s")
+            df.set_index("time", inplace=True)
+            df.rename(columns={"tick_volume": "volume"}, inplace=True)
+            from agents.orchestrator.strategy_optimizer import PARAMS_FILE
+            applied_p = dict(PARAMS)
+            if os.path.exists(PARAMS_FILE):
+                with open(PARAMS_FILE) as f:
+                    applied_p.update(json.load(f).get("params", {}))
+            trades, metrics = backtest_v15f(df, applied_p)
+            from collections import defaultdict
+            sessions = {"London Open":{"t":0,"w":0},"London Full":{"t":0,"w":0},"NY/LON Overlap":{"t":0,"w":0},"NY Full":{"t":0,"w":0},"Asian/Other":{"t":0,"w":0}}
+            monthly = defaultdict(lambda:{"t":0,"w":0})
+            signal_types = defaultdict(lambda:{"t":0,"w":0})
+            for t in trades:
+                et = pd.Timestamp(t["entry_time"]); h = et.hour
+                if 7<=h<9: sess="London Open"
+                elif 9<=h<16: sess="London Full"
+                elif 12<=h<17: sess="NY/LON Overlap"
+                elif 17<=h<21: sess="NY Full"
+                else: sess="Asian/Other"
+                sessions[sess]["t"]+=1
+                if t["result"]=="win": sessions[sess]["w"]+=1
+                mo=et.strftime("%b %y"); monthly[mo]["t"]+=1
+                if t["result"]=="win": monthly[mo]["w"]+=1
+                st=t.get("signal_type","?"); signal_types[st]["t"]+=1
+                if t["result"]=="win": signal_types[st]["w"]+=1
+            ts_all=[pd.Timestamp(t["entry_time"]) for t in trades]
+            wf=[]
+            if ts_all:
+                t0,t1=ts_all[0],ts_all[-1]
+                for w in range(4):
+                    ts=t0+(t1-t0)*w/4; te=t0+(t1-t0)*(w+1)/4
+                    sub=[t for t,ts2 in zip(trades,ts_all) if ts<=ts2<te]
+                    if sub:
+                        wins=sum(1 for t in sub if t["result"]=="win")
+                        wf.append({"label":"W{}".format(w+1),"trades":len(sub),"wr":round(wins/len(sub)*100,1)})
+            stats={"generated":datetime.now().isoformat(),"symbol":"XAUUSD","bars":len(df),"total_trades":metrics["total_trades"],"win_rate":metrics["win_rate"],"profit_factor":metrics["profit_factor"],"max_drawdown":metrics["max_drawdown"],"total_return":metrics["total_return"],"sessions":sessions,"monthly":dict(monthly),"signal_types":dict(signal_types),"walk_forward":wf}
+            with open("agents/master_trader/session_stats.json","w") as f:
+                json.dump(stats, f, indent=2)
+            print("[SCHEDULER] session_stats.json refreshed ({} trades)".format(metrics["total_trades"]))
+    except Exception as e:
+        print("[SCHEDULER] Session stats refresh error: {}".format(e))
 
 
 # ── Main ──────────────────────────────────────────────────────
@@ -638,6 +714,7 @@ if __name__ == "__main__":
         threading.Thread(target=run_cot_feed,             daemon=True, name="COTFeed"),
         threading.Thread(target=run_sentiment_score,      daemon=True, name="SentimentScore"),
         threading.Thread(target=run_multi_symbol,         daemon=True, name="MultiSymbol"),
+        threading.Thread(target=run_multi_symbol_trader,  daemon=True, name="MultiSymTrader"),
     ]
     if tg_ok:
         threads.append(threading.Thread(target=run_telegram_agent, daemon=True, name="Telegram"))
@@ -681,7 +758,8 @@ if __name__ == "__main__":
         ("PatternRec",      "10min", "H&S/Double Top/Flag"),
         ("COTFeed",         "weekly","CFTC institutional positioning"),
         ("SentimentScore",  "5min",  "Composite 0-10 sentiment"),
-        ("MultiSymbol",     "5min",  "EURUSD/US30/USOIL/USDJPY"),
+        ("MultiSymbol",     "5min",  "EURUSD/US30/USOIL/USDJPY monitor"),
+        ("MultiSymTrader",  "60s",   "EURUSD/GBPUSD/CL-OIL paper trading"),
         ("MiroDashboard",   "live",  "localhost:5055"),
     ]
     for name, interval, role in rows:

@@ -1,0 +1,106 @@
+{
+  "generated": "2026-04-18T20:04:55.606870",
+  "symbol": "XAUUSD",
+  "bars": 3000,
+  "total_trades": 51,
+  "win_rate": 68.63,
+  "profit_factor": 3.15,
+  "max_drawdown": 1.0,
+  "total_return": 41.38,
+  "sessions": {
+    "London Open": {
+      "t": 6,
+      "w": 4
+    },
+    "London Full": {
+      "t": 26,
+      "w": 18
+    },
+    "NY/LON Overlap": {
+      "t": 5,
+      "w": 4
+    },
+    "NY Full": {
+      "t": 14,
+      "w": 9
+    },
+    "Asian/Other": {
+      "t": 0,
+      "w": 0
+    }
+  },
+  "monthly": {
+    "Oct 25": {
+      "t": 2,
+      "w": 1
+    },
+    "Nov 25": {
+      "t": 10,
+      "w": 9
+    },
+    "Dec 25": {
+      "t": 5,
+      "w": 3
+    },
+    "Jan 26": {
+      "t": 11,
+      "w": 5
+    },
+    "Feb 26": {
+      "t": 12,
+      "w": 9
+    },
+    "Mar 26": {
+      "t": 5,
+      "w": 5
+    },
+    "Apr 26": {
+      "t": 6,
+      "w": 3
+    }
+  },
+  "signal_types": {
+    "SELL_TREND": {
+      "t": 13,
+      "w": 8
+    },
+    "SELL_REVERSAL": {
+      "t": 9,
+      "w": 7
+    },
+    "BUY_TREND": {
+      "t": 25,
+      "w": 16
+    },
+    "BUY_REVERSAL": {
+      "t": 2,
+      "w": 2
+    },
+    "BUY_REENTRY": {
+      "t": 2,
+      "w": 2
+    }
+  },
+  "walk_forward": [
+    {
+      "label": "W1",
+      "trades": 12,
+      "wr": 83.3
+    },
+    {
+      "label": "W2",
+      "trades": 12,
+      "wr": 50.0
+    },
+    {
+      "label": "W3",
+      "trades": 16,
+      "wr": 68.8
+    },
+    {
+      "label": "W4",
+      "trades": 10,
+      "wr": 80.0
+    }
+  ]
+}
