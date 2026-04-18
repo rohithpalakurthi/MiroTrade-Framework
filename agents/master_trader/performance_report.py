@@ -143,13 +143,13 @@ def generate_report_image(state=None, bt_trades=None, bt_metrics=None):
         for t in bt_trades:
             et = pd.Timestamp(t["entry_time"])
             h = et.hour
-            if 7 <= h < 9:
-                sess = "London\nOpen"
-            elif 9 <= h < 16:
-                sess = "London\nFull"
-            elif 12 <= h < 17:
+            if 13 <= h < 16:
                 sess = "NY/LON\nOverlap"
-            elif 17 <= h < 21:
+            elif 7 <= h < 9:
+                sess = "London\nOpen"
+            elif 9 <= h < 13:
+                sess = "London"
+            elif 16 <= h < 21:
                 sess = "NY\nFull"
             else:
                 sess = "Asian /\nOther"

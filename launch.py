@@ -622,15 +622,15 @@ def nightly_optimization():
                     applied_p.update(json.load(f).get("params", {}))
             trades, metrics = backtest_v15f(df, applied_p)
             from collections import defaultdict
-            sessions = {"London Open":{"t":0,"w":0},"London Full":{"t":0,"w":0},"NY/LON Overlap":{"t":0,"w":0},"NY Full":{"t":0,"w":0},"Asian/Other":{"t":0,"w":0}}
+            sessions = {"London Open":{"t":0,"w":0},"London":{"t":0,"w":0},"NY/LON Overlap":{"t":0,"w":0},"NY Full":{"t":0,"w":0},"Asian/Other":{"t":0,"w":0}}
             monthly = defaultdict(lambda:{"t":0,"w":0})
             signal_types = defaultdict(lambda:{"t":0,"w":0})
             for t in trades:
                 et = pd.Timestamp(t["entry_time"]); h = et.hour
-                if 7<=h<9: sess="London Open"
-                elif 9<=h<16: sess="London Full"
-                elif 12<=h<17: sess="NY/LON Overlap"
-                elif 17<=h<21: sess="NY Full"
+                if 13<=h<16: sess="NY/LON Overlap"
+                elif 7<=h<9: sess="London Open"
+                elif 9<=h<13: sess="London"
+                elif 16<=h<21: sess="NY Full"
                 else: sess="Asian/Other"
                 sessions[sess]["t"]+=1
                 if t["result"]=="win": sessions[sess]["w"]+=1

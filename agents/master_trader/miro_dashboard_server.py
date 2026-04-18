@@ -134,10 +134,14 @@ def _agent_health():
         "News Brain" : ("agents/master_trader/news_brain.json",              3600),   # 30min poll → stale after 1h
         "Perf Track" : ("agents/master_trader/performance.json",              600),
         "Circ Break" : ("agents/master_trader/circuit_breaker_state.json",    600),
-        "Scale Out"  : ("agents/master_trader/scale_out_state.json",        86400),   # only writes when positions open
-        "Breakeven"  : ("agents/master_trader/breakeven_state.json",        86400),   # same
-        "Price Feed" : ("dashboard/frontend/live_price.json",                  60),   # should update every 5s
+        "Scale Out"  : ("agents/master_trader/scale_out_state.json",        86400),
+        "Breakeven"  : ("agents/master_trader/breakeven_state.json",        86400),
+        "Price Feed" : ("dashboard/frontend/live_price.json",                  60),
         "Multi Brain": ("agents/master_trader/multi_brain.json",              600),
+        "Pattern Rec": ("agents/master_trader/patterns.json",                 700),
+        "COT Feed"   : ("agents/master_trader/cot_data.json",             604800),   # weekly
+        "Sentiment"  : ("agents/master_trader/sentiment.json",               600),
+        "MultiSymTrd": ("agents/master_trader/multi_symbol_state.json",      120),
     }
     result = []
     for name, (path, threshold) in checks.items():
@@ -1609,7 +1613,7 @@ function _renderSessionHeatmap(ss){
   bars.innerHTML=''; lbls.innerHTML='';
   const sessions=ss.sessions;
   const maxT=Math.max(...Object.values(sessions).map(v=>v.t),1);
-  Object.entries(sessions).forEach(([name,v])=>{
+  Object.entries(sessions).filter(([n,v])=>v.t>0).forEach(([name,v])=>{
     const wr=v.t>0?Math.round(v.w/v.t*100):0;
     const h=Math.max(4, Math.round((v.t/maxT)*54));
     const col=wr>=65?'var(--green)':wr>=50?'var(--warn)':'var(--red)';

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-18T20:22:28.252930",
+  "generated": "2026-04-18T20:39:45.301791",
   "symbol": "XAUUSD",
   "bars": 3000,
   "total_trades": 51,
@@ -12,21 +12,17 @@
       "t": 6,
       "w": 4
     },
-    "London Full": {
-      "t": 26,
-      "w": 18
+    "London": {
+      "t": 15,
+      "w": 12
     },
     "NY/LON Overlap": {
-      "t": 5,
-      "w": 4
+      "t": 11,
+      "w": 6
     },
     "NY Full": {
-      "t": 14,
-      "w": 9
-    },
-    "Asian/Other": {
-      "t": 0,
-      "w": 0
+      "t": 19,
+      "w": 13
     }
   },
   "monthly": {
