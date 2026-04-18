@@ -50,7 +50,7 @@ SYMBOLS = {
         "emoji"  : "🇬🇧",
     },
     "CL-OIL": {
-        "params" : {**PARAMS, "require_volume": True, "min_score": 5},
+        "params" : {**PARAMS, "require_volume": True, "min_score": 5, "sl_mult": 1.8},
         "label"  : "WTI Crude",
         "emoji"  : "🛢",
     },

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-18T20:04:55.606870",
+  "generated": "2026-04-18T20:22:28.252930",
   "symbol": "XAUUSD",
   "bars": 3000,
   "total_trades": 51,
@@ -102,5 +102,55 @@
       "trades": 10,
       "wr": 80.0
     }
-  ]
+  ],
+  "multi_symbol_backtest": {
+    "EURUSD": {
+      "bars": 2000,
+      "date_from": "2025-12-19",
+      "date_to": "2026-04-17",
+      "total_trades": 41,
+      "win_rate": 73.17,
+      "profit_factor": 2.17,
+      "max_drawdown": -0.0,
+      "total_return": 13.5,
+      "params_override": {
+        "require_volume": false,
+        "min_score": 4,
+        "sl_mult": 1.5
+      },
+      "validated": true
+    },
+    "GBPUSD": {
+      "bars": 2000,
+      "date_from": "2025-12-19",
+      "date_to": "2026-04-17",
+      "total_trades": 35,
+      "win_rate": 68.57,
+      "profit_factor": 2.14,
+      "max_drawdown": 1.81,
+      "total_return": 13.68,
+      "params_override": {
+        "require_volume": false,
+        "min_score": 4,
+        "sl_mult": 1.5
+      },
+      "validated": true
+    },
+    "CL-OIL": {
+      "bars": 2000,
+      "date_from": "2025-12-12",
+      "date_to": "2026-04-17",
+      "total_trades": 34,
+      "win_rate": 70.59,
+      "profit_factor": 2.82,
+      "max_drawdown": -0.0,
+      "total_return": 19.33,
+      "params_override": {
+        "require_volume": true,
+        "min_score": 5,
+        "sl_mult": 1.8
+      },
+      "validated": true
+    }
+  }
 }

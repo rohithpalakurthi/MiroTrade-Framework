@@ -390,9 +390,11 @@ def api_intel():
 @app.route("/api/multisym")
 def api_multisym():
     """Multi-symbol paper trader state + session stats."""
+    ss = _load("session_stats") or {}
     return jsonify({
-        "state"        : _load("multi_sym_state"),
-        "session_stats": _load("session_stats"),
+        "state"            : _load("multi_sym_state"),
+        "session_stats"    : ss,
+        "ms_backtest"      : ss.get("multi_symbol_backtest", {}),
     })
 
 @app.route("/api/health")
@@ -545,9 +547,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 
 /* ── Trades table ── */
 .trades-wrap{background:var(--bg2);padding:12px 14px;flex-shrink:0}
-.th{display:grid;grid-template-columns:50px 60px 60px 50px 58px 62px;gap:4px;font-size:9px;color:var(--muted);letter-spacing:1px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px;text-transform:uppercase}
-.tr{display:grid;grid-template-columns:50px 60px 60px 50px 58px 62px;gap:4px;font-size:10px;padding:4px 0;border-bottom:1px solid var(--border);align-items:center}
+.th{display:grid;grid-template-columns:44px 55px 70px 68px 52px 60px 60px 72px;gap:3px;font-size:8px;color:var(--muted);letter-spacing:1px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px;text-transform:uppercase}
+.tr{display:grid;grid-template-columns:44px 55px 70px 68px 52px 60px 60px 72px;gap:3px;font-size:9px;padding:3px 0;border-bottom:1px solid var(--border);align-items:center}
 .tr:last-child{border-bottom:none}
+.th-ms{display:grid;grid-template-columns:62px 44px 55px 70px 52px 60px 72px;gap:3px;font-size:8px;color:var(--muted);letter-spacing:1px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px;text-transform:uppercase}
+.tr-ms{display:grid;grid-template-columns:62px 44px 55px 70px 52px 60px 72px;gap:3px;font-size:9px;padding:3px 0;border-bottom:1px solid var(--border);align-items:center}
+.trade-scroll{max-height:240px;overflow-y:auto}
+.pnl-pos{color:var(--green)} .pnl-neg{color:var(--red)} .pnl-be{color:var(--muted)}
+.exit-reason{font-size:8px;color:var(--muted);font-family:var(--mono)}
 
 /* ── Intel panels (center/right) ── */
 .panel{background:var(--bg2);padding:12px 14px;flex-shrink:0}
@@ -858,11 +865,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div style="position:relative;width:100%;height:180px"><canvas id="equityChart"></canvas></div>
   </div>
 
-  <!-- Recent trades -->
+  <!-- Trade History (XAUUSD paper) -->
   <div class="trades-wrap">
-    <div class="chart-title">recent paper trades (last 10)</div>
-    <div class="th"><span>TYPE</span><span>ENTRY</span><span>EXIT</span><span>RESULT</span><span>P&L</span><span>BALANCE</span></div>
-    <div id="trade-rows"><div class="empty">No trades yet</div></div>
+    <div class="chart-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>xauusd paper trade history</span>
+      <span id="th-summary" style="font-size:9px;color:var(--muted)"></span>
+    </div>
+    <div class="th">
+      <span>DIR</span><span>TYPE</span><span>ENTRY</span><span>EXIT</span><span>REASON</span><span>P&amp;L</span><span>BALANCE</span><span>TIME</span>
+    </div>
+    <div class="trade-scroll">
+      <div id="trade-rows"><div class="empty">No trades yet</div></div>
+    </div>
+  </div>
+
+  <!-- Multi-Symbol Trade History -->
+  <div class="trades-wrap">
+    <div class="chart-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>multi-symbol paper trades</span>
+      <span id="ms-th-summary" style="font-size:9px;color:var(--muted)"></span>
+    </div>
+    <div class="th-ms">
+      <span>SYMBOL</span><span>DIR</span><span>TYPE</span><span>ENTRY</span><span>REASON</span><span>P&amp;L</span><span>TIME</span>
+    </div>
+    <div class="trade-scroll">
+      <div id="ms-trade-rows"><div class="empty">No multi-symbol trades yet — starts Monday</div></div>
+    </div>
   </div>
 
   <!-- Market Regime -->
@@ -1028,6 +1056,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
   <!-- Multi-Symbol Paper Trades -->
   <div class="rp">
     <div class="chart-title">multi-symbol paper trading</div>
+    <!-- Backtest validation badges -->
+    <div id="ms-validation" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px"></div>
     <div id="ms-open-positions" style="font-size:9px;margin-bottom:6px"></div>
     <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px">
       <span>Closed trades</span><span id="ms-closed-count">0</span>
@@ -1239,22 +1269,34 @@ function render(d){
       document.getElementById('chart-title').textContent='equity curve — paper trading ('+closed.length+' trades)';
     }
 
-    // trade table
+    // trade history table (XAUUSD)
     const trows=document.getElementById('trade-rows');
+    const thSummary=document.getElementById('th-summary');
     if(closed.length>0){
-      trows.innerHTML=closed.slice(-10).reverse().map(t=>{
-        const sig=t.signal||t.type||'--';
+      const allWins=closed.filter(t=>t.result==='win').length;
+      const totalPnl=closed.reduce((s,t)=>s+parseFloat(t.pnl||0),0);
+      if(thSummary) thSummary.textContent=closed.length+'t | WR:'+(allWins/closed.length*100).toFixed(0)+'% | P&L:$'+(totalPnl>=0?'+':'')+totalPnl.toFixed(0);
+      trows.innerHTML=[...closed].reverse().map(t=>{
+        const sig=t.signal||'--';
+        const stype=(t.signal_type||'').replace('BUY_','').replace('SELL_','');
         const pnl=parseFloat(t.pnl||0);
-        const balA=parseFloat(t.balance_after||bal);
+        const balA=parseFloat(t.balance_after||0);
+        const dt=(t.entry_time||'').substring(5,16);
+        const pnlCls=pnl>0?'pnl-pos':pnl<0?'pnl-neg':'pnl-be';
+        const reason=(t.reason||t.exit_reason||'').toUpperCase();
         return`<div class="tr">
           <span class="tag ${sig==='BUY'?'tag-buy':'tag-sell'}">${sig}</span>
-          <span class="mu">${parseFloat(t.entry_price||t.open_price||0).toFixed(0)}</span>
-          <span class="mu">${parseFloat(t.exit_price||0).toFixed(0)}</span>
-          <span style="color:${t.result==='win'?'var(--green)':'var(--red)'}">${(t.result||'').toUpperCase()}</span>
-          <span style="${fc(pnl)}">${pnl>=0?'+':'-'}$${Math.abs(pnl).toFixed(0)}</span>
-          <span>$${(balA/1000).toFixed(1)}K</span>
+          <span class="exit-reason" style="color:var(--text2)">${stype}</span>
+          <span class="mu">${parseFloat(t.entry_price||0).toFixed(1)}</span>
+          <span class="mu">${parseFloat(t.exit_price||0).toFixed(1)}</span>
+          <span class="exit-reason">${reason}</span>
+          <span class="${pnlCls}">${pnl>=0?'+':'-'}$${Math.abs(pnl).toFixed(0)}</span>
+          <span>$${balA>0?(balA/1000).toFixed(1)+'K':'--'}</span>
+          <span style="font-size:8px;color:var(--muted)">${dt}</span>
         </div>`;
       }).join('');
+    } else {
+      trows.innerHTML='<div class="empty">No closed trades yet</div>';
     }
 
     // checklist
@@ -1542,7 +1584,20 @@ async function loadMultiSym(){
     const d=await r.json();
     _renderSessionHeatmap(d.session_stats);
     _renderMultiSymState(d.state);
+    _renderMsValidation(d.ms_backtest||{});
   }catch(e){}
+}
+
+function _renderMsValidation(bt){
+  const el=document.getElementById('ms-validation');
+  if(!el||!Object.keys(bt).length) return;
+  el.innerHTML=Object.entries(bt).map(([sym,v])=>{
+    const ok=v.validated;
+    const col=ok?'var(--green)':'var(--red)';
+    return`<div style="border:1px solid ${col};border-radius:3px;padding:2px 5px;font-size:8px;color:${col};font-family:var(--mono)">
+      ${sym} ${v.win_rate}%WR ${v.profit_factor}PF ${ok?'✓':'✗'}
+    </div>`;
+  }).join('');
 }
 
 function _renderSessionHeatmap(ss){
@@ -1599,13 +1654,43 @@ function _renderMultiSymState(state){
       }).join('');
     }
   }
-  // Recent trades
+  // Recent trades mini-text (right column)
   if(rec&&closed.length>0){
     const last3=closed.slice(-3).reverse();
     rec.innerHTML='Recent: '+last3.map(t=>{
       const icon=t.result==='win'?'✅':t.result==='be'?'⚪':'❌';
       return icon+' '+t.symbol+' '+(t.pnl>0?'+':'')+t.pnl.toFixed(2);
     }).join(' | ');
+  }
+  // Multi-symbol trade history table (center column)
+  const msTrows=document.getElementById('ms-trade-rows');
+  const msThSummary=document.getElementById('ms-th-summary');
+  if(msTrows){
+    if(closed.length>0){
+      const msWins=closed.filter(t=>t.result==='win').length;
+      const msTotalPnl=closed.reduce((s,t)=>s+parseFloat(t.pnl||0),0);
+      if(msThSummary) msThSummary.textContent=closed.length+'t | WR:'+(msWins/closed.length*100).toFixed(0)+'% | P&L:$'+(msTotalPnl>=0?'+':'')+msTotalPnl.toFixed(0);
+      msTrows.innerHTML=[...closed].reverse().map(t=>{
+        const sym=t.symbol||'--';
+        const dir=t.direction||'--';
+        const stype=(t.sig_type||'').replace('BUY_','').replace('SELL_','');
+        const pnl=parseFloat(t.pnl||0);
+        const pnlCls=pnl>0?'pnl-pos':pnl<0?'pnl-neg':'pnl-be';
+        const reason=(t.reason||'').toUpperCase();
+        const dt=(t.entry_time||'').substring(5,16);
+        return`<div class="tr-ms">
+          <span style="font-size:9px;font-weight:700;color:var(--text)">${sym}</span>
+          <span class="tag ${dir==='BUY'?'tag-buy':'tag-sell'}">${dir}</span>
+          <span class="exit-reason" style="color:var(--text2)">${stype}</span>
+          <span class="mu">${parseFloat(t.entry||0).toFixed(4)}</span>
+          <span class="exit-reason">${reason}</span>
+          <span class="${pnlCls}">${pnl>=0?'+':'-'}$${Math.abs(pnl).toFixed(0)}</span>
+          <span style="font-size:8px;color:var(--muted)">${dt}</span>
+        </div>`;
+      }).join('');
+    } else {
+      msTrows.innerHTML='<div class="empty">No multi-symbol trades yet — starts Monday</div>';
+    }
   }
 }
 
