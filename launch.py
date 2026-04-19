@@ -459,6 +459,19 @@ def run_multi_symbol_trader():
         set_status("MultiSymTrader", "error", str(e))
         print("[MULTI SYM TRADER] Fatal: {}".format(e))
 
+def run_mobile_tunnel():
+    set_status("MobileTunnel", "starting")
+    try:
+        from agents.master_trader.mobile_tunnel import run
+        set_status("MobileTunnel", "running", "ngrok tunnel to :5055")
+        run()
+    except ImportError:
+        set_status("MobileTunnel", "error", "pyngrok not installed (pip install pyngrok)")
+        print("[TUNNEL] pyngrok not installed -- skipping mobile tunnel")
+    except Exception as e:
+        set_status("MobileTunnel", "error", str(e))
+        print("[TUNNEL] Fatal: {}".format(e))
+
 def run_scheduler():
     set_status("Scheduler", "starting")
     try:
@@ -715,6 +728,7 @@ if __name__ == "__main__":
         threading.Thread(target=run_sentiment_score,      daemon=True, name="SentimentScore"),
         threading.Thread(target=run_multi_symbol,         daemon=True, name="MultiSymbol"),
         threading.Thread(target=run_multi_symbol_trader,  daemon=True, name="MultiSymTrader"),
+        threading.Thread(target=run_mobile_tunnel,        daemon=True, name="MobileTunnel"),
     ]
     if tg_ok:
         threads.append(threading.Thread(target=run_telegram_agent, daemon=True, name="Telegram"))
@@ -760,6 +774,7 @@ if __name__ == "__main__":
         ("SentimentScore",  "5min",  "Composite 0-10 sentiment"),
         ("MultiSymbol",     "5min",  "EURUSD/US30/USOIL/USDJPY monitor"),
         ("MultiSymTrader",  "60s",   "EURUSD/GBPUSD/CL-OIL paper trading"),
+        ("MobileTunnel",    "startup","ngrok public URL -> Telegram, re-ping 6h"),
         ("MiroDashboard",   "live",  "localhost:5055"),
     ]
     for name, interval, role in rows:

@@ -673,6 +673,29 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 .g{color:var(--green)}.r{color:var(--red)}.w{color:var(--warn)}.b{color:var(--blue)}.mu{color:var(--muted)}
 .bold{font-weight:700}.mono{font-family:var(--mono)}
 .empty{font-size:10px;color:var(--muted);text-align:center;padding:10px 0}
+
+/* ── Mobile responsive ── */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr!important}
+  .stats-bar{grid-template-columns:repeat(3,1fr)!important}
+  .ctrl-grid{grid-template-columns:repeat(2,1fr)!important}
+  .toggle-row{flex-wrap:wrap;gap:6px}
+  .th,.tr{font-size:9px}
+  .th-ms,.tr-ms{font-size:9px}
+}
+@media(max-width:600px){
+  body{padding:8px!important}
+  .header{padding:8px 10px!important}
+  .stats-bar{grid-template-columns:repeat(2,1fr)!important}
+  .btn{padding:10px 12px!important;font-size:11px!important;min-height:40px}
+  .toggle-btn{padding:8px 10px!important;font-size:10px!important;min-height:38px}
+  .heatmap-bar{flex-direction:column;gap:8px}
+  .trade-scroll{max-height:60vh!important}
+  h1,h2{font-size:13px!important}
+  .card{padding:8px!important}
+  .pos-grid{grid-template-columns:repeat(2,1fr)!important}
+  .section{padding:8px!important}
+}
 </style>
 </head>
 <body>
