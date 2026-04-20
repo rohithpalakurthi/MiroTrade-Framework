@@ -1,44 +1,44 @@
 {
-  "generated_at": "2026-04-15 10:31:05.482572",
+  "generated_at": "2026-04-18 19:44:16.996187",
   "readiness_pct": 50,
   "passed": 5,
   "total": 10,
   "checks": {
     "paper_trades": {
       "passed": false,
-      "value": 0,
+      "value": 4,
       "required": 20,
-      "label": "Paper trades: 0 (need 20)"
+      "label": "Paper trades: 4 (need 20)"
     },
     "paper_days": {
       "passed": false,
-      "value": 0,
+      "value": 3,
       "required": 14,
-      "label": "Paper trading days: 0 (need 14)"
+      "label": "Paper trading days: 3 (need 14)"
     },
     "paper_win_rate": {
       "passed": false,
-      "value": 0,
+      "value": 25.0,
       "required": 50.0,
-      "label": "Live win rate: 0% (need 50.0%+)"
+      "label": "Live win rate: 25.0% (need 50.0%+)"
     },
     "paper_profit_factor": {
       "passed": true,
-      "value": 999,
+      "value": 1.54,
       "required": 1.5,
-      "label": "Live profit factor: 999 (need 1.5+)"
+      "label": "Live profit factor: 1.54 (need 1.5+)"
     },
     "paper_drawdown": {
       "passed": true,
-      "value": 0.0,
+      "value": 6.06,
       "required": 10.0,
-      "label": "Max drawdown: 0.0% (must be <10.0%)"
+      "label": "Max drawdown: 6.06% (must be <10.0%)"
     },
     "risk_manager": {
       "passed": true,
-      "value": 10,
+      "value": 7,
       "required": 7,
-      "label": "Risk score 10/10 (need 7)"
+      "label": "Risk score 7/10 (need 7)"
     },
     "orchestrator": {
       "passed": false,
@@ -48,15 +48,15 @@
     },
     "backtest_return": {
       "passed": true,
-      "value": 246.0,
+      "value": 54.66,
       "required": 50.0,
-      "label": "Backtest return 246% (need 50.0%+)"
+      "label": "Backtest return 54.7% (need 50.0%+)"
     },
     "backtest_win_rate": {
       "passed": true,
-      "value": 54.95,
+      "value": 71.15,
       "required": 50.0,
-      "label": "Backtest win rate 54.95% (need 50.0%+)"
+      "label": "Backtest win rate 71.2% (need 50.0%+)"
     },
     "ea_demo_test": {
       "passed": false,

@@ -565,36 +565,36 @@
       "file_type": "rationale",
       "source_file": "D:\\Trading Project\\MiroTrade-Framework\\launch.py",
       "source_location": "L491",
-      "id": "launch_rationale_491",
       "community": 0,
-      "norm_label": "start tradingview webhook server (flask :5000) + ngrok tunnel."
+      "norm_label": "start tradingview webhook server (flask :5000) + ngrok tunnel.",
+      "id": "launch_rationale_491"
     },
     {
       "label": "Feature 2: Monitor critical agents and alert via Telegram on crashes.",
       "file_type": "rationale",
       "source_file": "D:\\Trading Project\\MiroTrade-Framework\\launch.py",
       "source_location": "L601",
-      "id": "launch_rationale_601",
       "community": 0,
-      "norm_label": "feature 2: monitor critical agents and alert via telegram on crashes."
+      "norm_label": "feature 2: monitor critical agents and alert via telegram on crashes.",
+      "id": "launch_rationale_601"
     },
     {
       "label": "Feature 1: Write consolidated session context for cross-session memory.",
       "file_type": "rationale",
       "source_file": "D:\\Trading Project\\MiroTrade-Framework\\launch.py",
       "source_location": "L661",
-      "id": "launch_rationale_661",
       "community": 0,
-      "norm_label": "feature 1: write consolidated session context for cross-session memory."
+      "norm_label": "feature 1: write consolidated session context for cross-session memory.",
+      "id": "launch_rationale_661"
     },
     {
       "label": "22:00 IST daily P&L Telegram summary.",
       "file_type": "rationale",
       "source_file": "D:\\Trading Project\\MiroTrade-Framework\\launch.py",
       "source_location": "L698",
-      "id": "launch_rationale_698",
       "community": 0,
-      "norm_label": "22:00 ist daily p&l telegram summary."
+      "norm_label": "22:00 ist daily p&l telegram summary.",
+      "id": "launch_rationale_698"
     },
     {
       "label": "test_signal.py",
@@ -10852,9 +10852,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "paper_trader_papertradingengine",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "paper_trader_papertradingengine",
-      "confidence_score": 0.5
+      "target": "paper_trader_papertradingengine"
     },
     {
       "relation": "uses",
@@ -10864,9 +10864,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "news_sentinel_ai_ainewssentinel",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "news_sentinel_ai_ainewssentinel",
-      "confidence_score": 0.5
+      "target": "news_sentinel_ai_ainewssentinel"
     },
     {
       "relation": "uses",
@@ -10876,9 +10876,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "news_sentinel_newssentinelagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "news_sentinel_newssentinelagent",
-      "confidence_score": 0.5
+      "target": "news_sentinel_newssentinelagent"
     },
     {
       "relation": "uses",
@@ -10888,9 +10888,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "risk_manager_riskmanageragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "risk_manager_riskmanageragent",
-      "confidence_score": 0.5
+      "target": "risk_manager_riskmanageragent"
     },
     {
       "relation": "uses",
@@ -10900,9 +10900,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "orchestrator_orchestratoragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "orchestrator_orchestratoragent",
-      "confidence_score": 0.5
+      "target": "orchestrator_orchestratoragent"
     },
     {
       "relation": "uses",
@@ -10912,9 +10912,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "telegram_agent_telegramalertagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "telegram_agent_telegramalertagent",
-      "confidence_score": 0.5
+      "target": "telegram_agent_telegramalertagent"
     },
     {
       "relation": "uses",
@@ -10924,9 +10924,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "crypto_extension_cryptoextension",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "crypto_extension_cryptoextension",
-      "confidence_score": 0.5
+      "target": "crypto_extension_cryptoextension"
     },
     {
       "relation": "uses",
@@ -10936,9 +10936,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "market_analyst_marketanalystagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "market_analyst_marketanalystagent",
-      "confidence_score": 0.5
+      "target": "market_analyst_marketanalystagent"
     },
     {
       "relation": "uses",
@@ -10948,9 +10948,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "mtf_analysis_multitimeframeanalysis",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "mtf_analysis_multitimeframeanalysis",
-      "confidence_score": 0.5
+      "target": "mtf_analysis_multitimeframeanalysis"
     },
     {
       "relation": "uses",
@@ -10960,9 +10960,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "mt5_bridge_mt5bridge",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "mt5_bridge_mt5bridge",
-      "confidence_score": 0.5
+      "target": "mt5_bridge_mt5bridge"
     },
     {
       "relation": "uses",
@@ -10972,9 +10972,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "tv_poller_tvsignalpoller",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "tv_poller_tvsignalpoller",
-      "confidence_score": 0.5
+      "target": "tv_poller_tvsignalpoller"
     },
     {
       "relation": "uses",
@@ -10984,9 +10984,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "position_manager_positionmanageragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "position_manager_positionmanageragent",
-      "confidence_score": 0.5
+      "target": "position_manager_positionmanageragent"
     },
     {
       "relation": "uses",
@@ -10996,9 +10996,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "master_trader_mastertraderagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "master_trader_mastertraderagent",
-      "confidence_score": 0.5
+      "target": "master_trader_mastertraderagent"
     },
     {
       "relation": "uses",
@@ -11008,9 +11008,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "strategy_optimizer_strategyoptimizer",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "strategy_optimizer_strategyoptimizer",
-      "confidence_score": 0.5
+      "target": "strategy_optimizer_strategyoptimizer"
     },
     {
       "relation": "uses",
@@ -11020,9 +11020,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_491",
       "_tgt": "autopilot_threadsupervisor",
+      "confidence_score": 0.5,
       "source": "launch_rationale_491",
-      "target": "autopilot_threadsupervisor",
-      "confidence_score": 0.5
+      "target": "autopilot_threadsupervisor"
     },
     {
       "relation": "uses",
@@ -11032,9 +11032,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "paper_trader_papertradingengine",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "paper_trader_papertradingengine",
-      "confidence_score": 0.5
+      "target": "paper_trader_papertradingengine"
     },
     {
       "relation": "uses",
@@ -11044,9 +11044,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "news_sentinel_ai_ainewssentinel",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "news_sentinel_ai_ainewssentinel",
-      "confidence_score": 0.5
+      "target": "news_sentinel_ai_ainewssentinel"
     },
     {
       "relation": "uses",
@@ -11056,9 +11056,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "news_sentinel_newssentinelagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "news_sentinel_newssentinelagent",
-      "confidence_score": 0.5
+      "target": "news_sentinel_newssentinelagent"
     },
     {
       "relation": "uses",
@@ -11068,9 +11068,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "risk_manager_riskmanageragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "risk_manager_riskmanageragent",
-      "confidence_score": 0.5
+      "target": "risk_manager_riskmanageragent"
     },
     {
       "relation": "uses",
@@ -11080,9 +11080,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "orchestrator_orchestratoragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "orchestrator_orchestratoragent",
-      "confidence_score": 0.5
+      "target": "orchestrator_orchestratoragent"
     },
     {
       "relation": "uses",
@@ -11092,9 +11092,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "telegram_agent_telegramalertagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "telegram_agent_telegramalertagent",
-      "confidence_score": 0.5
+      "target": "telegram_agent_telegramalertagent"
     },
     {
       "relation": "uses",
@@ -11104,9 +11104,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "crypto_extension_cryptoextension",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "crypto_extension_cryptoextension",
-      "confidence_score": 0.5
+      "target": "crypto_extension_cryptoextension"
     },
     {
       "relation": "uses",
@@ -11116,9 +11116,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "market_analyst_marketanalystagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "market_analyst_marketanalystagent",
-      "confidence_score": 0.5
+      "target": "market_analyst_marketanalystagent"
     },
     {
       "relation": "uses",
@@ -11128,9 +11128,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "mtf_analysis_multitimeframeanalysis",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "mtf_analysis_multitimeframeanalysis",
-      "confidence_score": 0.5
+      "target": "mtf_analysis_multitimeframeanalysis"
     },
     {
       "relation": "uses",
@@ -11140,9 +11140,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "mt5_bridge_mt5bridge",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "mt5_bridge_mt5bridge",
-      "confidence_score": 0.5
+      "target": "mt5_bridge_mt5bridge"
     },
     {
       "relation": "uses",
@@ -11152,9 +11152,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "tv_poller_tvsignalpoller",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "tv_poller_tvsignalpoller",
-      "confidence_score": 0.5
+      "target": "tv_poller_tvsignalpoller"
     },
     {
       "relation": "uses",
@@ -11164,9 +11164,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "position_manager_positionmanageragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "position_manager_positionmanageragent",
-      "confidence_score": 0.5
+      "target": "position_manager_positionmanageragent"
     },
     {
       "relation": "uses",
@@ -11176,9 +11176,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "master_trader_mastertraderagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "master_trader_mastertraderagent",
-      "confidence_score": 0.5
+      "target": "master_trader_mastertraderagent"
     },
     {
       "relation": "uses",
@@ -11188,9 +11188,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "strategy_optimizer_strategyoptimizer",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "strategy_optimizer_strategyoptimizer",
-      "confidence_score": 0.5
+      "target": "strategy_optimizer_strategyoptimizer"
     },
     {
       "relation": "uses",
@@ -11200,9 +11200,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_601",
       "_tgt": "autopilot_threadsupervisor",
+      "confidence_score": 0.5,
       "source": "launch_rationale_601",
-      "target": "autopilot_threadsupervisor",
-      "confidence_score": 0.5
+      "target": "autopilot_threadsupervisor"
     },
     {
       "relation": "uses",
@@ -11212,9 +11212,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "paper_trader_papertradingengine",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "paper_trader_papertradingengine",
-      "confidence_score": 0.5
+      "target": "paper_trader_papertradingengine"
     },
     {
       "relation": "uses",
@@ -11224,9 +11224,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "news_sentinel_ai_ainewssentinel",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "news_sentinel_ai_ainewssentinel",
-      "confidence_score": 0.5
+      "target": "news_sentinel_ai_ainewssentinel"
     },
     {
       "relation": "uses",
@@ -11236,9 +11236,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "news_sentinel_newssentinelagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "news_sentinel_newssentinelagent",
-      "confidence_score": 0.5
+      "target": "news_sentinel_newssentinelagent"
     },
     {
       "relation": "uses",
@@ -11248,9 +11248,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "risk_manager_riskmanageragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "risk_manager_riskmanageragent",
-      "confidence_score": 0.5
+      "target": "risk_manager_riskmanageragent"
     },
     {
       "relation": "uses",
@@ -11260,9 +11260,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "orchestrator_orchestratoragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "orchestrator_orchestratoragent",
-      "confidence_score": 0.5
+      "target": "orchestrator_orchestratoragent"
     },
     {
       "relation": "uses",
@@ -11272,9 +11272,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "telegram_agent_telegramalertagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "telegram_agent_telegramalertagent",
-      "confidence_score": 0.5
+      "target": "telegram_agent_telegramalertagent"
     },
     {
       "relation": "uses",
@@ -11284,9 +11284,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "crypto_extension_cryptoextension",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "crypto_extension_cryptoextension",
-      "confidence_score": 0.5
+      "target": "crypto_extension_cryptoextension"
     },
     {
       "relation": "uses",
@@ -11296,9 +11296,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "market_analyst_marketanalystagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "market_analyst_marketanalystagent",
-      "confidence_score": 0.5
+      "target": "market_analyst_marketanalystagent"
     },
     {
       "relation": "uses",
@@ -11308,9 +11308,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "mtf_analysis_multitimeframeanalysis",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "mtf_analysis_multitimeframeanalysis",
-      "confidence_score": 0.5
+      "target": "mtf_analysis_multitimeframeanalysis"
     },
     {
       "relation": "uses",
@@ -11320,9 +11320,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "mt5_bridge_mt5bridge",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "mt5_bridge_mt5bridge",
-      "confidence_score": 0.5
+      "target": "mt5_bridge_mt5bridge"
     },
     {
       "relation": "uses",
@@ -11332,9 +11332,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "tv_poller_tvsignalpoller",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "tv_poller_tvsignalpoller",
-      "confidence_score": 0.5
+      "target": "tv_poller_tvsignalpoller"
     },
     {
       "relation": "uses",
@@ -11344,9 +11344,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "position_manager_positionmanageragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "position_manager_positionmanageragent",
-      "confidence_score": 0.5
+      "target": "position_manager_positionmanageragent"
     },
     {
       "relation": "uses",
@@ -11356,9 +11356,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "master_trader_mastertraderagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "master_trader_mastertraderagent",
-      "confidence_score": 0.5
+      "target": "master_trader_mastertraderagent"
     },
     {
       "relation": "uses",
@@ -11368,9 +11368,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "strategy_optimizer_strategyoptimizer",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "strategy_optimizer_strategyoptimizer",
-      "confidence_score": 0.5
+      "target": "strategy_optimizer_strategyoptimizer"
     },
     {
       "relation": "uses",
@@ -11380,9 +11380,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_661",
       "_tgt": "autopilot_threadsupervisor",
+      "confidence_score": 0.5,
       "source": "launch_rationale_661",
-      "target": "autopilot_threadsupervisor",
-      "confidence_score": 0.5
+      "target": "autopilot_threadsupervisor"
     },
     {
       "relation": "uses",
@@ -11392,9 +11392,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "paper_trader_papertradingengine",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "paper_trader_papertradingengine",
-      "confidence_score": 0.5
+      "target": "paper_trader_papertradingengine"
     },
     {
       "relation": "uses",
@@ -11404,9 +11404,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "news_sentinel_ai_ainewssentinel",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "news_sentinel_ai_ainewssentinel",
-      "confidence_score": 0.5
+      "target": "news_sentinel_ai_ainewssentinel"
     },
     {
       "relation": "uses",
@@ -11416,9 +11416,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "news_sentinel_newssentinelagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "news_sentinel_newssentinelagent",
-      "confidence_score": 0.5
+      "target": "news_sentinel_newssentinelagent"
     },
     {
       "relation": "uses",
@@ -11428,9 +11428,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "risk_manager_riskmanageragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "risk_manager_riskmanageragent",
-      "confidence_score": 0.5
+      "target": "risk_manager_riskmanageragent"
     },
     {
       "relation": "uses",
@@ -11440,9 +11440,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "orchestrator_orchestratoragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "orchestrator_orchestratoragent",
-      "confidence_score": 0.5
+      "target": "orchestrator_orchestratoragent"
     },
     {
       "relation": "uses",
@@ -11452,9 +11452,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "telegram_agent_telegramalertagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "telegram_agent_telegramalertagent",
-      "confidence_score": 0.5
+      "target": "telegram_agent_telegramalertagent"
     },
     {
       "relation": "uses",
@@ -11464,9 +11464,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "crypto_extension_cryptoextension",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "crypto_extension_cryptoextension",
-      "confidence_score": 0.5
+      "target": "crypto_extension_cryptoextension"
     },
     {
       "relation": "uses",
@@ -11476,9 +11476,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "market_analyst_marketanalystagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "market_analyst_marketanalystagent",
-      "confidence_score": 0.5
+      "target": "market_analyst_marketanalystagent"
     },
     {
       "relation": "uses",
@@ -11488,9 +11488,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "mtf_analysis_multitimeframeanalysis",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "mtf_analysis_multitimeframeanalysis",
-      "confidence_score": 0.5
+      "target": "mtf_analysis_multitimeframeanalysis"
     },
     {
       "relation": "uses",
@@ -11500,9 +11500,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "mt5_bridge_mt5bridge",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "mt5_bridge_mt5bridge",
-      "confidence_score": 0.5
+      "target": "mt5_bridge_mt5bridge"
     },
     {
       "relation": "uses",
@@ -11512,9 +11512,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "tv_poller_tvsignalpoller",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "tv_poller_tvsignalpoller",
-      "confidence_score": 0.5
+      "target": "tv_poller_tvsignalpoller"
     },
     {
       "relation": "uses",
@@ -11524,9 +11524,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "position_manager_positionmanageragent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "position_manager_positionmanageragent",
-      "confidence_score": 0.5
+      "target": "position_manager_positionmanageragent"
     },
     {
       "relation": "uses",
@@ -11536,9 +11536,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "master_trader_mastertraderagent",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "master_trader_mastertraderagent",
-      "confidence_score": 0.5
+      "target": "master_trader_mastertraderagent"
     },
     {
       "relation": "uses",
@@ -11548,9 +11548,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "strategy_optimizer_strategyoptimizer",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "strategy_optimizer_strategyoptimizer",
-      "confidence_score": 0.5
+      "target": "strategy_optimizer_strategyoptimizer"
     },
     {
       "relation": "uses",
@@ -11560,9 +11560,9 @@
       "weight": 0.8,
       "_src": "launch_rationale_698",
       "_tgt": "autopilot_threadsupervisor",
+      "confidence_score": 0.5,
       "source": "launch_rationale_698",
-      "target": "autopilot_threadsupervisor",
-      "confidence_score": 0.5
+      "target": "autopilot_threadsupervisor"
     },
     {
       "relation": "rationale_for",
@@ -11726,8 +11726,8 @@
       "source_file": "launch.py",
       "source_location": "L129",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "market_analyst_marketanalystagent",
+      "_src": "market_analyst_marketanalystagent",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "market_analyst_marketanalystagent",
       "target": "launch_rationale_490"
@@ -11738,8 +11738,8 @@
       "source_file": "launch.py",
       "source_location": "L129",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "market_analyst_marketanalystagent",
+      "_src": "market_analyst_marketanalystagent",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "market_analyst_marketanalystagent",
       "target": "launch_rationale_550"
@@ -11750,8 +11750,8 @@
       "source_file": "launch.py",
       "source_location": "L129",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "market_analyst_marketanalystagent",
+      "_src": "market_analyst_marketanalystagent",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "market_analyst_marketanalystagent",
       "target": "launch_rationale_587"
@@ -13586,8 +13586,8 @@
       "source_file": "launch.py",
       "source_location": "L233",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "master_trader_mastertraderagent",
+      "_src": "master_trader_mastertraderagent",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "master_trader_mastertraderagent",
       "target": "launch_rationale_490"
@@ -13598,8 +13598,8 @@
       "source_file": "launch.py",
       "source_location": "L233",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "master_trader_mastertraderagent",
+      "_src": "master_trader_mastertraderagent",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "master_trader_mastertraderagent",
       "target": "launch_rationale_550"
@@ -13610,8 +13610,8 @@
       "source_file": "launch.py",
       "source_location": "L233",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "master_trader_mastertraderagent",
+      "_src": "master_trader_mastertraderagent",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "master_trader_mastertraderagent",
       "target": "launch_rationale_587"
@@ -18386,8 +18386,8 @@
       "source_file": "launch.py",
       "source_location": "L66",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "news_sentinel_newssentinelagent",
+      "_src": "news_sentinel_newssentinelagent",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "news_sentinel_newssentinelagent",
       "target": "launch_rationale_490"
@@ -18398,8 +18398,8 @@
       "source_file": "launch.py",
       "source_location": "L66",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "news_sentinel_newssentinelagent",
+      "_src": "news_sentinel_newssentinelagent",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "news_sentinel_newssentinelagent",
       "target": "launch_rationale_550"
@@ -18410,8 +18410,8 @@
       "source_file": "launch.py",
       "source_location": "L66",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "news_sentinel_newssentinelagent",
+      "_src": "news_sentinel_newssentinelagent",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "news_sentinel_newssentinelagent",
       "target": "launch_rationale_587"
@@ -18830,8 +18830,8 @@
       "source_file": "launch.py",
       "source_location": "L63",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "news_sentinel_ai_ainewssentinel",
+      "_src": "news_sentinel_ai_ainewssentinel",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "news_sentinel_ai_ainewssentinel",
       "target": "launch_rationale_490"
@@ -18842,8 +18842,8 @@
       "source_file": "launch.py",
       "source_location": "L63",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "news_sentinel_ai_ainewssentinel",
+      "_src": "news_sentinel_ai_ainewssentinel",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "news_sentinel_ai_ainewssentinel",
       "target": "launch_rationale_550"
@@ -18854,8 +18854,8 @@
       "source_file": "launch.py",
       "source_location": "L63",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "news_sentinel_ai_ainewssentinel",
+      "_src": "news_sentinel_ai_ainewssentinel",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "news_sentinel_ai_ainewssentinel",
       "target": "launch_rationale_587"
@@ -19754,8 +19754,8 @@
       "source_file": "launch.py",
       "source_location": "L99",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "orchestrator_orchestratoragent",
+      "_src": "orchestrator_orchestratoragent",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "orchestrator_orchestratoragent",
       "target": "launch_rationale_490"
@@ -19766,8 +19766,8 @@
       "source_file": "launch.py",
       "source_location": "L99",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "orchestrator_orchestratoragent",
+      "_src": "orchestrator_orchestratoragent",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "orchestrator_orchestratoragent",
       "target": "launch_rationale_550"
@@ -19778,8 +19778,8 @@
       "source_file": "launch.py",
       "source_location": "L99",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "orchestrator_orchestratoragent",
+      "_src": "orchestrator_orchestratoragent",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "orchestrator_orchestratoragent",
       "target": "launch_rationale_587"
@@ -20522,8 +20522,8 @@
       "source_file": "launch.py",
       "source_location": "L674",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "strategy_optimizer_strategyoptimizer",
+      "_src": "strategy_optimizer_strategyoptimizer",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "strategy_optimizer_strategyoptimizer",
       "target": "launch_rationale_490"
@@ -20534,8 +20534,8 @@
       "source_file": "launch.py",
       "source_location": "L674",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "strategy_optimizer_strategyoptimizer",
+      "_src": "strategy_optimizer_strategyoptimizer",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "strategy_optimizer_strategyoptimizer",
       "target": "launch_rationale_550"
@@ -20546,8 +20546,8 @@
       "source_file": "launch.py",
       "source_location": "L674",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "strategy_optimizer_strategyoptimizer",
+      "_src": "strategy_optimizer_strategyoptimizer",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "strategy_optimizer_strategyoptimizer",
       "target": "launch_rationale_587"
@@ -20930,8 +20930,8 @@
       "source_file": "launch.py",
       "source_location": "L222",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "position_manager_positionmanageragent",
+      "_src": "position_manager_positionmanageragent",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "position_manager_positionmanageragent",
       "target": "launch_rationale_490"
@@ -20942,8 +20942,8 @@
       "source_file": "launch.py",
       "source_location": "L222",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "position_manager_positionmanageragent",
+      "_src": "position_manager_positionmanageragent",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "position_manager_positionmanageragent",
       "target": "launch_rationale_550"
@@ -20954,8 +20954,8 @@
       "source_file": "launch.py",
       "source_location": "L222",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "position_manager_positionmanageragent",
+      "_src": "position_manager_positionmanageragent",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "position_manager_positionmanageragent",
       "target": "launch_rationale_587"
@@ -21650,8 +21650,8 @@
       "source_file": "launch.py",
       "source_location": "L83",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "risk_manager_riskmanageragent",
+      "_src": "risk_manager_riskmanageragent",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "risk_manager_riskmanageragent",
       "target": "launch_rationale_490"
@@ -21662,8 +21662,8 @@
       "source_file": "launch.py",
       "source_location": "L83",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "risk_manager_riskmanageragent",
+      "_src": "risk_manager_riskmanageragent",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "risk_manager_riskmanageragent",
       "target": "launch_rationale_550"
@@ -21674,8 +21674,8 @@
       "source_file": "launch.py",
       "source_location": "L83",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "risk_manager_riskmanageragent",
+      "_src": "risk_manager_riskmanageragent",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "risk_manager_riskmanageragent",
       "target": "launch_rationale_587"
@@ -22250,8 +22250,8 @@
       "source_file": "launch.py",
       "source_location": "L856",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "autopilot_threadsupervisor",
+      "_src": "autopilot_threadsupervisor",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "autopilot_threadsupervisor",
       "target": "launch_rationale_490"
@@ -22262,8 +22262,8 @@
       "source_file": "launch.py",
       "source_location": "L856",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "autopilot_threadsupervisor",
+      "_src": "autopilot_threadsupervisor",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "autopilot_threadsupervisor",
       "target": "launch_rationale_550"
@@ -22274,8 +22274,8 @@
       "source_file": "launch.py",
       "source_location": "L856",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "autopilot_threadsupervisor",
+      "_src": "autopilot_threadsupervisor",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "autopilot_threadsupervisor",
       "target": "launch_rationale_587"
@@ -23090,8 +23090,8 @@
       "source_file": "launch.py",
       "source_location": "L581",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "telegram_agent_telegramalertagent",
+      "_src": "telegram_agent_telegramalertagent",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "telegram_agent_telegramalertagent",
       "target": "launch_rationale_490"
@@ -23102,8 +23102,8 @@
       "source_file": "launch.py",
       "source_location": "L581",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "telegram_agent_telegramalertagent",
+      "_src": "telegram_agent_telegramalertagent",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "telegram_agent_telegramalertagent",
       "target": "launch_rationale_550"
@@ -23114,8 +23114,8 @@
       "source_file": "launch.py",
       "source_location": "L581",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "telegram_agent_telegramalertagent",
+      "_src": "telegram_agent_telegramalertagent",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "telegram_agent_telegramalertagent",
       "target": "launch_rationale_587"
@@ -24134,8 +24134,8 @@
       "source_file": "launch.py",
       "source_location": "L119",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "crypto_extension_cryptoextension",
+      "_src": "crypto_extension_cryptoextension",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "crypto_extension_cryptoextension",
       "target": "launch_rationale_490"
@@ -24146,8 +24146,8 @@
       "source_file": "launch.py",
       "source_location": "L119",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "crypto_extension_cryptoextension",
+      "_src": "crypto_extension_cryptoextension",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "crypto_extension_cryptoextension",
       "target": "launch_rationale_550"
@@ -24158,8 +24158,8 @@
       "source_file": "launch.py",
       "source_location": "L119",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "crypto_extension_cryptoextension",
+      "_src": "crypto_extension_cryptoextension",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "crypto_extension_cryptoextension",
       "target": "launch_rationale_587"
@@ -24938,8 +24938,8 @@
       "source_file": "launch.py",
       "source_location": "L161",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "mt5_bridge_mt5bridge",
+      "_src": "mt5_bridge_mt5bridge",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "mt5_bridge_mt5bridge",
       "target": "launch_rationale_490"
@@ -24950,8 +24950,8 @@
       "source_file": "launch.py",
       "source_location": "L161",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "mt5_bridge_mt5bridge",
+      "_src": "mt5_bridge_mt5bridge",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "mt5_bridge_mt5bridge",
       "target": "launch_rationale_550"
@@ -24962,8 +24962,8 @@
       "source_file": "launch.py",
       "source_location": "L161",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "mt5_bridge_mt5bridge",
+      "_src": "mt5_bridge_mt5bridge",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "mt5_bridge_mt5bridge",
       "target": "launch_rationale_587"
@@ -25586,8 +25586,8 @@
       "source_file": "launch.py",
       "source_location": "L51",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "paper_trader_papertradingengine",
+      "_src": "paper_trader_papertradingengine",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "paper_trader_papertradingengine",
       "target": "launch_rationale_490"
@@ -25598,8 +25598,8 @@
       "source_file": "launch.py",
       "source_location": "L51",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "paper_trader_papertradingengine",
+      "_src": "paper_trader_papertradingengine",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "paper_trader_papertradingengine",
       "target": "launch_rationale_550"
@@ -25610,8 +25610,8 @@
       "source_file": "launch.py",
       "source_location": "L51",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "paper_trader_papertradingengine",
+      "_src": "paper_trader_papertradingengine",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "paper_trader_papertradingengine",
       "target": "launch_rationale_587"
@@ -26174,8 +26174,8 @@
       "source_file": "launch.py",
       "source_location": "L143",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "mtf_analysis_multitimeframeanalysis",
+      "_src": "mtf_analysis_multitimeframeanalysis",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "mtf_analysis_multitimeframeanalysis",
       "target": "launch_rationale_490"
@@ -26186,8 +26186,8 @@
       "source_file": "launch.py",
       "source_location": "L143",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "mtf_analysis_multitimeframeanalysis",
+      "_src": "mtf_analysis_multitimeframeanalysis",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "mtf_analysis_multitimeframeanalysis",
       "target": "launch_rationale_550"
@@ -26198,8 +26198,8 @@
       "source_file": "launch.py",
       "source_location": "L143",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "mtf_analysis_multitimeframeanalysis",
+      "_src": "mtf_analysis_multitimeframeanalysis",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "mtf_analysis_multitimeframeanalysis",
       "target": "launch_rationale_587"
@@ -28022,8 +28022,8 @@
       "source_file": "launch.py",
       "source_location": "L202",
       "weight": 0.8,
-      "_src": "launch_rationale_490",
-      "_tgt": "tv_poller_tvsignalpoller",
+      "_src": "tv_poller_tvsignalpoller",
+      "_tgt": "launch_rationale_490",
       "confidence_score": 0.5,
       "source": "tv_poller_tvsignalpoller",
       "target": "launch_rationale_490"
@@ -28034,8 +28034,8 @@
       "source_file": "launch.py",
       "source_location": "L202",
       "weight": 0.8,
-      "_src": "launch_rationale_550",
-      "_tgt": "tv_poller_tvsignalpoller",
+      "_src": "tv_poller_tvsignalpoller",
+      "_tgt": "launch_rationale_550",
       "confidence_score": 0.5,
       "source": "tv_poller_tvsignalpoller",
       "target": "launch_rationale_550"
@@ -28046,8 +28046,8 @@
       "source_file": "launch.py",
       "source_location": "L202",
       "weight": 0.8,
-      "_src": "launch_rationale_587",
-      "_tgt": "tv_poller_tvsignalpoller",
+      "_src": "tv_poller_tvsignalpoller",
+      "_tgt": "launch_rationale_587",
       "confidence_score": 0.5,
       "source": "tv_poller_tvsignalpoller",
       "target": "launch_rationale_587"

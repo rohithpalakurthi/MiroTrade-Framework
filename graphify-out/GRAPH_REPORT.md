@@ -1,7 +1,7 @@
 # Graph Report - D:\Trading Project\MiroTrade-Framework  (2026-04-20)
 
 ## Corpus Check
-- 64 files · ~149,828 words
+- 64 files · ~151,173 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
