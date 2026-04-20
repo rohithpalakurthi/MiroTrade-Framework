@@ -90,24 +90,32 @@ class AINewsSentinel:
         print("Gathering market context...")
         context = []
 
+        # Feature 4: Try RSS web scraper first (no API limits)
+        try:
+            from agents.news_sentinel.web_scraper import fetch_news, format_for_claude
+            web_articles = fetch_news()
+            if web_articles:
+                context.append("=== LIVE RSS NEWS ===")
+                context.append(format_for_claude(web_articles))
+                print("  RSS scraper: {} articles".format(len(web_articles)))
+        except Exception as e:
+            print("  RSS scraper unavailable: {}".format(e))
+
+        # DuckDuckGo fallback (2 queries max to stay fast)
         searches = [
             "gold XAU USD price today market",
-            "economic calendar high impact events today",
-            "Federal Reserve news today",
-            "geopolitical news gold market today"
+            "Federal Reserve inflation news today",
         ]
-
         for query in searches:
             results = self.search_web(query)
             if results:
                 context.extend(results[:2])
-                print("  Found {} results for: {}".format(len(results), query[:40]))
 
-        # Also try NewsAPI
+        # NewsAPI if key available
         news = self.fetch_newsapi("gold XAUUSD market moving")
         if news:
             context.extend(news[:5])
-            print("  Found {} news articles".format(len(news)))
+            print("  Found {} NewsAPI articles".format(len(news)))
 
         return context
 
@@ -128,18 +136,24 @@ Current time: {} IST (UTC+5:30)
 Here is current market information gathered from the web:
 {}
 
-Your job: Decide if algorithmic gold trading should be BLOCKED or ALLOWED right now.
+Your job: Decide if algorithmic gold (XAUUSD) trading should be BLOCKED or ALLOWED right now.
 
-BLOCK trading if:
-- A major scheduled economic event is happening RIGHT NOW or within 30 minutes (NFP, FOMC rate decision, CPI release, PPI release)
-- A breaking geopolitical crisis is causing extreme gold volatility (>$30 move in <1 hour)
-- Market conditions are genuinely dangerous for algorithmic scalping
+BLOCK trading ONLY if:
+- A USD-specific or gold-specific high-impact event is happening RIGHT NOW or within 30 minutes:
+  * US NFP (Non-Farm Payrolls)
+  * FOMC rate decision or Fed Chair speech
+  * US CPI or US PPI release
+  * US GDP release
+  * Gold is moving more than $30 in under 1 hour (extreme volatility)
+- A breaking geopolitical crisis is causing CONFIRMED extreme gold volatility (>$30 move in <1 hour)
 
 ALLOW trading if:
-- No scheduled high-impact events are imminent
-- Background geopolitical news exists but markets are stable
+- No USD or gold-relevant high-impact event is imminent
+- The event is from a non-USD country (Canada CPI, UK data, EU data, etc.) — these rarely move gold
+- Background geopolitical news exists but gold price is stable (< $15/hour move)
 - Normal market conditions prevail
 - Old news (events from yesterday or earlier) — do NOT block for old news
+- Geopolitical tensions are ongoing (days/weeks) and already priced in — do NOT block for background tensions
 
 Respond in this EXACT JSON format with no other text:
 {{
@@ -207,11 +221,14 @@ Respond in this EXACT JSON format with no other text:
             if 17 <= h <= 19:
                 return True, "FOMC decision window (18:00 UTC)", 90
 
-        # CPI: 2nd week Tue/Wed
+        # US CPI: 2nd week Tue/Wed, narrow 30-min window around 12:30 UTC
         if 8<=now.day<=15 and now.weekday() in [1,2]:
             h = now.utcnow().hour
-            if 12 <= h <= 14:
-                return True, "CPI release window (12:30 UTC)", 90
+            m = now.utcnow().minute
+            if h == 12 and 25 <= m <= 59:
+                return True, "US CPI release window (12:30 UTC)", 60
+            if h == 13 and m <= 15:
+                return True, "US CPI immediate aftermath (13:00 UTC)", 60
 
         return False, "No scheduled events - market clear", 0
 

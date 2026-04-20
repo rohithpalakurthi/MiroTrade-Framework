@@ -14,12 +14,26 @@ import threading
 from datetime import datetime
 from dotenv import load_dotenv
 
+# Fix Windows cp1252 encoding — allow Unicode arrows/symbols in all agent print output
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+os.environ["PYTHONIOENCODING"] = "utf-8"
+
 load_dotenv()
 sys.path.append(os.getcwd())
 
 # Global agent status tracker
 AGENT_STATUS = {}
 STATUS_FILE  = "paper_trading/logs/agents_status.json"
+
+# Feature 2: Ruflo Agent Health Monitoring
+CRITICAL_AGENTS   = {"Orchestrator", "MasterTrader", "PositionMgr", "CircuitBreaker", "PaperTrader"}
+_watchdog_alerted = {}
+
+# Feature 2: Autopilot supervisor (initialized in __main__)
+SUPERVISOR = None
 
 def set_status(name, status, detail=""):
     AGENT_STATUS[name] = {"status": status, "detail": detail, "updated": str(datetime.now())}
@@ -472,6 +486,43 @@ def run_mobile_tunnel():
         set_status("MobileTunnel", "error", str(e))
         print("[TUNNEL] Fatal: {}".format(e))
 
+def run_watchdog():
+    """Feature 2: Monitor critical agents and alert via Telegram on crashes."""
+    import requests as _req
+    set_status("Watchdog", "running", "Monitoring critical agents every 60s")
+    token   = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
+
+    while True:
+        try:
+            time.sleep(60)
+            crashed = []
+            for agent in CRITICAL_AGENTS:
+                st = AGENT_STATUS.get(agent, {})
+                if st.get("status") == "error":
+                    last_alert = _watchdog_alerted.get(agent, 0)
+                    if time.time() - last_alert > 3600:
+                        crashed.append((agent, st.get("detail", "unknown")))
+                        _watchdog_alerted[agent] = time.time()
+
+            health = {
+                "updated": str(datetime.now()),
+                "critical": {a: AGENT_STATUS.get(a, {}).get("status", "?") for a in CRITICAL_AGENTS},
+                "crashed_now": [a for a, _ in crashed],
+                "running_total": sum(1 for v in AGENT_STATUS.values() if v.get("status") == "running"),
+            }
+            os.makedirs("agents/ruflo_bridge", exist_ok=True)
+            with open("agents/ruflo_bridge/health_status.json", "w") as f:
+                json.dump(health, f, indent=2)
+
+            # Crash alerts handled by autopilot.py — suppress here to avoid duplicates
+            if crashed:
+                print("[WATCHDOG] Crashed agents (autopilot will alert): {}".format(
+                    [a for a, _ in crashed]))
+        except Exception as e:
+            print("[WATCHDOG] Error: {}".format(e))
+
+
 def run_scheduler():
     set_status("Scheduler", "starting")
     try:
@@ -480,7 +531,8 @@ def run_scheduler():
         schedule.every().day.at("16:30").do(daily_pnl_summary)   # 22:00 IST
         schedule.every().day.at("18:30").do(nightly_optimization)
         schedule.every().sunday.at("02:30").do(weekly_performance_report)
-        set_status("Scheduler", "running", "9am/10pm/midnight IST")
+        schedule.every(30).minutes.do(_sync_ruflo_memory)         # Feature 1: memory sync
+        set_status("Scheduler", "running", "9am/10pm/midnight IST + ruflo memory every 30min")
         while True:
             schedule.run_pending()
             time.sleep(60)
@@ -493,6 +545,15 @@ def run_scheduler():
 
 
 # ── Scheduled jobs ────────────────────────────────────────────
+
+def _sync_ruflo_memory():
+    """Feature 1: Write consolidated session context for cross-session memory."""
+    try:
+        from agents.ruflo_bridge.memory_sync import sync
+        sync()
+    except Exception as e:
+        print("[MEMORY SYNC] Error: {}".format(e))
+
 
 def morning_briefing():
     print("\n[SCHEDULER] Sending morning briefing...")
@@ -729,6 +790,7 @@ if __name__ == "__main__":
         threading.Thread(target=run_multi_symbol,         daemon=True, name="MultiSymbol"),
         threading.Thread(target=run_multi_symbol_trader,  daemon=True, name="MultiSymTrader"),
         threading.Thread(target=run_mobile_tunnel,        daemon=True, name="MobileTunnel"),
+        threading.Thread(target=run_watchdog,             daemon=True, name="Watchdog"),
     ]
     if tg_ok:
         threads.append(threading.Thread(target=run_telegram_agent, daemon=True, name="Telegram"))
@@ -785,6 +847,35 @@ if __name__ == "__main__":
     print("  Ctrl+C to stop")
     print("=" * 60)
     print("")
+
+    # Feature 1: initial memory sync on startup
+    _sync_ruflo_memory()
+
+    # Feature 2: autopilot supervisor — watches already-started threads, restarts on crash
+    try:
+        from agents.ruflo_bridge.autopilot import ThreadSupervisor
+        SUPERVISOR = ThreadSupervisor(
+            agent_status_dict=AGENT_STATUS,
+            telegram_token=os.getenv("TELEGRAM_BOT_TOKEN", ""),
+            telegram_chat_id=str(os.getenv("TELEGRAM_CHAT_ID", "")),
+        )
+        # Map thread names to their runner functions for restart
+        _critical = {
+            "Orchestrator":   run_orchestrator_loop,
+            "MasterTrader":   run_master_trader,
+            "PositionMgr":    run_position_manager,
+            "CircuitBreaker": run_circuit_breaker,
+            "PaperTrader":    run_paper_trader,
+        }
+        for t in threads:
+            if t.name in _critical:
+                SUPERVISOR.watch(t.name, _critical[t.name], existing_thread=t,
+                                 max_restarts=10, cooldown=30)
+        autopilot_thread = SUPERVISOR.start()
+        threads.append(autopilot_thread)
+        print("[Autopilot] Watching {} critical agents with auto-restart".format(len(_critical)))
+    except Exception as e:
+        print("[Autopilot] Failed to start: {}".format(e))
 
     # Startup Telegram — rich alert with live market snapshot
     _launch_time = datetime.now()

@@ -28,7 +28,7 @@ load_dotenv()
 SIGNAL_FILE    = "live_execution/bridge/signal.json"
 RESULT_FILE    = "live_execution/bridge/result.json"
 BRIDGE_LOG     = "live_execution/bridge/bridge_log.json"
-STATE_FILE     = "paper_trading/logs/state.json"
+STATE_FILE     = "live_execution/bridge/mt5_state.json"   # bridge keeps its own state — do NOT share with paper trader
 TP1_STATE_FILE = "live_execution/bridge/tp1_state.json"
 
 # MT5 Common Files folder — EA reads signal from here via FILE_COMMON flag

@@ -24,6 +24,9 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
 .b-partial{background:rgba(224,160,0,.15);color:#e0a000}
 .b-new{background:rgba(59,130,246,.15);color:#3b82f6}
 .b-updated{background:rgba(168,85,247,.15);color:#a855f7}
+.card.ruflo{border-left:3px solid #f97316;border-top:1px solid rgba(249,115,22,.2)}
+.b-ruflo{background:rgba(249,115,22,.15);color:#f97316}
+.fbox.orange{border-color:rgba(249,115,22,.5);color:#f97316}
 .flow{background:#0e1015;border:1px solid #1e2330;border-radius:4px;padding:20px 24px;margin-bottom:24px;overflow-x:auto}
 .flow-title{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:3px;color:#5a6478;text-transform:uppercase;margin-bottom:20px}
 .f-row{display:flex;align-items:center;min-width:900px;margin-bottom:0}
@@ -62,25 +65,26 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
 <body>
 
 <h1>MIROTRADE FRAMEWORK</h1>
-<div class="sub">COMPLETE SYSTEM MAP — XAUUSD AUTONOMOUS TRADING FRAMEWORK • UPDATED 2026-04-19</div>
+<div class="sub">COMPLETE SYSTEM MAP — XAUUSD AUTONOMOUS TRADING FRAMEWORK + RUFLO AI BRIDGE • UPDATED 2026-04-20</div>
 
 <!-- Stats -->
 <div class="stats">
-  <div class="stat"><div class="stat-n">60+</div><div class="stat-l">Python Files</div></div>
-  <div class="stat"><div class="stat-n">38</div><div class="stat-l">Live Threads</div></div>
-  <div class="stat"><div class="stat-n">+1</div><div class="stat-l">TV Webhook (sep.)</div></div>
-  <div class="stat"><div class="stat-n">3</div><div class="stat-l">Mobile+Dashboard+Tunnel</div></div>
-  <div class="stat"><div class="stat-n">30</div><div class="stat-l">Nightly Combos</div></div>
-  <div class="stat"><div class="stat-n">10</div><div class="stat-l">Intel Sources</div></div>
-  <div class="stat"><div class="stat-n">16</div><div class="stat-l">Agent Health Checks</div></div>
+  <div class="stat"><div class="stat-n">65+</div><div class="stat-l">Python Files</div></div>
+  <div class="stat"><div class="stat-n">39</div><div class="stat-l">Live Threads</div></div>
+  <div class="stat"><div class="stat-n">4</div><div class="stat-l">Ruflo AI Modules</div></div>
+  <div class="stat"><div class="stat-n">3</div><div class="stat-l">Model Routing Tiers</div></div>
+  <div class="stat"><div class="stat-n">30*</div><div class="stat-l">Smart Nightly Combos</div></div>
+  <div class="stat"><div class="stat-n">12</div><div class="stat-l">Intel Sources</div></div>
+  <div class="stat"><div class="stat-n">5</div><div class="stat-l">Auto-Healed Agents</div></div>
 </div>
 
 <!-- Legend -->
 <div class="legend">
   <div class="leg"><div class="leg-dot" style="background:#00c87a"></div>Built &amp; Running</div>
   <div class="leg"><div class="leg-dot" style="background:#e0a000"></div>Built, Needs Data</div>
-  <div class="leg"><div class="leg-dot" style="background:#3b82f6"></div>New This Session (Apr 18)</div>
-  <div class="leg"><div class="leg-dot" style="background:#a855f7"></div>Updated This Session</div>
+  <div class="leg"><div class="leg-dot" style="background:#3b82f6"></div>New Apr 18-19</div>
+  <div class="leg"><div class="leg-dot" style="background:#a855f7"></div>Updated</div>
+  <div class="leg"><div class="leg-dot" style="background:#f97316"></div>New Apr 20 (Ruflo)</div>
 </div>
 
 <!-- ── SIGNAL FLOW ──────────────────────────────────── -->
@@ -644,6 +648,48 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
     <div class="fbox" style="padding:7px 12px"><span style="font-weight:700">/risk</span><br><span style="font-size:8px;color:#5a6478">Current risk settings<br>+ consecutive losses</span></div>
     <div class="fbox blue" style="padding:7px 12px"><span style="font-weight:700">/perfchart</span><br><span style="font-size:8px;color:#5a6478">5-panel performance chart<br>equity + sessions + monthly</span></div>
     <div class="fbox purple" style="padding:7px 12px"><span style="font-weight:700">Free text</span><br><span style="font-size:8px;color:#5a6478">Routes to GPT-4o MIRO<br>with market context</span></div>
+    <div class="fbox orange" style="padding:7px 12px"><span style="font-weight:700">/query &lt;text&gt;</span><br><span style="font-size:8px;color:#5a6478">Natural language trade search<br>e.g. /query losses london</span></div>
+    <div class="fbox orange" style="padding:7px 12px"><span style="font-weight:700">/agents</span><br><span style="font-size:8px;color:#5a6478">Autopilot health status<br>restarts, exhausted agents</span></div>
+    <div class="fbox orange" style="padding:7px 12px"><span style="font-weight:700">/optmem</span><br><span style="font-size:8px;color:#5a6478">Optimizer memory stats<br>good/bad combos per regime</span></div>
+    <div class="fbox orange" style="padding:7px 12px"><span style="font-weight:700">/webnews</span><br><span style="font-size:8px;color:#5a6478">Live RSS gold headlines<br>Kitco + FXStreet (no API key)</span></div>
+  </div>
+</div>
+
+<!-- ── RUFLO BRIDGE ────────────────────────────── -->
+<div class="flow">
+  <div class="flow-title">Ruflo AI Bridge — 4 Persistent Intelligence Modules</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <div class="fbox orange" style="padding:10px 14px;min-width:160px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:4px;color:#f97316">SEMANTIC JOURNAL</div>
+      <div style="font-size:8px;color:#5a6478">Indexes every trade with session,<br>regime, R-multiple. NL search<br>via /query. Rebuilt every 30min.<br><br>File: semantic_journal.py<br>Index: trade_journal_index.json</div>
+    </div>
+    <div class="fbox orange" style="padding:10px 14px;min-width:160px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:4px;color:#f97316">SELF-HEALING AUTOPILOT</div>
+      <div style="font-size:8px;color:#5a6478">Watches 5 critical agents.<br>Auto-restart up to 10x with 30s<br>cooldown. Telegram alert on crash<br>and recovery.<br><br>File: autopilot.py<br>Health: health_status.json</div>
+    </div>
+    <div class="fbox orange" style="padding:10px 14px;min-width:160px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:4px;color:#f97316">OPTIMIZER MEMORY</div>
+      <div style="font-size:8px;color:#5a6478">Records every nightly backtest<br>combo + regime. Skips known-bad,<br>seeds known-good next run.<br>30-combo budget gets smarter.<br><br>File: optimizer_memory.py<br>History: optimizer_history.json</div>
+    </div>
+    <div class="fbox orange" style="padding:10px 14px;min-width:160px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:4px;color:#f97316">WEB NEWS SCRAPER</div>
+      <div style="font-size:8px;color:#5a6478">RSS feeds: Kitco + FXStreet<br>+ Investing.com. Zero API keys.<br>News Sentinel uses it first,<br>then DuckDuckGo fallback.<br><br>File: web_scraper.py<br>Command: /webnews</div>
+    </div>
+    <div class="fbox" style="padding:10px 14px;min-width:160px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:4px">MEMORY SYNC</div>
+      <div style="font-size:8px;color:#5a6478">Reads 12 JSON state files,<br>builds session_context.json.<br>Injected into every Claude Code<br>session via SessionStart hook.<br><br>File: memory_sync.py<br>Output: session_context.json</div>
+    </div>
+  </div>
+  <div class="flow-row" style="margin-top:12px;justify-content:center">
+    <div class="fbox orange" style="font-size:8px;padding:5px 10px">Session Start Hook</div>
+    <div class="f-arr">&#x2192;</div>
+    <div class="fbox orange" style="font-size:8px;padding:5px 10px">memory_sync.py --context</div>
+    <div class="f-arr">&#x2192;</div>
+    <div class="fbox" style="font-size:8px;padding:5px 10px">session_context.json</div>
+    <div class="f-arr">&#x2192;</div>
+    <div class="fbox blue" style="font-size:8px;padding:5px 10px">Claude Code gets live state</div>
+    <div class="f-arr">&#x2192;</div>
+    <div class="fbox green" style="font-size:8px;padding:5px 10px">No re-explain needed</div>
   </div>
 </div>
 
@@ -663,6 +709,10 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
       <div style="font-size:10px;font-weight:700;margin-bottom:3px">&#10003; Mobile Access</div>
       <div style="font-size:8px;color:#5a6478">ngrok tunnel. Responsive CSS.<br>URL pushed to Telegram on startup.</div>
     </div>
+    <div class="fbox orange" style="padding:8px 14px;opacity:.7">
+      <div style="font-size:10px;font-weight:700;margin-bottom:3px">&#10003; Ruflo AI Bridge</div>
+      <div style="font-size:8px;color:#5a6478">Semantic journal, self-healing<br>autopilot, optimizer memory,<br>web scraper. Persistent AI memory.</div>
+    </div>
     <div class="fbox warn" style="padding:8px 14px">
       <div style="font-size:10px;font-weight:700;margin-bottom:3px">Live Deployment</div>
       <div style="font-size:8px;color:#5a6478">12-point checklist at 100%<br>Accumulate 20+ paper trades<br>Risk approval required</div>
@@ -675,7 +725,7 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
 </div>
 
 <div style="color:#5a6478;font-size:9px;margin-top:16px;letter-spacing:1px">
-  MIROTRADE-FRAMEWORK • ROHITH PALAKURTHI • ALL TIMES IST • LAST UPDATED 2026-04-19 • 38 AGENTS
+  MIROTRADE-FRAMEWORK • ROHITH PALAKURTHI • ALL TIMES IST • LAST UPDATED 2026-04-20 • 39 AGENTS • 4 RUFLO MODULES
 </div>
 </body>
 </html>

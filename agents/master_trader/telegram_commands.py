@@ -476,6 +476,111 @@ def cmd_risk():
     send(msg)
 
 
+def cmd_resetdd():
+    """Reset peak_balance to current balance — clears drawdown so trading can resume."""
+    try:
+        if not os.path.exists(STATE_FILE):
+            send("No paper trading state found.")
+            return
+        with open(STATE_FILE) as f:
+            state = json.load(f)
+
+        old_peak = state.get("peak_balance", 0)
+        current  = state.get("balance", 0)
+        old_dd   = round((old_peak - current) / old_peak * 100, 1) if old_peak > 0 else 0
+
+        state["peak_balance"] = current
+        with open(STATE_FILE, "w") as f:
+            import json as _json
+            _json.dump(state, f, indent=2, default=str)
+
+        send(
+            "<b>DRAWDOWN RESET</b>\n"
+            "Old peak: ${:,.2f}\n"
+            "Old drawdown: {}%\n"
+            "New peak set to current balance: ${:,.2f}\n"
+            "Drawdown now: 0%\n\n"
+            "<i>Risk manager will re-approve on next cycle (30s).\n"
+            "Use sparingly — only when paper trading baseline needs resetting.</i>".format(
+                old_peak, old_dd, current)
+        )
+    except Exception as e:
+        send("resetdd error: {}".format(e))
+
+
+def cmd_query(text=""):
+    """Feature 1: Semantic trade journal query via Telegram."""
+    from agents.ruflo_bridge.semantic_journal import query, format_results, build_index
+    build_index()  # refresh index
+    q = text.strip() or "last 5 trades"
+    records, err = query(q)
+    send(format_results(records, q))
+
+
+def cmd_agents():
+    """Feature 2: Show autopilot / agent health status."""
+    try:
+        import json, os
+        health_file = "agents/ruflo_bridge/health_status.json"
+        if not os.path.exists(health_file):
+            send("<b>MIRO AGENTS</b>\nAutopilot health file not yet written.\nRun system for 30s.")
+            return
+        with open(health_file) as f:
+            h = json.load(f)
+        supervised = h.get("supervised", {})
+        lines = ["<b>MIRO AGENT HEALTH</b>", "━━━━━━━━━━━━━━━━━━━━",
+                 "Updated: {}".format(h.get("updated", "?")[-8:]),
+                 "Alive: {}/{}".format(h.get("total_alive", "?"), h.get("total_agents", "?")),
+                 "━━━━━━━━━━━━━━━━━━━━"]
+        for name, s in supervised.items():
+            icon = "✓" if s.get("alive") else ("!" if s.get("exhausted") else "↻")
+            lines.append("{} {} — restarts: {}/{}".format(
+                icon, name, s.get("restarts", 0), s.get("max", "?")))
+        send("\n".join(lines))
+    except Exception as e:
+        send("Agent health error: {}".format(e))
+
+
+def cmd_optmem():
+    """Feature 3: Show optimizer memory stats."""
+    try:
+        from agents.ruflo_bridge.optimizer_memory import OptimizerMemory
+        mem   = OptimizerMemory()
+        stats = mem.get_stats()
+        q     = stats.get("by_quality", {})
+        r     = stats.get("by_regime",  {})
+        lines = [
+            "<b>OPTIMIZER MEMORY</b>",
+            "━━━━━━━━━━━━━━━━━━━━",
+            "Total runs: {} | Applied: {}".format(stats["total"], stats["applied"]),
+            "Quality — good:{} ok:{} bad:{}".format(
+                q.get("good",0), q.get("ok",0), q.get("bad",0)),
+            "━━━━━━━━━━━━━━━━━━━━",
+        ] + ["{}: {} runs".format(reg, cnt) for reg, cnt in r.items()]
+        send("\n".join(lines))
+    except Exception as e:
+        send("Optimizer memory error: {}".format(e))
+
+
+def cmd_webnews():
+    """Feature 4: Fetch and show latest web news headlines."""
+    send("<b>MIRO</b>: Fetching live gold news...")
+    try:
+        from agents.news_sentinel.web_scraper import fetch_news
+        articles = fetch_news()
+        if not articles:
+            send("No recent gold news found in RSS feeds.")
+            return
+        lines = ["<b>LIVE GOLD NEWS ({} articles)</b>".format(len(articles)),
+                 "━━━━━━━━━━━━━━━━━━━━"]
+        for a in articles[:6]:
+            lines.append("[{}] +{}min\n<i>{}</i>".format(
+                a["source"], a["age_min"], a["title"]))
+        send("\n".join(lines))
+    except Exception as e:
+        send("Web news error: {}".format(e))
+
+
 def cmd_help():
     send(
         "<b>MIRO COMMANDS</b>\n\n"
@@ -489,6 +594,11 @@ def cmd_help():
         "/closeall  — close all positions\n"
         "/report    — today's P&L\n"
         "/risk      — risk settings\n"
+        "/resetdd   — reset drawdown baseline (paper trading)\n"
+        "/query     — search trade journal\n"
+        "/agents    — agent health + autopilot\n"
+        "/optmem    — optimizer memory stats\n"
+        "/webnews   — live gold RSS headlines\n"
         "/help      — this list"
     )
 
@@ -505,6 +615,11 @@ COMMANDS = {
     "/closeall"  : cmd_closeall,
     "/report"    : cmd_report,
     "/risk"      : cmd_risk,
+    "/resetdd"   : cmd_resetdd,
+    "/query"     : cmd_query,
+    "/agents"    : cmd_agents,
+    "/optmem"    : cmd_optmem,
+    "/webnews"   : cmd_webnews,
     "/help"      : cmd_help,
 }
 
@@ -538,11 +653,15 @@ def run():
                     continue
 
                 # Match command (with or without @botname suffix)
-                cmd = text.split("@")[0].split(" ")[0]
+                cmd  = text.split("@")[0].split(" ")[0]
+                args = " ".join(text.split(" ")[1:])  # everything after the command
                 if cmd in COMMANDS:
-                    print("[TeleCmd] Command: {}".format(cmd))
+                    print("[TeleCmd] Command: {} args={}".format(cmd, args))
                     try:
-                        COMMANDS[cmd]()
+                        if cmd == "/query":
+                            cmd_query(args)
+                        else:
+                            COMMANDS[cmd]()
                     except Exception as e:
                         send("Error: {}".format(e))
                 elif text:

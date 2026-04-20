@@ -1,0 +1,572 @@
+[
+  {
+    "ts": "2026-04-20T18:30:43.345485",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.2,
+      "rr_tp2": 3.5,
+      "signal_cooldown": 5,
+      "stoch_ob": 80,
+      "stoch_os": 20,
+      "require_volume": false
+    },
+    "wr": 67.86,
+    "pf": 3.14,
+    "dd": 1.99,
+    "trades": 56,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:43.733137",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 6,
+      "sl_mult": 1.2,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 7,
+      "stoch_ob": 70,
+      "stoch_os": 25,
+      "require_volume": false
+    },
+    "wr": 69.81,
+    "pf": 3.61,
+    "dd": 1.0,
+    "trades": 53,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:44.132506",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 4,
+      "sl_mult": 1.5,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 5,
+      "stoch_ob": 75,
+      "stoch_os": 20,
+      "require_volume": true
+    },
+    "wr": 68.0,
+    "pf": 3.05,
+    "dd": 1.0,
+    "trades": 50,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:44.522385",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 5,
+      "sl_mult": 1.2,
+      "rr_tp2": 3.5,
+      "signal_cooldown": 5,
+      "stoch_ob": 70,
+      "stoch_os": 20,
+      "require_volume": false
+    },
+    "wr": 67.86,
+    "pf": 3.14,
+    "dd": 1.99,
+    "trades": 56,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:44.906139",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 4,
+      "sl_mult": 1.8,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 5,
+      "stoch_ob": 80,
+      "stoch_os": 20,
+      "require_volume": false
+    },
+    "wr": 68.75,
+    "pf": 2.85,
+    "dd": 1.5,
+    "trades": 48,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:45.301522",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 6,
+      "sl_mult": 1.5,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 3,
+      "stoch_ob": 70,
+      "stoch_os": 30,
+      "require_volume": true
+    },
+    "wr": 68.63,
+    "pf": 3.15,
+    "dd": 1.0,
+    "trades": 51,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:45.683400",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.8,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 7,
+      "stoch_ob": 75,
+      "stoch_os": 20,
+      "require_volume": true
+    },
+    "wr": 70.21,
+    "pf": 3.06,
+    "dd": 1.5,
+    "trades": 47,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:46.080435",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.8,
+      "rr_tp2": 3.5,
+      "signal_cooldown": 7,
+      "stoch_ob": 80,
+      "stoch_os": 30,
+      "require_volume": false
+    },
+    "wr": 69.39,
+    "pf": 2.96,
+    "dd": 0.51,
+    "trades": 49,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:46.467473",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 6,
+      "sl_mult": 1.2,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 7,
+      "stoch_ob": 80,
+      "stoch_os": 20,
+      "require_volume": true
+    },
+    "wr": 70.59,
+    "pf": 3.74,
+    "dd": 1.0,
+    "trades": 51,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:46.850506",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.5,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 3,
+      "stoch_ob": 70,
+      "stoch_os": 25,
+      "require_volume": false
+    },
+    "wr": 67.31,
+    "pf": 2.96,
+    "dd": 1.0,
+    "trades": 52,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:47.249437",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 4,
+      "sl_mult": 1.2,
+      "rr_tp2": 3.5,
+      "signal_cooldown": 7,
+      "stoch_ob": 80,
+      "stoch_os": 20,
+      "require_volume": true
+    },
+    "wr": 70.59,
+    "pf": 3.74,
+    "dd": 1.0,
+    "trades": 51,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:47.633075",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 5,
+      "sl_mult": 1.8,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 5,
+      "stoch_ob": 80,
+      "stoch_os": 30,
+      "require_volume": false
+    },
+    "wr": 69.39,
+    "pf": 2.96,
+    "dd": 0.51,
+    "trades": 49,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:48.091438",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 6,
+      "sl_mult": 1.2,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 5,
+      "stoch_ob": 70,
+      "stoch_os": 25,
+      "require_volume": true
+    },
+    "wr": 69.64,
+    "pf": 3.42,
+    "dd": 1.99,
+    "trades": 56,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:48.483323",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.8,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 3,
+      "stoch_ob": 75,
+      "stoch_os": 30,
+      "require_volume": true
+    },
+    "wr": 70.83,
+    "pf": 3.18,
+    "dd": 0.5,
+    "trades": 48,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:48.906811",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 4,
+      "sl_mult": 1.8,
+      "rr_tp2": 3.5,
+      "signal_cooldown": 3,
+      "stoch_ob": 70,
+      "stoch_os": 30,
+      "require_volume": true
+    },
+    "wr": 70.83,
+    "pf": 3.18,
+    "dd": 0.5,
+    "trades": 48,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:49.316157",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 5,
+      "sl_mult": 1.8,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 5,
+      "stoch_ob": 75,
+      "stoch_os": 30,
+      "require_volume": false
+    },
+    "wr": 69.39,
+    "pf": 2.96,
+    "dd": 0.51,
+    "trades": 49,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:49.712747",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 4,
+      "sl_mult": 1.5,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 5,
+      "stoch_ob": 70,
+      "stoch_os": 25,
+      "require_volume": true
+    },
+    "wr": 68.63,
+    "pf": 3.15,
+    "dd": 1.0,
+    "trades": 51,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:50.112345",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.8,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 3,
+      "stoch_ob": 75,
+      "stoch_os": 25,
+      "require_volume": false
+    },
+    "wr": 69.39,
+    "pf": 2.96,
+    "dd": 0.51,
+    "trades": 49,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:50.508289",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.2,
+      "rr_tp2": 3.5,
+      "signal_cooldown": 7,
+      "stoch_ob": 80,
+      "stoch_os": 25,
+      "require_volume": true
+    },
+    "wr": 71.15,
+    "pf": 3.85,
+    "dd": 1.0,
+    "trades": 52,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:50.898408",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.8,
+      "rr_tp2": 3.5,
+      "signal_cooldown": 5,
+      "stoch_ob": 75,
+      "stoch_os": 20,
+      "require_volume": false
+    },
+    "wr": 68.75,
+    "pf": 2.85,
+    "dd": 1.5,
+    "trades": 48,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:51.306121",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 7,
+      "sl_mult": 1.2,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 3,
+      "stoch_ob": 70,
+      "stoch_os": 20,
+      "require_volume": true
+    },
+    "wr": 69.09,
+    "pf": 3.32,
+    "dd": 1.99,
+    "trades": 55,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:51.701036",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 5,
+      "sl_mult": 1.2,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 3,
+      "stoch_ob": 80,
+      "stoch_os": 20,
+      "require_volume": true
+    },
+    "wr": 69.09,
+    "pf": 3.32,
+    "dd": 1.99,
+    "trades": 55,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:52.100743",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 5,
+      "sl_mult": 1.8,
+      "rr_tp2": 3.5,
+      "signal_cooldown": 3,
+      "stoch_ob": 80,
+      "stoch_os": 30,
+      "require_volume": false
+    },
+    "wr": 69.39,
+    "pf": 2.96,
+    "dd": 0.51,
+    "trades": 49,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:52.495603",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 4,
+      "sl_mult": 1.8,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 7,
+      "stoch_ob": 80,
+      "stoch_os": 20,
+      "require_volume": false
+    },
+    "wr": 68.75,
+    "pf": 2.85,
+    "dd": 1.5,
+    "trades": 48,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:52.890510",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 6,
+      "sl_mult": 1.8,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 7,
+      "stoch_ob": 70,
+      "stoch_os": 25,
+      "require_volume": true
+    },
+    "wr": 70.83,
+    "pf": 3.18,
+    "dd": 0.5,
+    "trades": 48,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:53.301240",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 5,
+      "sl_mult": 1.5,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 3,
+      "stoch_ob": 75,
+      "stoch_os": 25,
+      "require_volume": false
+    },
+    "wr": 67.31,
+    "pf": 2.96,
+    "dd": 1.0,
+    "trades": 52,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:53.701031",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 6,
+      "sl_mult": 1.5,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 7,
+      "stoch_ob": 70,
+      "stoch_os": 30,
+      "require_volume": false
+    },
+    "wr": 68.63,
+    "pf": 3.14,
+    "dd": 1.0,
+    "trades": 51,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:54.102713",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 6,
+      "sl_mult": 1.8,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 5,
+      "stoch_ob": 75,
+      "stoch_os": 25,
+      "require_volume": false
+    },
+    "wr": 69.39,
+    "pf": 2.96,
+    "dd": 0.51,
+    "trades": 49,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:54.491785",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 5,
+      "sl_mult": 1.2,
+      "rr_tp2": 3.0,
+      "signal_cooldown": 3,
+      "stoch_ob": 80,
+      "stoch_os": 30,
+      "require_volume": true
+    },
+    "wr": 68.42,
+    "pf": 3.2,
+    "dd": 1.99,
+    "trades": 57,
+    "quality": "good",
+    "applied": false
+  },
+  {
+    "ts": "2026-04-20T18:30:54.890535",
+    "regime": "RANGING",
+    "params": {
+      "min_score": 4,
+      "sl_mult": 1.8,
+      "rr_tp2": 2.5,
+      "signal_cooldown": 3,
+      "stoch_ob": 75,
+      "stoch_os": 20,
+      "require_volume": false
+    },
+    "wr": 68.75,
+    "pf": 2.85,
+    "dd": 1.5,
+    "trades": 48,
+    "quality": "good",
+    "applied": false
+  }
+]

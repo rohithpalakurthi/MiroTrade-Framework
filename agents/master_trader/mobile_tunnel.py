@@ -54,10 +54,23 @@ def _save_url(url):
         json.dump({"url": url, "updated": datetime.now().isoformat()}, f)
 
 
+def _kill_existing_ngrok():
+    """Kill any orphaned ngrok.exe processes before starting a new session."""
+    try:
+        import subprocess
+        subprocess.run(["taskkill", "/IM", "ngrok.exe", "/F"],
+                       capture_output=True, timeout=10)
+        import time; time.sleep(2)  # let OS release the port binding
+    except Exception:
+        pass
+
+
 def _start_ngrok():
     """Start ngrok tunnel, return public URL or None."""
     try:
         from pyngrok import ngrok, conf
+
+        _kill_existing_ngrok()
 
         if NGROK_TOKEN:
             conf.get_default().auth_token = NGROK_TOKEN

@@ -30,7 +30,8 @@ load_dotenv()
 
 BOT_TOKEN    = os.getenv("TELEGRAM_BOT_TOKEN", "")
 CHAT_ID      = os.getenv("TELEGRAM_CHAT_ID", "")
-STATE_FILE   = "paper_trading/logs/state.json"
+STATE_FILE      = "paper_trading/logs/state.json"         # paper trading simulation state
+MT5_STATE_FILE  = "live_execution/bridge/mt5_state.json"  # live MT5 account state (from bridge)
 SENT_FILE    = "agents/telegram/sent_alerts.json"
 NEWS_FILE    = "agents/news_sentinel/news_log.json"
 RISK_FILE    = "agents/risk_manager/risk_state.json"
@@ -50,6 +51,8 @@ class TelegramAlertAgent:
         self.last_open_count  = 0
         self.last_result_ts   = ""   # last EA result timestamp seen
         self.known_tickets    = set() # live MT5 tickets already alerted
+        self._last_risk_alert_score = None   # last score we alerted on
+        self._last_risk_alert_time  = 0      # unix timestamp of last risk alert
 
         if not self.bot_token or not self.chat_id:
             print("WARNING: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set in .env")
@@ -178,14 +181,57 @@ class TelegramAlertAgent:
         self.send_message(msg)
 
     def alert_risk_warning(self, reason, score):
-        """Alert when risk manager raises a warning."""
+        """Alert when risk manager raises a warning. Cooldown: 1h, or immediately on score change."""
+        import time as _time
+        now = _time.time()
+        score_changed = (score != self._last_risk_alert_score)
+        cooldown_ok   = (now - self._last_risk_alert_time) > 3600  # 1 hour
+
+        if not score_changed and not cooldown_ok:
+            return  # suppress repeat — same score, within cooldown window
+
+        self._last_risk_alert_score = score
+        self._last_risk_alert_time  = now
+
+        # Determine severity label and action guidance
+        if score <= 2:
+            severity = "CRITICAL"
+            action = (
+                "TRADING IS HALTED.\n\n"
+                "<b>What to do now:</b>\n"
+                "1. Don't force trades — let the system stay halted\n"
+                "2. Review recent losses: /query losses\n"
+                "3. Wait for regime to improve: /status\n"
+                "4. If paper trading: reset drawdown baseline with /resetdd\n"
+                "5. If in live: reduce position sizes and wait for recovery"
+            )
+        elif score <= 4:
+            severity = "WARNING"
+            action = (
+                "<b>What to do now:</b>\n"
+                "1. System is auto-reducing position sizes\n"
+                "2. Avoid forcing new trades — wait for better setups\n"
+                "3. Check current regime: /status\n"
+                "4. Review recent trades: /query losses\n"
+                "5. Trading continues at reduced risk until recovery"
+            )
+        else:
+            severity = "NOTICE"
+            action = "Monitor closely. System adjusting risk automatically."
+
         msg = (
-            "<b>RISK WARNING</b>\n"
+            "<b>MIRO RISK {}</b>\n"
             "--------------------------------\n"
             "<b>Score:</b> {}/10\n"
             "<b>Reason:</b> {}\n"
-            "<b>Time:</b> {}"
-        ).format(score, reason, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            "<b>Time:</b> {}\n"
+            "--------------------------------\n"
+            "{}"
+        ).format(
+            severity, score, reason,
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            action
+        )
         self.send_message(msg)
 
     def send_morning_briefing(self, state, news_log, risk_state):
@@ -343,12 +389,10 @@ class TelegramAlertAgent:
     def check_live_positions(self):
         """Alert on new live MT5 positions (ticket-based, from mt5_bridge sync)."""
         try:
-            if not os.path.exists(STATE_FILE):
+            if not os.path.exists(MT5_STATE_FILE):
                 return
-            with open(STATE_FILE) as f:
+            with open(MT5_STATE_FILE) as f:
                 state = json.load(f)
-            if state.get("source") != "MT5_LIVE":
-                return
             for pos in state.get("open_trades", []):
                 ticket = pos.get("ticket")
                 if ticket and ticket not in self.known_tickets:
@@ -381,22 +425,8 @@ class TelegramAlertAgent:
         with open(STATE_FILE, "r") as f:
             state = json.load(f)
 
-        # ── Paper trades (paper_trader.py) ─────────────────────
-        if state.get("source") != "MT5_LIVE":
-            closed      = state.get("closed_trades", [])
-            open_trades = state.get("open_trades", [])
-
-            for trade in closed:
-                trade_id  = trade.get("id", 0)
-                close_key = "close_{}".format(trade_id)
-                if close_key not in self.sent["trade_ids"]:
-                    self.alert_trade_closed(trade)
-
-            for trade in open_trades:
-                trade_id = trade.get("id", 0)
-                open_key = "open_{}".format(trade_id)
-                if open_key not in self.sent["trade_ids"]:
-                    self.alert_trade_opened(trade)
+        # Paper trade open/close alerts are sent directly by paper_trader.py at the
+        # moment of the trade. Do NOT re-alert here — it would double every message.
 
         # ── Risk warnings ──────────────────────────────────────
         if os.path.exists(RISK_FILE):

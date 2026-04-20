@@ -257,6 +257,15 @@ def scan_all_symbols():
             mt5.login(login, password=os.getenv("MT5_PASSWORD", ""),
                       server=os.getenv("MT5_SERVER", ""))
 
+        # Ensure all symbols are visible in Market Watch — required for bar data
+        for sym in SYMBOLS:
+            info = mt5.symbol_info(sym)
+            if info is None:
+                print("[MultiSym] WARNING: {} not found in broker — skipping".format(sym))
+            elif not info.visible:
+                mt5.symbol_select(sym, True)
+                print("[MultiSym] Enabled {} in Market Watch".format(sym))
+
         state = _load_state()
 
         for symbol, cfg in SYMBOLS.items():

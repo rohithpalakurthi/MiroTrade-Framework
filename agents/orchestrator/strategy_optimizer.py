@@ -197,13 +197,51 @@ class StrategyOptimizer:
         else:
             print("[Optimizer] Baseline failed — too few trades")
 
-        # 4. Build search grid
+        # 4. Build search grid — Feature 3: use optimizer memory to avoid bad combos
         keys   = list(PARAM_GRID.keys())
         values = list(PARAM_GRID.values())
         combos = list(itertools.product(*values))
         random.shuffle(combos)
+
+        # Load current regime for memory lookup
+        _current_regime = "UNKNOWN"
+        try:
+            if os.path.exists("agents/master_trader/regime.json"):
+                with open("agents/master_trader/regime.json") as _f:
+                    _current_regime = json.load(_f).get("regime", "UNKNOWN")
+        except Exception:
+            pass
+
+        try:
+            from agents.ruflo_bridge.optimizer_memory import OptimizerMemory, _params_key
+            _opt_mem  = OptimizerMemory()
+            _bad      = _opt_mem.get_bad_params(_current_regime)
+            _bad_keys = {_params_key(b) for b in _bad}
+            _seeds    = _opt_mem.get_best_seeds(_current_regime, top_n=5)
+            # Filter out known-bad combos
+            _bad_count = 0
+            filtered_combos = []
+            for combo in combos:
+                override = dict(zip(keys, combo))
+                if _params_key(override) not in _bad_keys:
+                    filtered_combos.append(combo)
+                else:
+                    _bad_count += 1
+            combos = filtered_combos
+            print("[Optimizer] Memory: skipped {} bad combos for regime={}".format(
+                _bad_count, _current_regime))
+            # Prepend known-good seeds
+            for seed in _seeds:
+                seed_combo = tuple(seed.get(k, values[i][0]) for i, k in enumerate(keys))
+                combos.insert(0, seed_combo)
+        except Exception as _e:
+            _opt_mem        = None
+            _current_regime = "UNKNOWN"
+            print("[Optimizer] Memory unavailable: {}".format(_e))
+
         combos = combos[:max_combinations]
-        print("[Optimizer] Testing {} combinations...".format(len(combos)))
+        print("[Optimizer] Testing {} combinations (regime={})...".format(
+            len(combos), _current_regime))
 
         results = []
         for i, combo in enumerate(combos):
@@ -214,6 +252,12 @@ class StrategyOptimizer:
                 r["composite_score"] = _score(r)
                 r["params"] = override
                 results.append(r)
+                # Feature 3: record every run in optimizer memory
+                try:
+                    if _opt_mem:
+                        _opt_mem.record_run(override, r, regime=_current_regime, applied=False)
+                except Exception:
+                    pass
                 if (i + 1) % 5 == 0:
                     print("[Optimizer] {}/{} tested | best so far: score={}".format(
                         i+1, len(combos),
@@ -250,6 +294,12 @@ class StrategyOptimizer:
                         "new"       : {"win_rate": best["win_rate"],     "profit_factor": best["profit_factor"]},
                     }, f, indent=2)
                 applied = True
+                # Feature 3: mark applied combo in optimizer memory
+                try:
+                    if _opt_mem:
+                        _opt_mem.record_run(best["params"], best, regime=_current_regime, applied=True)
+                except Exception:
+                    pass
                 # Build param diff string
                 changed = {k: v for k, v in best["params"].items()
                            if current_full.get(k) != v}

@@ -82,6 +82,7 @@ class PaperTradingEngine:
         self.today_pnl        = 0.0
         self.paper_days       = 0
         self.ea_days          = 0
+        self._last_paper_date = None   # track calendar dates seen for paper_days
         self.last_h1_scan_ts  = 0.0   # unix timestamp — time-based H1 rescan
         self.last_m5_candle   = None  # candle-based M5 dedup
         self.last_signal_score = {}   # latest confluence snapshot for dashboard
@@ -93,8 +94,12 @@ class PaperTradingEngine:
         if os.path.exists(sp):
             with open(sp) as f:
                 s = json.load(f)
-            self.balance      = s.get("balance", INITIAL_BALANCE)
-            self.peak_balance = s.get("peak_balance", INITIAL_BALANCE)
+            # Reject state files written by MT5 bridge (they have source=MT5_LIVE or no trade_id)
+            if s.get("source") == "MT5_LIVE" or "trade_id" not in s:
+                print("[PaperTrader] WARNING: state.json looks like MT5 bridge data — ignoring, starting fresh")
+            else:
+                self.balance      = s.get("balance", INITIAL_BALANCE)
+                self.peak_balance = s.get("peak_balance", INITIAL_BALANCE)
             # Filter out MT5-bridge trades (they have "ticket") — paper trader manages its own
             self.open_trades  = [t for t in s.get("open_trades", []) if "ticket" not in t]
             self.closed_trades= s.get("closed_trades", [])
@@ -102,6 +107,7 @@ class PaperTradingEngine:
             self.today_pnl    = s.get("today_pnl", 0.0)
             self.paper_days        = s.get("paper_days", 0)
             self.ea_days           = s.get("ea_days", 0)
+            self._last_paper_date  = s.get("last_paper_date", None)
             self.last_signal_score = s.get("signal_score", {})
             print("State loaded: ${} | Open:{} Closed:{}".format(
                 round(self.balance,2), len(self.open_trades), len(self.closed_trades)))
@@ -117,6 +123,7 @@ class PaperTradingEngine:
                 "today_pnl"     : round(self.today_pnl, 2),
                 "paper_days"    : self.paper_days,
                 "ea_days"       : self.ea_days,
+                "last_paper_date": self._last_paper_date,
                 "last_update"   : str(datetime.now()),
                 "signal_score"  : self.last_signal_score,
             }, f, indent=2, default=str)
@@ -484,17 +491,21 @@ class PaperTradingEngine:
         if not self.connect_mt5():
             print("MT5 connection failed"); return
 
-        last_day = datetime.now().date()
         h1_sig = m5_sig = None
         h1_bull = h1_bear = 0
 
+        # Seed _last_paper_date so restarts don't double-count today
+        if self._last_paper_date is None:
+            self._last_paper_date = datetime.now().date().isoformat()
+
         while True:
             try:
-                today = datetime.now().date()
-                if today != last_day:
+                today_str = datetime.now().date().isoformat()
+                if today_str != self._last_paper_date:
                     self.today_pnl = 0.0
                     self.paper_days += 1
-                    last_day = today
+                    self._last_paper_date = today_str
+                    self.save_state()
                     print("Day {} of paper trading".format(self.paper_days))
 
                 bid, ask = self.get_price()

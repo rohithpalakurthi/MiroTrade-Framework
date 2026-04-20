@@ -1,7 +1,7 @@
 ============================================================
   MIROTRADE FRAMEWORK — DAILY STARTUP & OPERATIONS GUIDE
-  XAUUSD Autonomous Trading System
-  Last updated: 2026-04-17
+  XAUUSD Autonomous Trading System + Ruflo AI Bridge
+  Last updated: 2026-04-20
 ============================================================
 
 PREREQUISITES (one-time, already done)
@@ -18,10 +18,9 @@ Make sure XAUUSD is visible in the market watch window.
 Keep MT5 running in the background. Do NOT close it.
 
 ------------------------------------------------------------
-STEP 2 — OPEN A TERMINAL (Command Prompt or PowerShell)
+STEP 2 — OPEN A TERMINAL
 ------------------------------------------------------------
-Press Win+R → type cmd → Enter
-OR open VS Code terminal
+Press Win+R -> type cmd -> Enter  OR  open VS Code terminal
 
 Navigate to the project:
   cd "D:\Trading Project\MiroTrade-Framework"
@@ -29,74 +28,84 @@ Navigate to the project:
 ------------------------------------------------------------
 STEP 3 — START THE FULL SYSTEM
 ------------------------------------------------------------
-Run this ONE command. It starts all 31 agents automatically:
+Run this ONE command. It starts all 39 agents automatically:
 
   python launch.py
 
-You will see all agents launch one by one and get a startup
+You will see all agents launch one by one with a startup
 summary. Keep this terminal OPEN and RUNNING all day.
 
-Expected startup output:
-  Paper Trader     : STARTING
-  News Sentinel    : STARTING (AI-powered Claude / Rule-based)
-  Risk Manager     : STARTING
-  Orchestrator     : STARTING
-  ...all 31 threads...
-  All 31 agents launched!
-  Dashboard → http://localhost:5055
+Expected output (first 30 seconds):
+  [MemorySync] Saved: agents/ruflo_bridge/session_context.json
+  Starting 39 agents (1s stagger)...
+  Paper Trader     : state loaded, scanning H1+M5
+  News Sentinel    : AI-powered (Claude) every 30min
+  Risk Manager     : APPROVED 8/10
+  Orchestrator     : GO - 72% confidence
+  [Dashboard] MIRO Unified Dashboard -> http://localhost:5055
+  [Autopilot] Watching 5 critical agents with auto-restart
 
 ------------------------------------------------------------
 STEP 4 — OPEN THE DASHBOARD
 ------------------------------------------------------------
-Open your browser and go to:
-  http://localhost:5055
+Open your browser:  http://localhost:5055
+Mobile access:      URL sent automatically to Telegram on startup
 
-This shows everything:
-  - Paper account balance and performance
+Dashboard shows:
+  - Paper account balance, equity curve, performance
   - Live confluence ring (9 factors)
-  - Orchestrator GO/NO-GO status
-  - All agent health (green = active, red = offline)
-  - Open trades, equity curve, recent trades
+  - Orchestrator GO/NO-GO + all 5 checks
+  - Agent health grid (green = active, red = offline)
+  - Open trades, recent closed trades table
   - Market narrative, news brain, DXY/yields
-  - Deployment readiness checklist
+  - Sentiment score, COT positioning, patterns
+  - Multi-symbol monitor panel
+  - Deployment readiness checklist (50% currently)
+  - Session heatmap and performance chart
 
 ------------------------------------------------------------
-STEP 5 — START THE TRADINGVIEW WEBHOOK (OPTIONAL)
+STEP 5 — TRADINGVIEW WEBHOOK (OPTIONAL)
 ------------------------------------------------------------
-Only needed if you are using TradingView Pine Script alerts.
+Only needed if using TradingView Pine Script alerts.
 Open a SECOND terminal:
 
   cd "D:\Trading Project\MiroTrade-Framework"
   python tradingview/bridge_launcher.py
 
 Webhook listens at: http://localhost:5056/webhook
-Keep this terminal open separately.
 
 ------------------------------------------------------------
-DAILY HEALTH CHECK (do this once after startup)
+DAILY HEALTH CHECK (once after startup)
 ------------------------------------------------------------
-Look at the dashboard System Status Bar at the top:
+Check dashboard System Status Bar at the top:
 
-  NEWS  → should say OK or SAFE (not BLOCK)
-  RISK  → should show a score like 8/10 or 9/10
-  ORCH  → should say GO (means all systems green)
-  MTF   → should say BUY or SELL (not NEUTRAL)
-  MT5   → should say LIVE (means MT5 is connected)
+  NEWS  -> OK or SAFE (not BLOCK)
+  RISK  -> score like 8/10 or 9/10
+  ORCH  -> GO (all systems green)
+  MTF   -> BUY or SELL (not NEUTRAL)
+  MT5   -> LIVE (MT5 connected)
 
-If ORCH says NO-GO, check the Orchestrator section on the
-dashboard to see which check is failing.
+If ORCH says NO-GO, check the Orchestrator section to see
+which check is failing.
+
+NEW: Check autopilot agent health any time via Telegram:
+  /agents   -> shows all 5 critical agents + restart counts
 
 ------------------------------------------------------------
 IF SOMETHING CRASHES / SYSTEM RESTARTS
 ------------------------------------------------------------
-Just run:  python launch.py   again from Step 3.
-All state is saved to JSON files — nothing is lost on restart.
-The system picks up where it left off.
+NEW: Autopilot self-heals! Critical agents (Orchestrator,
+MasterTrader, PositionMgr, CircuitBreaker, PaperTrader)
+auto-restart up to 10 times without you doing anything.
+You will receive a Telegram alert on crash and recovery.
+
+If the whole system needs a restart:  python launch.py
+All state is saved to JSON files — nothing is lost.
 
 ------------------------------------------------------------
-INDIVIDUAL AGENT COMMANDS (for debugging only)
+INDIVIDUAL AGENT COMMANDS (debugging only)
 ------------------------------------------------------------
-Run a single agent in isolation (open a separate terminal):
+Run a single agent in isolation (separate terminal):
 
   Paper Trader only:
     python paper_trading/simulator/paper_trader.py
@@ -110,136 +119,239 @@ Run a single agent in isolation (open a separate terminal):
   Dashboard only:
     python agents/master_trader/miro_dashboard_server.py
 
-  Run optimizer now (don't wait for midnight):
-    python agents/orchestrator/strategy_optimizer.py quick
-    python agents/orchestrator/strategy_optimizer.py full   (takes longer)
+  Run optimizer now (don't wait for 18:30 IST):
+    python agents/orchestrator/strategy_optimizer.py
 
   Run backtest on current v15F parameters:
     python strategies/scalper_v15/backtest_mt5.py --timeframe H1 --bars 3000
-    python strategies/scalper_v15/backtest_mt5.py --timeframe M5 --bars 5000
+
+  Sync ruflo memory manually:
+    python agents/ruflo_bridge/memory_sync.py
+
+  Test web news scraper:
+    python agents/news_sentinel/web_scraper.py
+
+  Query semantic trade journal:
+    python -c "from agents.ruflo_bridge.semantic_journal import query,format_results; r,_=query('all trades'); print(format_results(r,'all trades'))"
+
+  Check optimizer memory stats:
+    python -c "from agents.ruflo_bridge.optimizer_memory import OptimizerMemory; print(OptimizerMemory().get_stats())"
 
 ------------------------------------------------------------
 TELEGRAM COMMANDS (from your phone)
 ------------------------------------------------------------
 Send these to your Telegram bot to control MIRO remotely:
 
-  /status     — full system status report
-  /balance    — current paper account balance
-  /positions  — list of open paper trades
-  /pause      — pause all trading (MIRO stops opening trades)
-  /resume     — resume trading after pause
+  MARKET & STATUS
+  /status     -- full system status (positions, regime, brain, DXY)
+  /analyse    -- run full analysis now
+  /chart      -- XAUUSD H1 candlestick chart
+  /intel      -- patterns + COT + sentiment + multi-symbol
+  /perfchart  -- full multi-panel performance chart
+
+  TRADING CONTROL
+  /pause      -- stop new entries (open positions still managed)
+  /resume     -- re-enable entries
+  /closeall   -- close all open positions immediately
+  /report     -- today's P&L and trade summary
+  /risk       -- current risk settings
+
+  RUFLO AI FEATURES (NEW)
+  /query <text>  -- search trade journal in natural language
+                    Examples:
+                    /query losses
+                    /query wins in london session
+                    /query trending bull regime
+                    /query best trades
+                    /query last 10 trades
+                    /query sell trades ny session
+
+  /agents     -- autopilot health: which agents are running,
+                 how many restarts, which are exhausted
+
+  /optmem     -- optimizer memory stats: how many good/bad
+                 param combos recorded per regime
+
+  /webnews    -- live gold headlines from Kitco + FXStreet RSS
+                 (no API key, no rate limits)
+
+  /help       -- full command list
 
 ------------------------------------------------------------
 PORTS IN USE (do not run other programs on these)
 ------------------------------------------------------------
-  5055  — MIRO Unified Dashboard (Flask)
-  5056  — TradingView Webhook Receiver (Flask)
-  (MT5 uses its own internal ports — do not touch)
+  5055  -- MIRO Unified Dashboard (Flask)
+  5056  -- TradingView Webhook Receiver (Flask)
+  (MT5 uses its own internal ports)
 
 ------------------------------------------------------------
-WHAT RUNS AUTOMATICALLY (you don't need to do anything)
+WHAT RUNS AUTOMATICALLY (nothing to do)
 ------------------------------------------------------------
-  Every 60 seconds   → Orchestrator makes GO/NO-GO decision
-  Every 60 seconds   → Paper Trader checks open trades for SL/TP
-  Every 5 minutes    → H1 scan for new trade signals
-  Every 60 seconds   → M5 scan for new trade signals
-  Every 5 seconds    → Price feed updates live_price.json
-  Every 30 minutes   → News Brain fetches headlines (NewsAPI)
-  Every 15 seconds   → Scale Out checks for partial close triggers
-  Every 15 seconds   → Breakeven Guard checks for SL moves
-  Every 3 seconds    → Dashboard refreshes all data
+  Every 5 seconds    -> Price feed updates live_price.json
+  Every 10 seconds   -> Breakeven Guard checks SL moves
+  Every 15 seconds   -> Scale Out checks partial close triggers
+  Every 30 seconds   -> Orchestrator GO/NO-GO decision
+  Every 30 seconds   -> Position Manager AI (Claude) reviews
+  Every 30 seconds   -> Master Trader scans for entry signals
+  Every 5 minutes    -> Risk Manager updates Kelly sizing
+  Every 5 minutes    -> Regime Detector updates market state
+  Every 5 minutes    -> DXY + Yields feed updates
+  Every 5 minutes    -> Supply & Demand zones refresh
+  Every 5 minutes    -> Fibonacci auto-levels refresh
+  Every 5 minutes    -> Sentiment Score composite (0-10)
+  Every 5 minutes    -> Multi-Symbol monitor (4 pairs)
+  Every 10 minutes   -> Pattern Recognition (H4 chart patterns)
+  Every 30 minutes   -> News Sentinel AI (Claude + RSS feeds)
+  Every 30 minutes   -> Ruflo memory sync (session_context.json)
+  Every 60 minutes   -> Multi-Symbol Paper Trader scans
+  Every 3 seconds    -> Dashboard auto-refresh (browser)
+  Every 30 seconds   -> Autopilot watchdog checks 5 agents
 
-  03:30 IST daily    → Morning briefing sent to Telegram
-  16:30 IST daily    → Evening summary sent to Telegram
-  18:30 IST daily    → Nightly optimizer runs (30 combos, ~5-10min)
-                        Best params auto-applied if improvement ≥3% WR
+  03:30 IST daily    -> Morning briefing (Telegram)
+  16:30 IST daily    -> Evening P&L summary (Telegram)
+  18:30 IST daily    -> Nightly v15F optimizer (30 combos)
+                        + Optimizer Memory records results
+                        + Session stats refresh
+  Sunday 08:00 IST   -> Weekly performance chart (Telegram)
 
 ------------------------------------------------------------
-ENABLING LIVE TRADING (Option B — Python v15F → MT5)
+RUFLO BRIDGE — NEW AI FEATURES (2026-04-20)
 ------------------------------------------------------------
-When you are ready to trade real money with the v15F signals:
+4 new modules in agents/ruflo_bridge/ add persistent AI memory:
 
-1. Add this line to your .env file:
-     LIVE_MODE=true
+1. SEMANTIC TRADE JOURNAL (semantic_journal.py)
+   - Indexes every trade with session, regime, R-multiple
+   - Natural language search via /query Telegram command
+   - Rebuilt every 30 minutes automatically
 
-2. Restart:  python launch.py
+2. SELF-HEALING AUTOPILOT (autopilot.py)
+   - Watches 5 critical agents, auto-restarts on crash
+   - Up to 10 restarts per agent with 30s cooldown
+   - Telegram alert on crash AND on recovery
+   - Check status with /agents command
 
-That's it. The paper trader will now mirror every v15F paper signal
-to MT5 via the bridge. Lot size is calculated from your real MT5
-account balance (not the $10k paper balance).
+3. OPTIMIZER MEMORY (optimizer_memory.py)
+   - Records every nightly backtest combo + regime
+   - Next night: skips known-bad combos, seeds good ones
+   - Makes 30-combo budget progressively smarter
+   - Check stats with /optmem command
 
-IMPORTANT: Do NOT enable until ALL go-live conditions below are met.
-When live, the paper account still tracks everything — you can compare
-paper vs live performance side by side on the dashboard.
+4. WEB NEWS SCRAPER (agents/news_sentinel/web_scraper.py)
+   - Scrapes Kitco + FXStreet + Investing.com RSS
+   - Zero API keys, zero rate limits
+   - News Sentinel AI uses it first (before DuckDuckGo/NewsAPI)
+   - Manual check with /webnews command
+
+CLAUDE CODE SESSIONS:
+   - Every session auto-receives MIRO live state in context
+   - No need to re-explain balance/regime/deployment status
+   - State injected via SessionStart hook from session_context.json
+
+------------------------------------------------------------
+MULTI-BRAIN MODEL ROUTING (cost optimization)
+------------------------------------------------------------
+multi_brain.py now uses 3-tier routing to reduce API costs:
+
+  SKIP tier  -- Rule score >= 12/18 OR regime=CHOPPY
+                No LLM call. Rule engine is definitive.
+                Estimated 40% of cycles.
+
+  HAIKU tier -- Moderate signal (score 4-11)
+                Claude Haiku only (cheap second opinion)
+                Estimated 40% of cycles.
+
+  FULL tier  -- Ambiguous signal (score < 4)
+                GPT-4o + Claude Sonnet
+                Estimated 20% of cycles.
+
+------------------------------------------------------------
+ENABLING LIVE TRADING
+------------------------------------------------------------
+When ready to trade real money:
+
+1. Add to .env:   LIVE_MODE=true
+2. Restart:       python launch.py
+
+IMPORTANT: Do NOT enable until ALL go-live conditions pass.
 
 ------------------------------------------------------------
 GO-LIVE CONDITIONS (DO NOT GO LIVE UNTIL ALL PASS)
 ------------------------------------------------------------
-Check deployment readiness at: http://localhost:5055 (left column)
+Check at: http://localhost:5055 (left column)
 
-  [ ] Paper trades completed:   need 20+   (currently 0 — reset today)
-  [ ] Paper trading days:        need 14    (currently 0)
-  [ ] Win rate on paper:         need 50%+  (on 20+ trades minimum)
-  [ ] Profit factor:             need 1.5+  (on 20+ trades minimum)
-  [ ] Max drawdown:              need <10%
-  [ ] Risk manager score:        need 7+/10
-  [ ] Orchestrator:              need GO
-  [ ] Backtest return:           need 50%+  (DONE: 246%)
-  [ ] Backtest win rate:         need 50%+  (DONE: 54.95%)
-  [ ] EA demo days:              need 7     (currently 2)
+  [ ] Paper trades:     need 20+   (currently 4)
+  [ ] Paper days:       need 14    (currently ~5)
+  [ ] Win rate:         need 50%+  (currently 25% — 4 trades)
+  [ ] Profit factor:    need 1.5+
+  [ ] Max drawdown:     need <10%  (currently 6.1%)
+  [ ] Risk score:       need 7+/10 (currently 8/10)
+  [ ] Orchestrator:     need GO    (currently GO)
+  [ ] Backtest return:  need 50%+  (DONE: 246%)
+  [ ] Backtest WR:      need 50%+  (DONE: 68.6%)
+  [ ] EA demo days:     need 7
 
   Estimated time to go live: ~14 days of paper trading
 
 ------------------------------------------------------------
 IMPORTANT FILES & LOCATIONS
 ------------------------------------------------------------
-  Paper trade state:    paper_trading/logs/state.json
-  Orchestrator log:     agents/orchestrator/orchestrator_log.json
-  Last decision:        agents/orchestrator/last_decision.json
-  Optimizer results:    agents/orchestrator/improvement_log.json
-  Applied params:       agents/orchestrator/applied_params.json
-  News alert:           agents/news_sentinel/current_alert.json
-  Risk state:           agents/risk_manager/risk_state.json
-  Agent statuses:       paper_trading/logs/agents_status.json
-  System map (visual):  SYSTEM_MAP.html  (open in browser)
-  Environment vars:     .env
+  Paper trade state:       paper_trading/logs/state.json
+  Orchestrator log:        agents/orchestrator/orchestrator_log.json
+  Last decision:           agents/orchestrator/last_decision.json
+  Pattern memory:          agents/orchestrator/pattern_memory.json
+  Optimizer results:       agents/orchestrator/improvement_log.json
+  Applied params:          agents/orchestrator/applied_params.json
+  News alert:              agents/news_sentinel/current_alert.json
+  Risk state:              agents/risk_manager/risk_state.json
+  Agent statuses:          paper_trading/logs/agents_status.json
+
+  [NEW] Session context:   agents/ruflo_bridge/session_context.json
+  [NEW] Trade journal idx: agents/ruflo_bridge/trade_journal_index.json
+  [NEW] Autopilot health:  agents/ruflo_bridge/health_status.json
+  [NEW] Optimizer history: agents/ruflo_bridge/optimizer_history.json
+
+  System map (visual):     SYSTEM_MAP.html (open in browser)
+  Environment vars:        .env
 
 ------------------------------------------------------------
 IF MT5 DISCONNECTS DURING THE DAY
 ------------------------------------------------------------
 1. Re-open MetaTrader 5 and log in
-2. In the MIRO terminal, press Ctrl+C to stop launch.py
-3. Run python launch.py again
-4. The paper trading state is saved — no trades are lost
+2. Press Ctrl+C in the MIRO terminal to stop launch.py
+3. Run: python launch.py
+4. Paper trading state is saved — no trades lost
 
 ------------------------------------------------------------
-NIGHTLY OPTIMIZER REPORT (via Telegram at ~18:30 IST)
+NIGHTLY OPTIMIZER REPORT (Telegram at ~18:30 IST)
 ------------------------------------------------------------
 You will receive a message like:
 
-  ✅ MIRO NIGHTLY OPTIMIZER
-  Combos tested: 30 | Bars: H1 × 3000
+  MIRO NIGHTLY OPTIMIZER
+  Combos tested: 30 | Regime: TRENDING_BULL | Skipped 3 bad combos
 
-  Before (baseline):   WR: 54% | PF: 1.62 | DD: 8%
-  Best Found:          WR: 58% | PF: 1.84 | DD: 7%
-  Param Changes:
-    sl_mult: 1.5 → 1.2
-    min_score: 5 → 6
+  Before:  WR: 54% | PF: 1.62 | DD: 8%
+  Best:    WR: 58% | PF: 1.84 | DD: 7%
+  Changes:
+    sl_mult: 1.5 -> 1.2
+    min_score: 5 -> 6
 
-  Decision: AUTO-APPLIED — git committed
+  Decision: AUTO-APPLIED -- git committed
 
-If it says NOT APPLIED, the improvement was too small.
-Current params are kept. No action needed from you.
+If NOT APPLIED, improvement was too small. Params unchanged.
 
-============================================================
+------------------------------------------------------------
   QUICK REFERENCE
 ============================================================
 
-  START EVERYTHING:   cd "D:\Trading Project\MiroTrade-Framework" && python launch.py
-  DASHBOARD:          http://localhost:5055
-  WEBHOOK (TV):       python tradingview/bridge_launcher.py  (separate terminal)
-  QUICK OPTIMIZER:    python agents/orchestrator/strategy_optimizer.py quick
-  RESET PAPER STATE:  (only if needed — wipes all paper trades)
-                      python -c "import json; open('paper_trading/logs/state.json','w').write(json.dumps({'balance':10000,'peak_balance':10000,'open_trades':[],'closed_trades':[],'trade_id':1,'today_pnl':0,'paper_days':0,'ea_days':0,'signal_score':{}}))"
+  START EVERYTHING:    cd "D:\Trading Project\MiroTrade-Framework" && python launch.py
+  DASHBOARD:           http://localhost:5055
+  WEBHOOK (TV):        python tradingview/bridge_launcher.py   (separate terminal)
+  MEMORY SYNC:         python agents/ruflo_bridge/memory_sync.py
+  TEST WEB NEWS:       python agents/news_sentinel/web_scraper.py
+  QUERY TRADES:        /query <text>   (via Telegram)
+  AGENT HEALTH:        /agents          (via Telegram)
+
+  RESET PAPER STATE (only if needed -- wipes all paper trades):
+    python -c "import json; open('paper_trading/logs/state.json','w').write(json.dumps({'balance':10000,'peak_balance':10000,'open_trades':[],'closed_trades':[],'trade_id':1,'today_pnl':0,'paper_days':0,'ea_days':0,'signal_score':{}}))"
 
 ============================================================

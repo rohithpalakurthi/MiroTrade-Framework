@@ -366,6 +366,7 @@ class MasterTraderAgent:
         cot      = _load(COT_FILE)
         sentiment= _load(SENTIMENT_FILE)
         ms       = _load(MULTISYM_FILE)
+        mtf      = _load(MTF_FILE)
 
         # ── Regime ──────────────────────────────────────────────────────
         regime_block = "Regime: not yet computed"
@@ -560,6 +561,9 @@ class MasterTraderAgent:
             "allowed_setups"    : regime.get("allowed_setups", []),
             "sentiment_buy_adj" : sentiment_buy_adj,
             "sentiment_sell_adj": sentiment_sell_adj,
+            "mtf_h1_bias"       : mtf.get("h1_bias", "neutral"),
+            "mtf_h4_bias"       : mtf.get("h4_bias", "neutral"),
+            "mtf_d1_bias"       : mtf.get("d1_bias", "neutral"),
         }
 
     def get_adaptive_min_confidence(self, setup_type=""):
@@ -1388,6 +1392,17 @@ RULES:
         buys  = sum(1 for p in positions_info if p["direction"] == "BUY")
         sells = sum(1 for p in positions_info if p["direction"] == "SELL")
 
+        # MTF direction hard-block: if H1+H4 both agree, only allow that direction
+        mtf_h1 = intel.get("mtf_h1_bias", "neutral").lower()
+        mtf_h4 = intel.get("mtf_h4_bias", "neutral").lower()
+        mtf_blocked_dir = None
+        if mtf_h1 == "bullish" and mtf_h4 == "bullish":
+            mtf_blocked_dir = "SELL"
+            print("[MasterTrader] MTF H1+H4 both BULLISH — blocking all SELL entries")
+        elif mtf_h1 == "bearish" and mtf_h4 == "bearish":
+            mtf_blocked_dir = "BUY"
+            print("[MasterTrader] MTF H1+H4 both BEARISH — blocking all BUY entries")
+
         for entry in result.get("new_entries", []):
             if entry.get("confidence", 0) < min_conf:
                 print("[MasterTrader] Skipping entry — confidence {}/{}".format(
@@ -1395,6 +1410,11 @@ RULES:
                 continue
 
             direction = entry.get("action", "")
+            if mtf_blocked_dir and direction == mtf_blocked_dir:
+                print("[MasterTrader] MTF hard-block — skipping {} (H1:{} H4:{})".format(
+                    direction, mtf_h1, mtf_h4))
+                continue
+
             if direction == "BUY"  and buys  >= max_dir:
                 print("[MasterTrader] Already {} BUYs — skipping".format(buys))
                 continue
@@ -1420,14 +1440,7 @@ RULES:
     def run(self, interval_seconds=SCAN_INTERVAL):
         """Main autonomous loop."""
         print("[MasterTrader] MIRO going live — scanning every {}s".format(interval_seconds))
-        self.send_telegram(
-            "<b>MIRO — MASTER TRADER ONLINE</b>\n"
-            "Autonomous XAUUSD AI active\n"
-            "Scanning every {}s | Risk {}%/trade\n"
-            "Max {} positions | Min confidence {}/10".format(
-                interval_seconds, int(RISK_PCT * 100),
-                MAX_OPEN_POSITIONS, MIN_CONFIDENCE)
-        )
+        # Startup message suppressed — launch.py sends the system-wide "MIRO ONLINE" message
         while True:
             try:
                 self.check_once()

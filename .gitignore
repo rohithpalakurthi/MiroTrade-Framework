@@ -34,3 +34,20 @@ dashboard/frontend/build/
 
 # MQL5 compiled
 live_execution/mql5/*.ex5
+
+# Graphify build cache (large hash files, regenerated automatically)
+graphify-out/cache/
+
+# Claude / Ruflo internals
+.claude-flow/
+.claude/agents/
+.claude/commands/
+.claude/helpers/
+.claude/settings.json
+.claude/skills/
+.swarm/
+ruvector.db
+
+# Runtime state (not code)
+agents/master_trader/tunnel_url.json
+agents/orchestrator/pattern_memory.json

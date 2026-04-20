@@ -233,10 +233,38 @@ class OrchestratorAgent:
                 except:
                     logs = []
         logs.append(decision)
-        # Keep last 100 decisions only
         logs = logs[-100:]
         with open(LOG_FILE, "w") as f:
             json.dump(logs, f, indent=2)
+
+        # Feature 4: Pattern learning — log every decision with all inputs for ruflo memory
+        self._store_pattern(decision)
+
+    def _store_pattern(self, decision):
+        """Append compressed decision record to pattern_memory.json for ruflo learning."""
+        PATTERN_FILE = "agents/orchestrator/pattern_memory.json"
+        pattern = {
+            "ts":          decision["timestamp"],
+            "verdict":     decision["verdict"],
+            "conf":        decision.get("confidence", 0),
+            "news_ok":     decision["checks"].get("news", {}).get("passed", True),
+            "health":      decision["checks"].get("portfolio_health", {}).get("score", 5),
+            "risk_ok":     decision["checks"].get("risk", {}).get("approved", True),
+            "mtf_ok":      decision["checks"].get("mtf", {}).get("passed", True),
+            "open_trades": decision["checks"].get("paper_trader", {}).get("open_trades", 0),
+            "reasons":     decision.get("reasons", []),
+        }
+        patterns = []
+        if os.path.exists(PATTERN_FILE):
+            try:
+                with open(PATTERN_FILE) as f:
+                    patterns = json.load(f)
+            except Exception:
+                patterns = []
+        patterns.append(pattern)
+        patterns = patterns[-500:]
+        with open(PATTERN_FILE, "w") as f:
+            json.dump(patterns, f, indent=2)
 
     def print_decision(self, decision):
         """Print decision to terminal."""

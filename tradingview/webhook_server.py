@@ -123,18 +123,17 @@ def check_orchestrator():
 
 
 def check_mtf(signal):
-    """Check MTF alignment (advisory)."""
+    """Hard-block when H1+H4 both oppose the signal direction."""
     try:
         if os.path.exists(MTF_FILE):
             with open(MTF_FILE) as f:
                 mtf = json.load(f)
-            direction = mtf.get("direction", "neutral")
-            if direction == "neutral":
-                return False, "MTF neutral"
-            if signal == "BUY" and direction != "BUY":
-                return False, "HTF bias is {}".format(direction)
-            if signal == "SELL" and direction != "SELL":
-                return False, "HTF bias is {}".format(direction)
+            h1 = mtf.get("h1_bias", "neutral").lower()
+            h4 = mtf.get("h4_bias", "neutral").lower()
+            if h1 == "bullish" and h4 == "bullish" and signal == "SELL":
+                return False, "MTF H1+H4 both BULLISH — SELL blocked"
+            if h1 == "bearish" and h4 == "bearish" and signal == "BUY":
+                return False, "MTF H1+H4 both BEARISH — BUY blocked"
     except:
         pass
     return True, "Aligned"
@@ -360,13 +359,14 @@ def webhook():
         filters["mtf"] = {"passed": mtf_ok, "reason": mtf_reason}
 
         # ── Final decision ──────────────────────────────────
-        hard_block = not news_ok or not risk_ok or not orch_ok
+        hard_block = not news_ok or not risk_ok or not orch_ok or not mtf_ok
 
         if hard_block:
             reasons = []
             if not news_ok:  reasons.append("NEWS: " + news_reason)
             if not risk_ok:  reasons.append("RISK: blocked")
             if not orch_ok:  reasons.append("ORCH: " + orch_verdict)
+            if not mtf_ok:   reasons.append("MTF: " + mtf_reason)
 
             reason_str = " | ".join(reasons)
             log_webhook(data, "BLOCKED", reason_str)
@@ -374,9 +374,9 @@ def webhook():
 
             send_telegram(
                 "<b>TV SIGNAL BLOCKED</b>\n"
-                "{} {} @ {}\n"
-                "Reason: {}\n"
-                "Indicator: {}".format(action, symbol, price, reason_str, indicator)
+                "<b>{} {}</b> @ ${}\n"
+                "<b>Why:</b> {}\n"
+                "<i>Indicator: {}</i>".format(action, symbol, price, reason_str, indicator)
             )
             return jsonify({
                 "status" : "blocked",
@@ -455,8 +455,7 @@ def webhook():
             action, symbol, price, sl, tp1, tp2, lots, sl_src))
 
         # Send Telegram
-        mtf_note = "" if mtf_ok else "\nMTF: {} (advisory)".format(mtf_reason)
-        st_note  = "\nType: {}".format(signal_type) if signal_type else ""
+        st_note = "\nType: {}".format(signal_type) if signal_type else ""
         send_telegram(
             "<b>TV SIGNAL RECEIVED</b>\n"
             "================================\n"
@@ -465,13 +464,13 @@ def webhook():
             "<b>TP1:</b> ${} (+0.5R)\n"
             "<b>TP2:</b> ${} (+3R)\n"
             "<b>Lots:</b> {} | Risk: ${}\n"
-            "<b>SL source:</b> {}{}{}\n"
+            "<b>SL source:</b> {}{}\n"
             "================================\n"
             "<i>Signal sent to MT5 EA</i>".format(
                 action, symbol, price,
                 sl, tp1, tp2,
                 lots, round(risk_amount, 2),
-                sl_src, st_note, mtf_note
+                sl_src, st_note
             )
         )
 
