@@ -486,6 +486,117 @@ def run_mobile_tunnel():
         set_status("MobileTunnel", "error", str(e))
         print("[TUNNEL] Fatal: {}".format(e))
 
+
+def run_tv_bridge():
+    """Start TradingView webhook server (Flask :5000) + ngrok tunnel."""
+    set_status("TVBridge", "starting")
+    import subprocess, requests as _req
+
+    WEBHOOK_PORT = 5000
+    STATUS_FILE  = "tradingview/bridge_status.json"
+    TG_TOKEN     = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    TG_CHAT      = os.getenv("TELEGRAM_CHAT_ID", "")
+
+    def _tg(msg):
+        if TG_TOKEN and TG_CHAT:
+            try:
+                _req.post(
+                    "https://api.telegram.org/bot{}/sendMessage".format(TG_TOKEN),
+                    data={"chat_id": TG_CHAT, "text": msg, "parse_mode": "HTML"},
+                    timeout=5,
+                )
+            except Exception:
+                pass
+
+    def _save_status(ngrok_url, webhook_ok, alert_count=0):
+        os.makedirs("tradingview", exist_ok=True)
+        with open(STATUS_FILE, "w") as _f:
+            json.dump({
+                "ngrok_url"   : ngrok_url,
+                "webhook_ok"  : webhook_ok,
+                "webhook_url" : "{}/webhook".format(ngrok_url) if ngrok_url else "",
+                "last_signal" : None,
+                "alert_count" : alert_count,
+                "updated"     : str(datetime.now()),
+            }, _f, indent=2)
+
+    def _get_ngrok_url():
+        try:
+            r = _req.get("http://127.0.0.1:4040/api/tunnels", timeout=3)
+            for t in r.json().get("tunnels", []):
+                if "https" in t.get("public_url", ""):
+                    return t["public_url"]
+        except Exception:
+            pass
+        return None
+
+    # Step 1: start Flask webhook server in a background thread
+    try:
+        sys.path.insert(0, os.getcwd())
+        from tradingview.webhook_server import app as _tv_app
+        flask_thread = threading.Thread(
+            target=lambda: _tv_app.run(
+                host="0.0.0.0", port=WEBHOOK_PORT,
+                debug=False, use_reloader=False
+            ),
+            daemon=True, name="TVFlask"
+        )
+        flask_thread.start()
+        time.sleep(2)
+        print("[TV BRIDGE] Flask webhook server started on port {}".format(WEBHOOK_PORT))
+    except Exception as e:
+        set_status("TVBridge", "error", "Flask failed: {}".format(e))
+        print("[TV BRIDGE] Flask error: {}".format(e))
+        return
+
+    # Step 2: kill any orphaned ngrok processes, then start fresh tunnel
+    try:
+        subprocess.run(["taskkill", "/IM", "ngrok.exe", "/F"],
+                       capture_output=True, timeout=5)
+        time.sleep(2)
+    except Exception:
+        pass
+
+    ngrok_url = None
+    try:
+        from pyngrok import ngrok as _ngrok
+        _ngrok.kill()
+        time.sleep(1)
+        tunnel    = _ngrok.connect(WEBHOOK_PORT, "http")
+        ngrok_url = tunnel.public_url.replace("http://", "https://")
+        print("[TV BRIDGE] ngrok tunnel: {}".format(ngrok_url))
+        set_status("TVBridge", "running", "{}/webhook".format(ngrok_url))
+        _save_status(ngrok_url, True)
+        _tg(
+            "<b>TV BRIDGE ONLINE</b>\n"
+            "Webhook URL:\n"
+            "<code>{}/webhook</code>\n\n"
+            "Set this in TradingView alerts".format(ngrok_url)
+        )
+    except Exception as e:
+        set_status("TVBridge", "warn", "ngrok failed — Flask only on :{}".format(WEBHOOK_PORT))
+        print("[TV BRIDGE] ngrok error: {}".format(e))
+        _save_status("", False)
+
+    # Step 3: keep status file fresh every 60s
+    while True:
+        try:
+            time.sleep(60)
+            current_url = _get_ngrok_url() or ngrok_url or ""
+            webhook_ok  = False
+            alert_count = 0
+            if current_url:
+                try:
+                    r = _req.get(current_url + "/status", timeout=3)
+                    if r.status_code == 200:
+                        webhook_ok  = True
+                        alert_count = r.json().get("total_alerts", 0)
+                except Exception:
+                    pass
+            _save_status(current_url, webhook_ok, alert_count)
+        except Exception as e:
+            print("[TV BRIDGE] Monitor error: {}".format(e))
+
 def run_watchdog():
     """Feature 2: Monitor critical agents and alert via Telegram on crashes."""
     import requests as _req
@@ -790,6 +901,7 @@ if __name__ == "__main__":
         threading.Thread(target=run_multi_symbol,         daemon=True, name="MultiSymbol"),
         threading.Thread(target=run_multi_symbol_trader,  daemon=True, name="MultiSymTrader"),
         threading.Thread(target=run_mobile_tunnel,        daemon=True, name="MobileTunnel"),
+        threading.Thread(target=run_tv_bridge,            daemon=True, name="TVBridge"),
         threading.Thread(target=run_watchdog,             daemon=True, name="Watchdog"),
     ]
     if tg_ok:
@@ -837,6 +949,7 @@ if __name__ == "__main__":
         ("MultiSymbol",     "5min",  "EURUSD/US30/USOIL/USDJPY monitor"),
         ("MultiSymTrader",  "60s",   "EURUSD/GBPUSD/CL-OIL paper trading"),
         ("MobileTunnel",    "startup","ngrok public URL -> Telegram, re-ping 6h"),
+        ("TVBridge",        "startup","Flask :5000 + ngrok → TradingView webhook"),
         ("MiroDashboard",   "live",  "localhost:5055"),
     ]
     for name, interval, role in rows:
