@@ -311,8 +311,8 @@ Respond ONLY as JSON:
         return None
 
 
-def claude_model(snap, regime, news, dxy, fib):
-    """Call Claude (Anthropic) for second opinion."""
+def claude_model(snap, regime, news, dxy, fib, use_haiku=False):
+    """Call Claude for second opinion. use_haiku=True for cheaper routing on moderate signals."""
     key = os.getenv("ANTHROPIC_API_KEY", "")
     if not key or key == "your_anthropic_api_key":
         return None
@@ -321,6 +321,9 @@ def claude_model(snap, regime, news, dxy, fib):
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=key)
+
+        # Feature 3: Tier routing — Haiku for cost efficiency on moderate-confidence signals
+        model = "claude-haiku-4-5-20251001" if use_haiku else "claude-sonnet-4-6"
 
         msg_text = """You are an elite XAUUSD analyst. Give a directional bias for GOLD based on:
 
@@ -341,7 +344,7 @@ Respond ONLY as JSON:
         )
 
         resp = client.messages.create(
-            model="claude-sonnet-4-6",
+            model=model,
             max_tokens=120,
             messages=[{"role": "user", "content": msg_text}]
         )
@@ -350,11 +353,32 @@ Respond ONLY as JSON:
             raw = raw.split("```")[1]
             if raw.startswith("json"): raw = raw[4:].strip()
         result = json.loads(raw)
-        result["name"] = "Claude"
+        result["name"] = "Claude-Haiku" if use_haiku else "Claude"
         return result
     except Exception as e:
         print("[MultiBrain] Claude error: {}".format(e))
         return None
+
+
+def _routing_tier(rule_result, regime):
+    """
+    Feature 3: Determine which LLM tier to use based on signal strength.
+    Returns: "skip" | "haiku" | "full"
+    - skip:  rule-based score is definitive (>= 12/18) OR regime is CHOPPY — no LLM needed
+    - haiku: moderate signal (score 4-11) — use cheap Haiku for second opinion
+    - full:  strong but ambiguous signal — use full Sonnet
+    """
+    abs_score  = abs(rule_result.get("score", 0))
+    reg_name   = (regime or {}).get("regime", "RANGING")
+    rule_action = rule_result.get("action", "NEUTRAL")
+
+    if reg_name == "CHOPPY" or rule_action == "NEUTRAL":
+        return "skip"
+    if abs_score >= 12:
+        return "skip"   # Rule engine is highly confident, LLM adds little
+    if abs_score >= 7:
+        return "haiku"  # Moderate confidence — cheap second opinion
+    return "full"       # Signal borderline — full Sonnet to break tie
 
 
 def build_consensus(models):
@@ -414,12 +438,27 @@ def run():
             # Get MT5 snapshot
             snap = _get_mt5_snapshot()
 
-            # Run all three models
+            # Run rule-based first, then route LLM calls by signal strength
             rb = rule_based_model(snap, regime, fib, dxy, news, sd)
             rb["name"] = "Rule-Based"
 
-            gpt = gpt4o_model(snap, regime, news, dxy, fib)
-            cld = claude_model(snap, regime, news, dxy, fib)
+            tier = _routing_tier(rb, regime)
+            gpt  = None
+            cld  = None
+
+            if tier == "skip":
+                # Rule engine is definitive — skip expensive LLM calls
+                print("[MultiBrain] Tier=SKIP (score={} regime={}) — rule-based only".format(
+                    rb.get("score", 0), (regime or {}).get("regime", "?")))
+            elif tier == "haiku":
+                # Moderate signal — Claude Haiku only (cheap second opinion)
+                cld = claude_model(snap, regime, news, dxy, fib, use_haiku=True)
+                print("[MultiBrain] Tier=HAIKU (score={})".format(rb.get("score", 0)))
+            else:
+                # Full tier — GPT-4o + Claude Sonnet
+                gpt = gpt4o_model(snap, regime, news, dxy, fib)
+                cld = claude_model(snap, regime, news, dxy, fib, use_haiku=False)
+                print("[MultiBrain] Tier=FULL (score={})".format(rb.get("score", 0)))
 
             models = [rb]
             if gpt: models.append(gpt)
