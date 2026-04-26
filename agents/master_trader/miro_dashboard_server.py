@@ -6,12 +6,23 @@ Serves at http://localhost:5055
 """
 
 import json, os, sys, time
-from datetime import datetime
-from flask import Flask, jsonify
+from datetime import datetime, timezone
+from flask import Flask, jsonify, request
+from flask import Response
 from flask_cors import CORS
 from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+from backtesting.research.experiment_registry import load_registry
+from backtesting.research.promotion import (
+    clear_manual_override,
+    evaluate_promotion,
+    resolve_promotion,
+    set_manual_override,
+    summarize_experiments,
+)
+from live_execution.safety import evaluate_live_safety, load_config as load_live_safety_config, save_config as save_live_safety_config
 
 FILES = {
     "regime"         : "agents/master_trader/regime.json",
@@ -36,6 +47,16 @@ FILES = {
     "bridge_status"  : "tradingview/bridge_status.json",
     "agents_status"  : "paper_trading/logs/agents_status.json",
     "paper_state"    : "paper_trading/logs/state.json",
+    "promotion_status": "backtesting/reports/promotion_status.json",
+    "research_summary": "backtesting/reports/research_summary.json",
+    "autonomous_discovery": "backtesting/reports/autonomous_discovery.json",
+    "strategy_portfolio": "backtesting/reports/strategy_portfolio.json",
+    "strategy_lifecycle": "backtesting/reports/strategy_lifecycle.json",
+    "survival_state": "agents/orchestrator/survival_state.json",
+    "patterns"       : "agents/master_trader/patterns.json",
+    "cot"            : "agents/master_trader/cot_data.json",
+    "sentiment"      : "agents/master_trader/sentiment.json",
+    "multi_symbol"   : "agents/master_trader/multi_symbol.json",
 }
 
 PAUSE_FILE     = "agents/master_trader/miro_pause.json"
@@ -53,6 +74,7 @@ _TRADING_DEFAULTS = {
     "news_block_enabled"       : True,
     "orchestrator_gate_enabled": True,
     "session_filter_enabled"   : True,
+    "tp1_cooldown_enabled"     : True,
 }
 app = Flask(__name__)
 CORS(app)
@@ -76,6 +98,177 @@ def _load(key):
     except Exception:
         pass
     return {}
+
+
+def _invalidate_cache(*keys):
+    for key in keys:
+        _cache.pop(key, None)
+        _cache_time.pop(key, None)
+
+
+def _recent_experiments(strategy="v15f", limit=8):
+    experiments = [exp for exp in load_registry() if exp.get("strategy") == strategy]
+    return experiments[-limit:]
+
+
+def _first_present(data, keys, default=None):
+    if not isinstance(data, dict):
+        return default
+    for key in keys:
+        value = data.get(key)
+        if value not in (None, ""):
+            return value
+    return default
+
+
+def _count_items(value):
+    if isinstance(value, list):
+        return len(value)
+    if isinstance(value, dict):
+        return len(value)
+    if isinstance(value, (int, float)):
+        return int(value)
+    return 0
+
+
+def _load_strategy_lifecycle():
+    candidates = [
+        FILES["strategy_lifecycle"],
+        "backtesting/reports/strategy_lifecycle.json",
+        "backtesting/reports/lifecycle_report.json",
+        "backtesting/reports/autonomy_lifecycle_report.json",
+        "backtesting/reports/strategy_lifecycle_status.json",
+    ]
+    for path in candidates:
+        try:
+            if not os.path.exists(path):
+                continue
+            with open(path) as f:
+                raw = json.load(f)
+            lifecycle = raw.get("lifecycle", raw) if isinstance(raw, dict) else {}
+            portfolio = raw.get("portfolio", {}) if isinstance(raw, dict) else {}
+            counts = raw.get("counts", {}) if isinstance(raw, dict) else {}
+            stage_counts = raw.get("stage_counts", {}) if isinstance(raw, dict) else {}
+            blockers = _first_present(lifecycle, ["blockers", "reasons", "constraints"], [])
+            if isinstance(blockers, str):
+                blockers = [blockers]
+            elif not isinstance(blockers, list):
+                blockers = []
+            active_count = _count_items(_first_present(counts, ["active"], portfolio.get("active", raw.get("active"))))
+            candidate_count = _count_items(_first_present(counts, ["candidates"], portfolio.get("candidates", raw.get("candidates"))))
+            derived_stage = "paper_active" if active_count else "no_active_candidates"
+            approved_for = "paper" if int(stage_counts.get("paper_approved", 0) or 0) > 0 else "research_only"
+            next_action = "paper trade active candidates" if active_count else "run discovery or wait for qualified candidates"
+            return {
+                "available": True,
+                "source": path,
+                "updated_at": _first_present(raw, ["updated_at", "generated_at", "timestamp"]),
+                "strategy": _first_present(lifecycle, ["strategy", "active_strategy", "name"], raw.get("strategy")),
+                "stage": _first_present(lifecycle, ["stage", "lifecycle_stage", "phase"], derived_stage),
+                "approved_for": _first_present(lifecycle, ["approved_for", "target", "execution_target"], approved_for),
+                "next_action": _first_present(lifecycle, ["next_action", "recommended_action", "action_required"], next_action),
+                "counts": {
+                    "active": active_count,
+                    "candidates": candidate_count,
+                    "quarantine": _count_items(_first_present(counts, ["quarantine"], portfolio.get("quarantine", raw.get("quarantine", stage_counts.get("quarantined"))))),
+                    "retired": _count_items(_first_present(counts, ["retired"], portfolio.get("retired", raw.get("retired", stage_counts.get("demoted"))))),
+                },
+                "blockers": blockers[:3],
+            }
+        except Exception:
+            continue
+    return {"available": False}
+
+
+def _check(name, passed, detail, severity="blocker"):
+    return {
+        "name": name,
+        "passed": bool(passed),
+        "detail": detail,
+        "severity": severity,
+    }
+
+
+def _build_autonomy_readiness(strategy="v15f", mt5_state=None, live_safety=None):
+    mt5_state = mt5_state or _get_mt5_state()
+    live_safety = live_safety or evaluate_live_safety(
+        strategy=strategy,
+        mt5_account=mt5_state.get("account", {}),
+        open_positions=mt5_state.get("positions", []),
+    )
+    promotion = resolve_promotion(strategy)
+    lifecycle = _load_strategy_lifecycle()
+    circuit_breaker = _load("circuit_breaker")
+    orchestrator = _load("orchestrator")
+    risk_state = _load("risk_state")
+    agent_health = _agent_health()
+
+    lifecycle_counts = lifecycle.get("counts", {}) if lifecycle.get("available") else {}
+    lifecycle_active = int(lifecycle_counts.get("active", 0) or 0)
+    lifecycle_candidates = int(lifecycle_counts.get("candidates", 0) or 0)
+    promotion_stage = (promotion.get("status") or "candidate").lower()
+    approved_for = (promotion.get("approved_for") or "research_only").lower()
+    cb_status = (circuit_breaker.get("status") or "OK").upper()
+    verdict = (orchestrator.get("verdict") or orchestrator.get("decision") or "UNKNOWN").upper()
+    risk_approved = bool(risk_state.get("approved", risk_state.get("risk_approved", False)))
+    offline_agents = [a["name"] for a in agent_health if a.get("status") == "offline"]
+    stale_agents = [a["name"] for a in agent_health if a.get("status") == "stale"]
+
+    promotion_ready = approved_for in {"paper", "demo", "live"} or promotion_stage in {"paper_approved", "demo_approved", "live_approved"}
+    demo_ready = approved_for in {"demo", "live"} or promotion_stage in {"demo_approved", "live_approved"}
+    live_ready = approved_for == "live" or promotion_stage == "live_approved"
+    checks = [
+        _check("Lifecycle report", lifecycle.get("available"), lifecycle.get("source", "No lifecycle report found"), "warning"),
+        _check(
+            "Lifecycle candidates",
+            lifecycle_active > 0 or lifecycle_candidates > 0,
+            "active={} candidates={}".format(lifecycle_active, lifecycle_candidates),
+            "warning",
+        ),
+        _check("Promotion gate", promotion_ready, "{} / {}".format(promotion_stage, approved_for)),
+        _check("Live safety gate", live_safety.get("allowed"), " | ".join(live_safety.get("reasons", [])) or "Allowed"),
+        _check("Circuit breaker", cb_status not in {"PAUSED", "TRIPPED", "BLOCKED"}, cb_status),
+        _check("Orchestrator", verdict == "GO", verdict),
+        _check("Risk manager", risk_approved, risk_state.get("reason") or risk_state.get("status") or "Risk state unavailable"),
+        _check(
+            "Agent health",
+            not offline_agents,
+            "offline={} stale={}".format(len(offline_agents), len(stale_agents)),
+            "warning",
+        ),
+    ]
+    blockers = [c for c in checks if not c["passed"] and c["severity"] == "blocker"]
+    warnings = [c for c in checks if not c["passed"] and c["severity"] == "warning"]
+    if live_ready and not blockers:
+        mode = "live_ready"
+    elif demo_ready and not blockers:
+        mode = "demo_ready"
+    elif promotion_ready and not blockers:
+        mode = "paper_ready"
+    elif warnings and not blockers:
+        mode = "research_watch"
+    else:
+        mode = "blocked"
+    return {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "strategy": strategy,
+        "mode": mode,
+        "ready": not blockers and mode in {"paper_ready", "demo_ready", "live_ready"},
+        "blocker_count": len(blockers),
+        "warning_count": len(warnings),
+        "next_action": blockers[0]["detail"] if blockers else (lifecycle.get("next_action") or "Continue paper/demo validation"),
+        "checks": checks,
+        "summary": {
+            "promotion_status": promotion_stage,
+            "approved_for": approved_for,
+            "lifecycle_stage": lifecycle.get("stage", "unavailable"),
+            "live_safety_allowed": bool(live_safety.get("allowed")),
+            "orchestrator": verdict,
+            "circuit_breaker": cb_status,
+            "offline_agents": offline_agents[:5],
+            "stale_agents": stale_agents[:5],
+        },
+    }
 
 
 def _get_mt5_state():
@@ -147,6 +340,12 @@ def api_miro():
     mt5_state = _get_mt5_state()
     paper     = _load("paper_state")
     ags       = _load("agents_status")
+    live_safety = evaluate_live_safety(
+        strategy="v15f",
+        mt5_account=mt5_state.get("account", {}),
+        open_positions=mt5_state.get("positions", []),
+    )
+    readiness = _build_autonomy_readiness(mt5_state=mt5_state, live_safety=live_safety)
     agents_legacy = []
     if ags:
         legacy_map = {
@@ -179,10 +378,144 @@ def api_miro():
         "bridge_status" : _load("bridge_status"),
         "price"         : _load("price"),
         "paper_state"   : paper,
+        "promotion_status": resolve_promotion(),
+        "research_summary": summarize_experiments(),
+        "recent_experiments": _recent_experiments(),
+        "live_safety": live_safety,
+        "autonomy_readiness": readiness,
+        "autonomous_discovery": _load("autonomous_discovery"),
+        "strategy_portfolio": _load("strategy_portfolio"),
+        "strategy_lifecycle": _load_strategy_lifecycle(),
+        "survival_state": _load("survival_state"),
         "journal_last5" : (_load("journal") or [])[-5:],
         "agent_health"  : _agent_health(),
         "agents_legacy" : agents_legacy,
         "is_paused"     : os.path.exists(PAUSE_FILE),
+    })
+
+
+@app.route("/api/promotion", methods=["GET"])
+def api_promotion_get():
+    strategy = request.args.get("strategy", "v15f")
+    refresh = request.args.get("refresh", "").lower() in {"1", "true", "yes"}
+    if refresh:
+        evaluate_promotion(strategy)
+    _invalidate_cache("promotion_status", "research_summary")
+    return jsonify({
+        "promotion": resolve_promotion(strategy),
+        "research_summary": summarize_experiments(strategy),
+    })
+
+
+@app.route("/api/promotion", methods=["POST"])
+def api_promotion_post():
+    body = request.get_json(force=True, silent=True) or {}
+    strategy = body.get("strategy", "v15f")
+    action = (body.get("action") or "override").strip().lower()
+
+    if action == "refresh":
+        evaluate_promotion(strategy)
+        _invalidate_cache("promotion_status", "research_summary")
+        return jsonify({
+            "status": "refreshed",
+            "promotion": resolve_promotion(strategy),
+            "research_summary": summarize_experiments(strategy),
+        })
+
+    if action == "clear_override":
+        cleared = clear_manual_override(strategy)
+        _invalidate_cache("promotion_status", "research_summary")
+        return jsonify({
+            "status": "override_cleared",
+            "result": cleared,
+            "promotion": resolve_promotion(strategy),
+        })
+
+    stage = body.get("stage", "paper_approved")
+    note = body.get("note", "")
+    actor = body.get("actor", "dashboard")
+    override = set_manual_override(strategy=strategy, stage=stage, note=note, actor=actor)
+    _invalidate_cache("promotion_status", "research_summary")
+    return jsonify({
+        "status": "override_saved",
+        "override": override,
+        "promotion": resolve_promotion(strategy),
+    })
+
+
+@app.route("/api/experiments", methods=["GET"])
+def api_experiments():
+    strategy = request.args.get("strategy", "v15f")
+    experiment_type = request.args.get("type", "").strip().lower()
+    experiments = [exp for exp in load_registry() if exp.get("strategy") == strategy]
+    if experiment_type:
+        experiments = [exp for exp in experiments if exp.get("experiment_type") == experiment_type]
+    return jsonify({
+        "strategy": strategy,
+        "count": len(experiments),
+        "experiments": experiments[-25:],
+    })
+
+
+@app.route("/api/autonomy", methods=["GET"])
+def api_autonomy():
+    strategy = request.args.get("strategy", "v15f")
+    return jsonify({
+        "discovery": _load("autonomous_discovery"),
+        "portfolio": _load("strategy_portfolio"),
+        "lifecycle": _load_strategy_lifecycle(),
+        "survival": _load("survival_state"),
+        "promotion": resolve_promotion(strategy),
+        "readiness": _build_autonomy_readiness(strategy),
+    })
+
+
+@app.route("/api/readiness", methods=["GET"])
+def api_readiness():
+    return jsonify(_build_autonomy_readiness(request.args.get("strategy", "v15f")))
+
+
+@app.route("/api/live-safety", methods=["GET"])
+def api_live_safety_get():
+    mt5_state = _get_mt5_state()
+    return jsonify({
+        "config": load_live_safety_config(),
+        "status": evaluate_live_safety(
+            strategy=request.args.get("strategy", "v15f"),
+            mt5_account=mt5_state.get("account", {}),
+            open_positions=mt5_state.get("positions", []),
+        ),
+    })
+
+
+@app.route("/api/live-safety", methods=["POST"])
+def api_live_safety_post():
+    body = request.get_json(force=True, silent=True) or {}
+    cfg_patch = {}
+    for key in (
+        "execution_target",
+        "max_risk_pct",
+        "max_open_positions",
+        "min_free_margin_pct",
+        "require_mt5_account",
+        "require_promotion",
+        "require_risk_approved",
+        "require_circuit_breaker_ok",
+        "require_orchestrator_go",
+        "require_manual_live_approval",
+    ):
+        if key in body:
+            cfg_patch[key] = body[key]
+    config = save_live_safety_config(cfg_patch)
+    mt5_state = _get_mt5_state()
+    return jsonify({
+        "status": "saved",
+        "config": config,
+        "live_safety": evaluate_live_safety(
+            strategy=body.get("strategy", "v15f"),
+            mt5_account=mt5_state.get("account", {}),
+            open_positions=mt5_state.get("positions", []),
+        ),
     })
 
 
@@ -274,7 +607,6 @@ def api_cb_config_get():
 
 @app.route("/api/cb-config", methods=["POST"])
 def api_cb_config_post():
-    from flask import request
     body = request.get_json(force=True, silent=True) or {}
     cfg = dict(_CB_DEFAULTS)
     if os.path.exists(CB_CONFIG_FILE):
@@ -335,7 +667,6 @@ def api_trading_config_get():
 
 @app.route("/api/trading-config", methods=["POST"])
 def api_trading_config_post():
-    from flask import request
     body = request.get_json(force=True, silent=True) or {}
     cfg = dict(_TRADING_DEFAULTS)
     if os.path.exists(TRADING_CONFIG_FILE):
@@ -352,15 +683,17 @@ def api_trading_config_post():
         "min_confidence"    : (1,     10),
         "max_open_positions": (1,     10),
         "max_same_direction": (1,     5),
+        "max_daily_trades"  : (1,     20),
+        "min_sl_pts"        : (2.0,   30.0),
     }
     for key, (lo, hi) in numeric.items():
         if key in body:
             val = float(body[key])
             if not (lo <= val <= hi):
                 return jsonify({"error": "{} must be between {} and {}".format(key, lo, hi)}), 400
-            cfg[key] = round(val, 4) if key in ("risk_pct","max_lots","min_rr") else int(val)
+            cfg[key] = round(val, 4) if key in ("risk_pct","max_lots","min_rr","min_sl_pts") else int(val)
     # Boolean toggles
-    for key in ("news_block_enabled", "orchestrator_gate_enabled", "session_filter_enabled"):
+    for key in ("news_block_enabled", "orchestrator_gate_enabled", "session_filter_enabled", "tp1_cooldown_enabled"):
         if key in body:
             cfg[key] = bool(body[key])
     os.makedirs("agents/master_trader", exist_ok=True)
@@ -368,9 +701,23 @@ def api_trading_config_post():
         json.dump(cfg, f, indent=2)
     return jsonify({"status": "saved", "config": cfg})
 
+@app.route("/api/intel")
+def api_intel():
+    return jsonify({
+        "patterns"   : _load("patterns"),
+        "cot"        : _load("cot"),
+        "sentiment"  : _load("sentiment"),
+        "multi_symbol": _load("multi_symbol"),
+    })
+
 @app.route("/api/health")
 def api_health():
     return jsonify({"status": "ok", "time": str(datetime.now())})
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return Response(status=204)
 
 
 # ── Dashboard HTML ─────────────────────────────────────────────────────────────
@@ -567,6 +914,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 .jc-bot{display:flex;gap:8px;font-size:9px}
 
 /* ── MIRO Agents Health ── */
+.exp-item{background:var(--bg3);border:1px solid var(--border2);border-radius:3px;padding:7px 8px;margin-bottom:4px}
+.exp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:9px}
+.exp-type{color:var(--accent);text-transform:uppercase;letter-spacing:.8px}
+.exp-id{color:var(--muted);font-size:8px}
+.exp-meta{font-size:9px;color:var(--text2);line-height:1.45}
+.safety-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.safety-input{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:5px 7px;border-radius:3px;font-size:10px;font-family:var(--mono)}
+.safety-note{font-size:9px;color:var(--text2);line-height:1.45;margin-top:6px}
 .ag-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
 .ag-item{display:flex;align-items:center;gap:4px;padding:3px 6px;background:var(--bg3);border-radius:3px;font-size:9px}
 .ag-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
@@ -745,6 +1100,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
   <div class="tc-row"><span class="tc-l">Max Positions</span><input class="tc-input" id="tc-maxpos" type="number" step="1" min="1" max="10" value="3"></div>
   <div class="tc-row"><span class="tc-l">Max Same Dir</span><input class="tc-input" id="tc-maxdir" type="number" step="1" min="1" max="5" value="2"></div>
   <div class="tc-row"><span class="tc-l">Max Lots</span><input class="tc-input" id="tc-lots" type="number" step="0.1" min="0.01" max="10" value="2.0"></div>
+  <div class="tc-row"><span class="tc-l">Daily Trade Limit</span><input class="tc-input" id="tc-dailytrades" type="number" step="1" min="1" max="20" value="5"></div>
+  <div class="tc-row"><span class="tc-l">Min SL pts</span><input class="tc-input" id="tc-minsl" type="number" step="0.5" min="2" max="30" value="10"></div>
   <div class="cbtn" style="margin-top:8px" onclick="saveTradingConfig()">SAVE CONFIG</div>
   <div id="tc-msg" style="font-size:9px;margin-top:5px;min-height:12px"></div>
 
@@ -768,6 +1125,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div style="display:flex;gap:3px">
       <div class="tg-btn" id="tg-sess-on"  onclick="setToggle('session_filter_enabled',true)">ON</div>
       <div class="tg-btn" id="tg-sess-off" onclick="setToggle('session_filter_enabled',false)">OFF</div>
+    </div>
+  </div>
+  <div class="tc-row" style="margin-bottom:5px">
+    <span class="tc-l" style="font-size:9px">TP1 COOLDOWN</span>
+    <div style="display:flex;gap:3px">
+      <div class="tg-btn" id="tg-tp1-on"  onclick="setToggle('tp1_cooldown_enabled',true)">ON</div>
+      <div class="tg-btn" id="tg-tp1-off" onclick="setToggle('tp1_cooldown_enabled',false)">OFF</div>
     </div>
   </div>
 
@@ -928,6 +1292,84 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
   <div class="rp">
     <div class="chart-title">trade journal</div>
     <div id="journal-wrap"><div class="empty">No journal entries yet</div></div>
+  </div>
+
+  <!-- Research Console -->
+  <div class="rp">
+    <div class="chart-title">research console</div>
+    <div class="krow"><span class="kl">Promotion</span><span class="mono" id="rs-promo">candidate</span></div>
+    <div class="krow"><span class="kl">Approved For</span><span class="mono" id="rs-approval">research_only</span></div>
+    <div class="krow"><span class="kl">WF Active</span><span class="mono" id="rs-wf-active">--</span></div>
+    <div class="krow"><span class="kl">WF Ratio</span><span class="mono" id="rs-wf-ratio">--</span></div>
+    <div class="krow"><span class="kl">Discovery</span><span class="mono" id="rs-discovery">--</span></div>
+    <div class="krow"><span class="kl">Active Candidates</span><span class="mono" id="rs-candidates">0</span></div>
+    <div class="krow"><span class="kl">Survival</span><span class="mono" id="rs-survival">--</span></div>
+    <div class="chart-title" style="margin-top:10px">strategy lifecycle</div>
+    <div class="krow"><span class="kl">Stage</span><span class="mono" id="lc-stage">no report</span></div>
+    <div class="krow"><span class="kl">Approved For</span><span class="mono" id="lc-approval">--</span></div>
+    <div class="krow"><span class="kl">Portfolio</span><span class="mono" id="lc-counts">--</span></div>
+    <div class="krow"><span class="kl">Next Action</span><span class="mono" id="lc-next">--</span></div>
+    <div id="lc-note" style="font-size:9px;color:var(--muted);line-height:1.5;margin-top:4px">Waiting for lifecycle report file.</div>
+    <div class="chart-title" style="margin-top:10px">autonomy readiness</div>
+    <div class="krow"><span class="kl">Mode</span><span class="mono" id="rd-mode">blocked</span></div>
+    <div class="krow"><span class="kl">Blockers</span><span class="mono" id="rd-blockers">--</span></div>
+    <div class="krow"><span class="kl">Warnings</span><span class="mono" id="rd-warnings">--</span></div>
+    <div id="rd-note" style="font-size:9px;color:var(--muted);line-height:1.5;margin-top:4px">Readiness loading...</div>
+    <div id="research-experiments" style="margin-top:8px"><div class="empty">No experiments loaded</div></div>
+  </div>
+
+  <!-- Live Safety -->
+  <div class="rp">
+    <div class="chart-title">live safety</div>
+    <div class="krow"><span class="kl">Target</span><span class="mono" id="ls-target">demo</span></div>
+    <div class="krow"><span class="kl">Allowed</span><span class="mono" id="ls-allowed">NO</span></div>
+    <div class="krow"><span class="kl">Required Approval</span><span class="mono" id="ls-required">demo</span></div>
+    <div class="safety-grid" style="margin-top:8px">
+      <div><div class="kl" style="margin-bottom:4px">Target</div><select class="safety-input" id="ls-target-input"><option value="demo">demo</option><option value="live">live</option></select></div>
+      <div><div class="kl" style="margin-bottom:4px">Max Risk %</div><input class="safety-input" id="ls-risk-input" type="number" step="0.05" min="0.05" max="5" value="0.50"></div>
+      <div><div class="kl" style="margin-bottom:4px">Max Open</div><input class="safety-input" id="ls-open-input" type="number" step="1" min="1" max="10" value="3"></div>
+      <div><div class="kl" style="margin-bottom:4px">Min Free Margin %</div><input class="safety-input" id="ls-margin-input" type="number" step="1" min="5" max="90" value="25"></div>
+    </div>
+    <div class="ctrl-grid" style="margin-top:8px">
+      <div class="cbtn" onclick="saveLiveSafety()">SAVE SAFETY</div>
+      <div class="cbtn" onclick="refreshPromotion()">REFRESH RESEARCH</div>
+    </div>
+    <div id="ls-note" class="safety-note">Safety checks loading...</div>
+  </div>
+
+  <!-- Market Intelligence Panel -->
+  <div class="rp">
+    <div class="chart-title">market intelligence</div>
+    <!-- Sentiment Bar -->
+    <div style="margin-bottom:6px">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:3px">COMPOSITE SENTIMENT</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div id="sent-bar" style="height:100%;width:50%;background:var(--accent);border-radius:4px;transition:width 0.5s"></div>
+        </div>
+        <span id="sent-val" style="font-size:10px;font-weight:700;min-width:30px">5.0</span>
+        <span id="sent-bias" style="font-size:9px;color:var(--muted)">NEUTRAL</span>
+      </div>
+    </div>
+    <!-- COT -->
+    <div style="margin-bottom:5px;font-size:9px">
+      <span style="color:var(--muted)">COT:</span>
+      <span id="cot-bias" style="margin-left:4px;font-weight:700">—</span>
+      <span id="cot-net" style="margin-left:6px;color:var(--muted)"></span>
+    </div>
+    <!-- Multi-Symbol -->
+    <div style="margin-bottom:5px;font-size:9px">
+      <span style="color:var(--muted)">RISK:</span>
+      <span id="ms-risk" style="margin-left:4px;font-weight:700">—</span>
+      <span style="color:var(--muted);margin-left:8px">USD:</span>
+      <span id="ms-usd" style="margin-left:4px;font-weight:700">—</span>
+      <span style="color:var(--muted);margin-left:8px">GOLD→</span>
+      <span id="ms-gold" style="margin-left:4px;font-weight:700">—</span>
+    </div>
+    <div id="ms-symbols" style="font-size:9px;color:var(--muted);margin-bottom:5px"></div>
+    <!-- Patterns -->
+    <div style="font-size:9px;color:var(--muted);margin-bottom:3px">PATTERNS (H4)</div>
+    <div id="patterns-list" style="font-size:9px"></div>
   </div>
 
   <!-- MIRO Agent Health -->
@@ -1322,6 +1764,81 @@ function render(d){
     }).join('');
   } else jw.innerHTML='<div class="empty">No journal entries yet</div>';
 
+  // ── Research Console ──
+  const promo=d.promotion_status||{};
+  const research=d.research_summary||{};
+  const wf=research.latest_walk_forward||{};
+  document.getElementById('rs-promo').textContent=(promo.status||'candidate').toUpperCase();
+  document.getElementById('rs-promo').style.color=(promo.status||'')==='candidate'?'var(--warn)':'var(--green)';
+  document.getElementById('rs-approval').textContent=promo.approved_for||'research_only';
+  document.getElementById('rs-wf-active').textContent=wf.active_window_count!=null?wf.active_window_count:'--';
+  document.getElementById('rs-wf-ratio').textContent=wf.profitable_window_ratio!=null?f(wf.profitable_window_ratio,2):'--';
+  const discovery=d.autonomous_discovery||{};
+  const portfolio=d.strategy_portfolio||{};
+  const survival=d.survival_state||{};
+  document.getElementById('rs-discovery').textContent=(discovery.accepted!=null?discovery.accepted:'--')+'/'+(discovery.shortlisted!=null?discovery.shortlisted:'--');
+  document.getElementById('rs-candidates').textContent=(portfolio.active||[]).length;
+  document.getElementById('rs-survival').textContent=(survival.status||'unknown').toUpperCase();
+  document.getElementById('rs-survival').style.color=survival.status==='quarantine'?'var(--red)':'var(--green)';
+  const lifecycle=d.strategy_lifecycle||{};
+  const lcStage=document.getElementById('lc-stage');
+  if(lifecycle.available){
+    const stage=(lifecycle.stage||'unknown').toString();
+    const approved=(lifecycle.approved_for||'research_only').toString();
+    const counts=lifecycle.counts||{};
+    const stageKey=stage.toLowerCase();
+    lcStage.textContent=stage.toUpperCase();
+    lcStage.style.color=stageKey.includes('quarantine')||stageKey.includes('retired')?'var(--red)':stageKey.includes('paper')||stageKey.includes('demo')||stageKey.includes('live')?'var(--green)':'var(--warn)';
+    document.getElementById('lc-approval').textContent=approved;
+    document.getElementById('lc-counts').textContent=`A ${counts.active||0} / C ${counts.candidates||0} / Q ${counts.quarantine||0} / R ${counts.retired||0}`;
+    document.getElementById('lc-next').textContent=lifecycle.next_action||'monitor';
+    document.getElementById('lc-note').textContent=(lifecycle.blockers||[]).length
+      ? 'Blockers: '+(lifecycle.blockers||[]).join(' | ')
+      : ((lifecycle.strategy||'strategy')+' lifecycle report loaded'+(lifecycle.updated_at?' @ '+lifecycle.updated_at:''));
+  } else {
+    lcStage.textContent='NO REPORT';
+    lcStage.style.color='var(--muted)';
+    document.getElementById('lc-approval').textContent='--';
+    document.getElementById('lc-counts').textContent='--';
+    document.getElementById('lc-next').textContent='--';
+    document.getElementById('lc-note').textContent='Waiting for lifecycle report file.';
+  }
+  const readiness=d.autonomy_readiness||{};
+  const rdMode=document.getElementById('rd-mode');
+  const mode=(readiness.mode||'blocked').toString();
+  rdMode.textContent=mode.toUpperCase();
+  rdMode.style.color=readiness.ready?'var(--green)':mode==='research_watch'?'var(--warn)':'var(--red)';
+  document.getElementById('rd-blockers').textContent=readiness.blocker_count!=null?readiness.blocker_count:'--';
+  document.getElementById('rd-warnings').textContent=readiness.warning_count!=null?readiness.warning_count:'--';
+  const failed=(readiness.checks||[]).filter(c=>!c.passed).slice(0,3);
+  document.getElementById('rd-note').textContent=failed.length
+    ? failed.map(c=>c.name+': '+c.detail).join(' | ')
+    : (readiness.next_action||'Ready checks passed');
+  const expWrap=document.getElementById('research-experiments');
+  const experiments=d.recent_experiments||[];
+  if(experiments.length){
+    expWrap.innerHTML=experiments.slice().reverse().map(exp=>{
+      const res=exp.results||{};
+      const meta=exp.experiment_type==='walk_forward'
+        ? `WF ${res.active_window_count||0} active | ratio ${f(res.profitable_window_ratio||0,2)} | PF ${f(res.average_profit_factor||0,2)}`
+        : `Applied ${res.applied?'YES':'NO'} | WR ${f(res.best_win_rate||res.baseline_win_rate||0,2)} | PF ${f(res.best_profit_factor||res.baseline_profit_factor||0,2)}`;
+      return `<div class="exp-item"><div class="exp-top"><span class="exp-type">${(exp.experiment_type||'experiment').replace('_',' ')}</span><span class="exp-id">${exp.id||''}</span></div><div class="exp-meta">${meta}</div></div>`;
+    }).join('');
+  } else expWrap.innerHTML='<div class="empty">No experiments loaded</div>';
+
+  // ── Live Safety ──
+  const ls=d.live_safety||{};
+  const lsCfg=ls.config||{};
+  document.getElementById('ls-target').textContent=(ls.execution_target||'demo').toUpperCase();
+  document.getElementById('ls-allowed').textContent=ls.allowed?'YES':'NO';
+  document.getElementById('ls-allowed').style.color=ls.allowed?'var(--green)':'var(--red)';
+  document.getElementById('ls-required').textContent=ls.required_approval||'demo';
+  document.getElementById('ls-target-input').value=lsCfg.execution_target||'demo';
+  document.getElementById('ls-risk-input').value=f((lsCfg.max_risk_pct||0.5)*100,2);
+  document.getElementById('ls-open-input').value=lsCfg.max_open_positions||3;
+  document.getElementById('ls-margin-input').value=f((lsCfg.min_free_margin_pct||0.25)*100,0);
+  document.getElementById('ls-note').textContent=(ls.reasons||['Live safety checks loading...']).slice(0,2).join(' | ');
+
   // ── MIRO Agent Health ──
   const ah=d.agent_health||[];
   document.getElementById('ag-miro').innerHTML=ah.map(a=>{
@@ -1340,6 +1857,63 @@ async function refreshAll(){
   }catch(e){
     document.getElementById('last-update').textContent='API offline';
   }
+  loadIntel();
+}
+
+async function loadIntel(){
+  try{
+    const r=await fetch('/api/intel');
+    const d=await r.json();
+
+    // Sentiment bar
+    const sent=d.sentiment||{};
+    const score=+(sent.composite_score||5).toFixed(1);
+    const bias=sent.bias||'NEUTRAL';
+    document.getElementById('sent-val').textContent=score;
+    document.getElementById('sent-bias').textContent=bias;
+    const bar=document.getElementById('sent-bar');
+    bar.style.width=(score/10*100)+'%';
+    const biasColor=bias.includes('BULL')?'var(--green)':bias.includes('BEAR')?'var(--red)':'var(--accent)';
+    bar.style.background=biasColor;
+
+    // COT
+    const cot=d.cot||{};
+    const cotBiasEl=document.getElementById('cot-bias');
+    cotBiasEl.textContent=cot.institutional_bias||'—';
+    cotBiasEl.style.color=(cot.institutional_bias||'').includes('BULL')?'var(--green)':
+                          (cot.institutional_bias||'').includes('BEAR')?'var(--red)':'var(--text)';
+    const net=cot.noncomm_net||0;
+    document.getElementById('cot-net').textContent=
+      'NC Net: '+(net>0?'+':'')+net.toLocaleString()+(cot.report_date?' ('+cot.report_date+')':'');
+
+    // Multi-symbol
+    const ms=d.multi_symbol||{};
+    const riskEl=document.getElementById('ms-risk');
+    riskEl.textContent=ms.risk_sentiment||'—';
+    riskEl.style.color=ms.risk_sentiment==='RISK_OFF'?'var(--green)':
+                       ms.risk_sentiment==='RISK_ON'?'var(--red)':'var(--text)';
+    document.getElementById('ms-usd').textContent=ms.usd_strength||'—';
+    const goldEl=document.getElementById('ms-gold');
+    goldEl.textContent=ms.gold_implication||'—';
+    goldEl.style.color=ms.gold_implication==='BULLISH'?'var(--green)':
+                       ms.gold_implication==='BEARISH'?'var(--red)':'var(--text)';
+    const syms=ms.symbols||{};
+    document.getElementById('ms-symbols').textContent=
+      Object.entries(syms).map(([s,v])=>s+' '+v.bias+' ('+v.change_24h+'%)').join(' | ');
+
+    // Patterns
+    const pats=(d.patterns||{}).patterns||[];
+    const patEl=document.getElementById('patterns-list');
+    if(pats.length===0){
+      patEl.innerHTML='<span style="color:var(--muted)">No patterns detected</span>';
+    } else {
+      patEl.innerHTML=pats.map(p=>{
+        const col=p.bias==='BULLISH'?'var(--green)':'var(--red)';
+        return '<div style="margin-bottom:2px"><span style="color:'+col+';font-weight:700">'+p.type.replace(/_/g,' ').toUpperCase()+'</span>'
+          +' <span style="color:var(--muted)">conf:'+p.confidence+' tgt:'+p.target+'</span></div>';
+      }).join('');
+    }
+  }catch(e){}
 }
 async function pauseMiro(){await fetch('/api/pause',{method:'POST'});refreshAll();}
 async function resumeMiro(){await fetch('/api/resume',{method:'POST'});refreshAll();}
@@ -1367,6 +1941,8 @@ async function loadTradingConfig(){
     document.getElementById('tc-maxpos').value=_tcState.max_open_positions;
     document.getElementById('tc-maxdir').value=_tcState.max_same_direction;
     document.getElementById('tc-lots').value=+(_tcState.max_lots).toFixed(2);
+    document.getElementById('tc-dailytrades').value=_tcState.max_daily_trades||5;
+    document.getElementById('tc-minsl').value=+(_tcState.min_sl_pts||10).toFixed(1);
     _renderToggles(_tcState);
   }catch(e){}
 }
@@ -1374,6 +1950,7 @@ function _renderToggles(cfg){
   _setToggleUI('tg-news', cfg.news_block_enabled);
   _setToggleUI('tg-orch', cfg.orchestrator_gate_enabled);
   _setToggleUI('tg-sess', cfg.session_filter_enabled);
+  _setToggleUI('tg-tp1',  cfg.tp1_cooldown_enabled!==false);
 }
 function _setToggleUI(prefix,val){
   const on=document.getElementById(prefix+'-on');
@@ -1397,12 +1974,15 @@ async function saveTradingConfig(){
   const maxpos=parseInt(document.getElementById('tc-maxpos').value);
   const maxdir=parseInt(document.getElementById('tc-maxdir').value);
   const lots=parseFloat(document.getElementById('tc-lots').value);
+  const dailytrades=parseInt(document.getElementById('tc-dailytrades').value);
+  const minsl=parseFloat(document.getElementById('tc-minsl').value);
   const msg=document.getElementById('tc-msg');
-  if([risk,rr,conf,maxpos,maxdir,lots].some(v=>isNaN(v)||v<=0)){msg.style.color='var(--red)';msg.textContent='Invalid values';return;}
+  if([risk,rr,conf,maxpos,maxdir,lots,dailytrades,minsl].some(v=>isNaN(v)||v<=0)){msg.style.color='var(--red)';msg.textContent='Invalid values';return;}
   try{
     const r=await fetch('/api/trading-config',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({risk_pct:risk/100,min_rr:rr,min_confidence:conf,
-        max_open_positions:maxpos,max_same_direction:maxdir,max_lots:lots})});
+        max_open_positions:maxpos,max_same_direction:maxdir,max_lots:lots,
+        max_daily_trades:dailytrades,min_sl_pts:minsl})});
     const res=await r.json();
     if(res.status==='saved'){msg.style.color='var(--green)';msg.textContent='Saved ✓';}
     else{msg.style.color='var(--red)';msg.textContent=res.error||'Error';}
@@ -1432,6 +2012,33 @@ async function saveCBConfig(){
     else{msg.style.color='var(--red)';msg.textContent=res.error||'Error';}
   }catch(e){msg.style.color='var(--red)';msg.textContent='Request failed';}
   setTimeout(()=>{msg.textContent='';},3000);
+}
+
+async function refreshPromotion(){
+  try{
+    await fetch('/api/promotion',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'refresh'})});
+  }catch(e){}
+  refreshAll();
+}
+
+async function saveLiveSafety(){
+  const target=document.getElementById('ls-target-input').value;
+  const risk=parseFloat(document.getElementById('ls-risk-input').value);
+  const open=parseInt(document.getElementById('ls-open-input').value);
+  const margin=parseFloat(document.getElementById('ls-margin-input').value);
+  const note=document.getElementById('ls-note');
+  if([risk,open,margin].some(v=>isNaN(v)||v<=0)){note.style.color='var(--red)';note.textContent='Invalid safety values';return;}
+  try{
+    const r=await fetch('/api/live-safety',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({execution_target:target,max_risk_pct:risk/100,max_open_positions:open,min_free_margin_pct:margin/100})});
+    const d=await r.json();
+    note.style.color=d.live_safety&&d.live_safety.allowed?'var(--green)':'var(--warn)';
+    note.textContent=((d.live_safety||{}).reasons||['Saved']).slice(0,2).join(' | ');
+  }catch(e){
+    note.style.color='var(--red)';
+    note.textContent='Safety update failed';
+  }
+  refreshAll();
 }
 
 refreshAll();
