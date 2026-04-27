@@ -1,12 +1,12 @@
-# Graph Report - D:\Trading Project\MiroTrade-Framework  (2026-04-27)
+# Graph Report - D:\Trading Project\MiroTrade-Framework  (2026-04-28)
 
 ## Corpus Check
-- 64 files · ~156,163 words
+- 64 files · ~162,786 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1009 nodes · 1729 edges · 110 communities detected
-- Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 342 edges (avg confidence: 0.62)
+- 1021 nodes · 1737 edges · 115 communities detected
+- Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 344 edges (avg confidence: 0.62)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -120,6 +120,11 @@
 - [[_COMMUNITY_Community 107|Community 107]]
 - [[_COMMUNITY_Community 108|Community 108]]
 - [[_COMMUNITY_Community 109|Community 109]]
+- [[_COMMUNITY_Community 110|Community 110]]
+- [[_COMMUNITY_Community 111|Community 111]]
+- [[_COMMUNITY_Community 112|Community 112]]
+- [[_COMMUNITY_Community 113|Community 113]]
+- [[_COMMUNITY_Community 114|Community 114]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `MasterTraderAgent` - 45 edges
@@ -127,7 +132,7 @@
 3. `set_status()` - 41 edges
 4. `PositionManagerAgent` - 34 edges
 5. `AINewsSentinel` - 33 edges
-6. `MT5Bridge` - 31 edges
+6. `MT5Bridge` - 33 edges
 7. `NewsSentinelAgent` - 30 edges
 8. `CryptoExtension` - 29 edges
 9. `PaperTradingEngine` - 27 edges
@@ -137,7 +142,7 @@
 - `TelegramAlertAgent` --uses--> `Run SMC confluence analysis tuned for crypto.`  [INFERRED]
   agents\telegram\telegram_agent.py → data_feeds\crypto_feed\crypto_extension.py
 - `run_paper_trader()` --calls--> `PaperTradingEngine`  [INFERRED]
-  D:\Trading Project\MiroTrade-Framework\launch.py → paper_trading\simulator\paper_trader.py
+  D:\Trading Project\MiroTrade-Framework\launch.py → D:\Trading Project\MiroTrade-Framework\paper_trading\simulator\paper_trader.py
 - `run_news_sentinel_loop()` --calls--> `NewsSentinelAgent`  [INFERRED]
   D:\Trading Project\MiroTrade-Framework\launch.py → agents\news_sentinel\news_sentinel.py
 - `run_risk_manager_loop()` --calls--> `RiskManagerAgent`  [INFERRED]
@@ -157,68 +162,68 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.03
-Nodes (61): ThreadSupervisor, Feature 2: Monitor critical agents and alert via Telegram on crashes., Start TradingView webhook server (Flask :5000) + ngrok tunnel., Feature 1: Write consolidated session context for cross-session memory., Feature 2: Monitor critical agents and alert via Telegram on crashes., 22:00 IST daily P&L Telegram summary., Feature 2: Monitor critical agents and alert via Telegram on crashes., Feature 1: Write consolidated session context for cross-session memory. (+53 more)
+Cohesion: 0.05
+Nodes (41): ThreadSupervisor, daily_pnl_summary(), Feature 2: Monitor critical agents and alert via Telegram on crashes., Start TradingView webhook server (Flask :5000) + ngrok tunnel., Feature 1: Write consolidated session context for cross-session memory., Feature 2: Monitor critical agents and alert via Telegram on crashes., 22:00 IST daily P&L Telegram summary., Feature 2: Monitor critical agents and alert via Telegram on crashes. (+33 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.06
-Nodes (31): CryptoExtension, Get current price from Binance., Calculate SL/TP for crypto trade., Open a virtual crypto trade., Check if open trades hit SL or TP., Close a virtual crypto trade., Print current crypto trading status., Run full scan on one symbol. (+23 more)
+Nodes (29): AINewsSentinel, Ask Claude to evaluate market conditions and make block/clear decision., Simple rule-based fallback when no API key., Run full AI-powered scan., Called by orchestrator every 60s., Run continuously every 30 minutes., Search using DuckDuckGo (no API key needed)., Fetch from NewsAPI if key available. (+21 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.06
-Nodes (48): nightly_optimization(), OptimizerMemory, _params_key(), Summary stats for Telegram reporting., Stable JSON key for a param dict (sorted keys)., Store one optimization result., Return param combos that have been 'bad' quality >= min_occurrences times, Return top-N param combos by WR from the same regime.         Use as priority se (+40 more)
+Nodes (31): CryptoExtension, Get current price from Binance., Calculate SL/TP for crypto trade., Open a virtual crypto trade., Check if open trades hit SL or TP., Close a virtual crypto trade., Print current crypto trading status., Run full scan on one symbol. (+23 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.07
-Nodes (21): detect_bos(), detect_swing_points(), add_ema(), add_support_resistance(), run_confluence_engine(), score_candle(), Run SMC confluence analysis tuned for crypto., detect_fvg() (+13 more)
+Nodes (47): OptimizerMemory, _params_key(), Summary stats for Telegram reporting., Stable JSON key for a param dict (sorted keys)., Store one optimization result., Return param combos that have been 'bad' quality >= min_occurrences times, Return top-N param combos by WR from the same regime.         Use as priority se, _fetch_mt5_bars() (+39 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.07
-Nodes (16): MT5Bridge, Register a live MT5 position for TP1 monitoring., Scan all tracked live positions.         When TP1 is hit:           - Close 50, Get current account info., Get all open positions from MT5., Write a trade signal to the signal file.         MQL5 EA reads this file and ex, Check if MT5 EA executed the last signal.         Returns execution result if a, Execute trade directly from Python via MT5 API.         Use this when EA is not (+8 more)
+Nodes (18): MT5Bridge, Register a live MT5 position for TP1 monitoring., Scan all tracked live positions.         When TP1 is hit:           - Close 50, Get current account info., Get all open positions from MT5., Write a trade signal to the signal file.         MQL5 EA reads this file and ex, Check if MT5 EA executed the last signal.         Returns execution result if a, Execute trade directly from Python via MT5 API.         Use this when EA is not (+10 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.08
-Nodes (44): connect_mt5(), fetch_mt5_data(), load_csv_data(), main(), optimize_params(), Simple grid search over key parameters., Fetch candle data from MT5., Load from CSV if MT5 not available. (+36 more)
+Cohesion: 0.07
+Nodes (21): detect_bos(), detect_swing_points(), add_ema(), add_support_resistance(), run_confluence_engine(), score_candle(), Run SMC confluence analysis tuned for crypto., detect_fvg() (+13 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.12
-Nodes (41): daily_pnl_summary(), run_breakeven_guard(), run_circuit_breaker(), run_correlation_guard(), run_cot_feed(), run_crypto_extension(), run_dxy_yields(), run_economic_calendar() (+33 more)
+Cohesion: 0.07
+Nodes (45): connect_mt5(), fetch_mt5_data(), load_csv_data(), main(), optimize_params(), Simple grid search over key parameters., Fetch candle data from MT5., Load from CSV if MT5 not available. (+37 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.08
-Nodes (14): MasterTraderAgent, Execute MIRO's decision on an open position., Block same-direction entry for 15min after a TP1 partial close., Called by scale_out or position_manager after a TP1 partial close., Full analysis + decision + execution cycle., Main autonomous loop., Fetch comprehensive market data across multiple timeframes.         Returns stru, Load all specialist agent outputs into one dict for prompt injection.         Ea (+6 more)
+Cohesion: 0.11
+Nodes (43): run_breakeven_guard(), run_circuit_breaker(), run_correlation_guard(), run_cot_feed(), run_crypto_extension(), run_dxy_yields(), run_economic_calendar(), run_fibonacci() (+35 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.08
-Nodes (23): weekly_performance_report(), _agent_health(), api_close_all(), api_intel(), api_miro(), api_multisym(), api_perfchart(), _get_mt5_state() (+15 more)
+Nodes (14): MasterTraderAgent, Execute MIRO's decision on an open position., Block same-direction entry for 15min after a TP1 partial close., Called by scale_out or position_manager after a TP1 partial close., Full analysis + decision + execution cycle., Main autonomous loop., Fetch comprehensive market data across multiple timeframes.         Returns stru, Load all specialist agent outputs into one dict for prompt injection.         Ea (+6 more)
 
 ### Community 9 - "Community 9"
+Cohesion: 0.08
+Nodes (16): PositionManagerAgent, Close a position (full or partial) via MT5., Move SL of a position via MT5., Get state from other agents for LLM context., Non-negotiable rules applied before LLM.         Returns (action, reason, new_sl, Build the shared prompt for either LLM., Strip markdown and parse JSON from LLM response., Tiered LLM routing to minimise API spend:           - R > 2.5 or R < -1.5 (criti (+8 more)
+
+### Community 10 - "Community 10"
+Cohesion: 0.08
+Nodes (23): weekly_performance_report(), _agent_health(), api_close_all(), api_intel(), api_miro(), api_multisym(), api_perfchart(), _get_mt5_state() (+15 more)
+
+### Community 11 - "Community 11"
 Cohesion: 0.09
 Nodes (19): Watch an already-running thread and restart it if it dies.         Does NOT star, Start a NEW thread and supervise it., SupervisedAgent, check_webhook(), find_ngrok(), get_ngrok_url(), print_status(), Save bridge status for dashboard to read. (+11 more)
 
-### Community 10 - "Community 10"
+### Community 12 - "Community 12"
 Cohesion: 0.09
 Nodes (29): calculate_sl_tp(), check_existing_position(), check_mtf(), check_news(), check_orchestrator(), check_risk(), get_atr(), _get_mt5_balance() (+21 more)
 
-### Community 11 - "Community 11"
-Cohesion: 0.14
-Nodes (11): run_mtf_loop(), MultiTimeframeAnalysis, Full multi-timeframe analysis.         Returns recommended trade direction and, Fallback analysis using cached CSV data., Main function called by confluence engine.         Returns True if proposed sig, Save MTF bias to file for other agents to read., Fetch candles for a specific timeframe., Get EMA trend direction. (+3 more)
-
-### Community 12 - "Community 12"
-Cohesion: 0.14
-Nodes (9): Calculate risk multiplier based on current conditions.         1.0 = normal ris, Generate full risk assessment report., Run risk assessment and save state., Load paper trading state., Count current consecutive losses., Count current consecutive wins., Calculate current drawdown %., Calculate total open risk as % of balance. (+1 more)
-
 ### Community 13 - "Community 13"
-Cohesion: 0.17
-Nodes (16): _sync_ruflo_memory(), build_context(), _load(), main(), sync(), build_index(), format_results(), _load() (+8 more)
-
-### Community 14 - "Community 14"
 Cohesion: 0.12
 Nodes (18): Graphify Knowledge Graph Integration, AI Agent Layer (agents/), Backtesting Engine (backtesting/), Live Execution Layer (live_execution/), MiroTrade Framework â€” Autonomous Trading System, Paper Trading Simulator (paper_trading/), Backtrader Backtesting Library, LangChain AI Agent Framework (+10 more)
 
-### Community 15 - "Community 15"
+### Community 14 - "Community 14"
 Cohesion: 0.17
 Nodes (7): PerformanceReporter, Calculate max consecutive wins or losses., Generate actionable recommendations based on performance., Print formatted report to terminal., Save report to JSON file., Generate and display full report., Generate full performance report.
+
+### Community 15 - "Community 15"
+Cohesion: 0.18
+Nodes (15): build_context(), _load(), main(), sync(), build_index(), format_results(), _load(), load_index() (+7 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.26
@@ -245,16 +250,16 @@ Cohesion: 0.19
 Nodes (4): DeploymentChecklist, Run all checks and generate readiness report., Manually update EA demo test days., Check paper trading performance criteria.
 
 ### Community 22 - "Community 22"
+Cohesion: 0.23
+Nodes (14): analyse_and_adapt(), _classify_session(), compute_adaptive_thresholds(), compute_stats(), _count_consecutive_losses(), load_paper_trades(), load_trade_log(), If a setup type is underperforming (WR < 45%), raise its confidence threshold. (+6 more)
+
+### Community 23 - "Community 23"
 Cohesion: 0.25
 Nodes (13): analyse_reaction_with_llm(), fetch_calendar_from_api(), get_upcoming_events(), is_paused(), load_cal_state(), Get events in the next N hours., Ask GPT-4o to interpret the economic release for gold impact., Try to fetch from ForexFactory-compatible public APIs. (+5 more)
 
-### Community 23 - "Community 23"
+### Community 24 - "Community 24"
 Cohesion: 0.24
 Nodes (12): _detect_double(), _detect_flags(), _detect_hs(), _find_pivots(), _get_h4_data(), Detect Double Top (bearish) and Double Bottom (bullish)., Detect Bull and Bear flags (continuation patterns)., Return indices of significant highs and lows. (+4 more)
-
-### Community 24 - "Community 24"
-Cohesion: 0.33
-Nodes (10): analyse_and_adapt(), compute_adaptive_thresholds(), compute_stats(), _count_consecutive_losses(), load_trade_log(), Send detailed weekly performance report on Sunday evenings., If a setup type is underperforming (WR < 45%), raise its confidence threshold., run() (+2 more)
 
 ### Community 25 - "Community 25"
 Cohesion: 0.36
@@ -289,56 +294,56 @@ Cohesion: 0.43
 Nodes (5): _compute_symbol_data(), _derive_macro_context(), Derive risk sentiment, USD strength, gold implication., run(), scan_once()
 
 ### Community 33 - "Community 33"
-Cohesion: 0.33
-Nodes (6): fetch_news(), format_for_claude(), _parse_rss(), Fetch gold-relevant news from all RSS feeds.     Returns: list of article dicts,, Format articles into a compact string for Claude/GPT analysis., Parse RSS XML and return relevant articles.
-
-### Community 34 - "Community 34"
 Cohesion: 0.38
 Nodes (6): calculate_position(), interactive_mode(), print_calc(), Calculate position size and trade levels., Print formatted calculation., Run interactive calculator.
 
-### Community 35 - "Community 35"
+### Community 34 - "Community 34"
 Cohesion: 0.47
 Nodes (5): compute_gold_signal(), fetch_dxy_and_yields(), Fetch DXY and 10Y yield from free public sources.     Uses Yahoo Finance compati, Compute net gold bias from DXY and yields.     Returns: signal dict with bias, s, run()
 
-### Community 36 - "Community 36"
+### Community 35 - "Community 35"
 Cohesion: 0.47
 Nodes (5): calc_fib_levels(), find_swing_points(), Find the most significant swing high and low in recent bars., Calculate retracement levels from the swing., run()
 
-### Community 37 - "Community 37"
+### Community 36 - "Community 36"
 Cohesion: 0.7
 Nodes (4): load_state(), run(), save_state(), send_telegram()
 
-### Community 38 - "Community 38"
+### Community 37 - "Community 37"
 Cohesion: 0.5
 Nodes (4): generate_html_report(), MinRR_value(), Generate full HTML report from backtest CSV., Estimate RR from trade data.
 
-### Community 39 - "Community 39"
+### Community 38 - "Community 38"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 40 - "Community 40"
+### Community 39 - "Community 39"
 Cohesion: 0.67
 Nodes (3): detect_zones(), Detect supply (resistance) and demand (support) zones from order blocks., run()
 
-### Community 41 - "Community 41"
+### Community 40 - "Community 40"
 Cohesion: 0.67
 Nodes (3): Write current MT5 price to JSON., run(), update_price()
 
-### Community 42 - "Community 42"
+### Community 41 - "Community 41"
 Cohesion: 1.0
 Nodes (2): detect_regime(), run()
 
-### Community 43 - "Community 43"
+### Community 42 - "Community 42"
 Cohesion: 1.0
 Nodes (2): calc_atr(), fix_sltp()
 
-### Community 44 - "Community 44"
+### Community 43 - "Community 43"
 Cohesion: 0.67
 Nodes (3): Data Feeds Layer (data_feeds/), CCXT Crypto Exchange Library, MetaTrader5 Python Package (>=5.0.45)
 
-### Community 45 - "Community 45"
+### Community 44 - "Community 44"
 Cohesion: 1.0
 Nodes (1): Test signal writer — writes status: DISABLED so the EA ignores it. Only used to
+
+### Community 45 - "Community 45"
+Cohesion: 1.0
+Nodes (2): Risk Management Rules (1-2% per trade, 5% daily DD, 15% total DD), Target Performance Metrics (65% WR, 1:2 RR, <15% DD)
 
 ### Community 46 - "Community 46"
 Cohesion: 1.0
@@ -346,7 +351,7 @@ Nodes (2): Rationale: Go-Live Conditions (14-day paper trading gate), EA Demo Da
 
 ### Community 47 - "Community 47"
 Cohesion: 1.0
-Nodes (2): Risk Management Rules (1-2% per trade, 5% daily DD, 15% total DD), Target Performance Metrics (65% WR, 1:2 RR, <15% DD)
+Nodes (0): 
 
 ### Community 48 - "Community 48"
 Cohesion: 1.0
@@ -358,387 +363,419 @@ Nodes (0):
 
 ### Community 50 - "Community 50"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Detect broker UTC offset by comparing last tick time to system UTC.
 
 ### Community 51 - "Community 51"
 Cohesion: 1.0
-Nodes (1): Fetch comprehensive market data across multiple timeframes.         Returns stru
+Nodes (1): Check SL/TP hits and update trailing stop.
 
 ### Community 52 - "Community 52"
 Cohesion: 1.0
-Nodes (1): Load all specialist agent outputs into one dict for prompt injection.         Ea
+Nodes (1): Return (allow: bool, reason: str). Gates mirror the main trader.
 
 ### Community 53 - "Community 53"
 Cohesion: 1.0
-Nodes (1): Read self-learned thresholds from performance tracker.
+Nodes (1): Check regime.json allowed_setups against the signal type.
 
 ### Community 54 - "Community 54"
 Cohesion: 1.0
-Nodes (1): Get news intelligence from news brain + fallback to sentinel.
+Nodes (1): If a setup type is underperforming (WR < 45%), raise its confidence threshold.
 
 ### Community 55 - "Community 55"
 Cohesion: 1.0
-Nodes (1): Add derived metrics to each position.
+Nodes (1): Send detailed weekly performance report on Sunday evenings.
 
 ### Community 56 - "Community 56"
 Cohesion: 1.0
-Nodes (1): Build the comprehensive prompt for MIRO.
+Nodes (1): Fetch comprehensive market data across multiple timeframes.         Returns stru
 
 ### Community 57 - "Community 57"
 Cohesion: 1.0
-Nodes (1): Call GPT-4o with the master trader persona.
+Nodes (1): Load all specialist agent outputs into one dict for prompt injection.         Ea
 
 ### Community 58 - "Community 58"
 Cohesion: 1.0
-Nodes (1): Open a new position based on MIRO's signal.
+Nodes (1): Read self-learned thresholds from performance tracker.
 
 ### Community 59 - "Community 59"
 Cohesion: 1.0
-Nodes (1): Execute MIRO's decision on an open position.
+Nodes (1): Get news intelligence from news brain + fallback to sentinel.
 
 ### Community 60 - "Community 60"
 Cohesion: 1.0
-Nodes (1): Block same-direction entry for 15min after a TP1 partial close.
+Nodes (1): Add derived metrics to each position.
 
 ### Community 61 - "Community 61"
 Cohesion: 1.0
-Nodes (1): Called by scale_out or position_manager after a TP1 partial close.
+Nodes (1): Build the comprehensive prompt for MIRO.
 
 ### Community 62 - "Community 62"
 Cohesion: 1.0
-Nodes (1): Full analysis + decision + execution cycle.
+Nodes (1): Call GPT-4o with the master trader persona.
 
 ### Community 63 - "Community 63"
 Cohesion: 1.0
-Nodes (1): Main autonomous loop.
+Nodes (1): Open a new position based on MIRO's signal.
 
 ### Community 64 - "Community 64"
 Cohesion: 1.0
-Nodes (1): Close all open XAUUSD positions via MT5.
+Nodes (1): Execute MIRO's decision on an open position.
 
 ### Community 65 - "Community 65"
 Cohesion: 1.0
-Nodes (1): Multi-symbol paper trader state + session stats.
+Nodes (1): Block same-direction entry for 15min after a TP1 partial close.
 
 ### Community 66 - "Community 66"
 Cohesion: 1.0
-Nodes (1): Return the performance chart as a base64-encoded PNG.
+Nodes (1): Called by scale_out or position_manager after a TP1 partial close.
 
 ### Community 67 - "Community 67"
 Cohesion: 1.0
-Nodes (1): Check SL/TP hits and update trailing stop.
+Nodes (1): Full analysis + decision + execution cycle.
 
 ### Community 68 - "Community 68"
 Cohesion: 1.0
-Nodes (1): Place an MT5 market order to add to a position.
+Nodes (1): Main autonomous loop.
 
 ### Community 69 - "Community 69"
 Cohesion: 1.0
-Nodes (1): Remove state entries for tickets that are no longer open.
+Nodes (1): Close all open XAUUSD positions via MT5.
 
 ### Community 70 - "Community 70"
 Cohesion: 1.0
-Nodes (1): Write TP1 cooldown timestamp to state.json so master_trader blocks re-entry for
+Nodes (1): Multi-symbol paper trader state + session stats.
 
 ### Community 71 - "Community 71"
 Cohesion: 1.0
-Nodes (1): True if MTF bias agrees with the trade direction and session is active.
+Nodes (1): Return the performance chart as a base64-encoded PNG.
 
 ### Community 72 - "Community 72"
 Cohesion: 1.0
-Nodes (1): Main scale-out check — call every 15 seconds.
+Nodes (1): Check SL/TP hits and update trailing stop.
 
 ### Community 73 - "Community 73"
 Cohesion: 1.0
-Nodes (1): Fetch all open XAUUSD positions from MT5.
+Nodes (1): Place an MT5 market order to add to a position.
 
 ### Community 74 - "Community 74"
 Cohesion: 1.0
-Nodes (1): Fetch live market data from MT5: price, ATR, EMAs, RSI, session.
+Nodes (1): Remove state entries for tickets that are no longer open.
 
 ### Community 75 - "Community 75"
 Cohesion: 1.0
-Nodes (1): Close a position (full or partial) via MT5.
+Nodes (1): Write TP1 cooldown timestamp to state.json so master_trader blocks re-entry for
 
 ### Community 76 - "Community 76"
 Cohesion: 1.0
-Nodes (1): Move SL of a position via MT5.
+Nodes (1): True if MTF bias agrees with the trade direction and session is active.
 
 ### Community 77 - "Community 77"
 Cohesion: 1.0
-Nodes (1): Get state from other agents for LLM context.
+Nodes (1): Main scale-out check — call every 15 seconds.
 
 ### Community 78 - "Community 78"
 Cohesion: 1.0
-Nodes (1): Non-negotiable rules applied before LLM.         Returns (action, reason, new_sl
+Nodes (1): Fetch all open XAUUSD positions from MT5.
 
 ### Community 79 - "Community 79"
 Cohesion: 1.0
-Nodes (1): Build the shared prompt for either LLM.
+Nodes (1): Fetch live market data from MT5: price, ATR, EMAs, RSI, session.
 
 ### Community 80 - "Community 80"
 Cohesion: 1.0
-Nodes (1): Strip markdown and parse JSON from LLM response.
+Nodes (1): Close a position (full or partial) via MT5.
 
 ### Community 81 - "Community 81"
 Cohesion: 1.0
-Nodes (1): Ask GPT-4o (with Claude Haiku fallback) to evaluate positions.         Falls bac
+Nodes (1): Move SL of a position via MT5.
 
 ### Community 82 - "Community 82"
 Cohesion: 1.0
-Nodes (1): Enrich a raw MT5 position with derived metrics.
+Nodes (1): Get state from other agents for LLM context.
 
 ### Community 83 - "Community 83"
 Cohesion: 1.0
-Nodes (1): Check if enough time has passed since last decision on this ticket.
+Nodes (1): Non-negotiable rules applied before LLM.         Returns (action, reason, new_sl
 
 ### Community 84 - "Community 84"
 Cohesion: 1.0
-Nodes (1): Delete decisions_YYYY-MM-DD.json files older than 7 days.
+Nodes (1): Build the shared prompt for either LLM.
 
 ### Community 85 - "Community 85"
 Cohesion: 1.0
-Nodes (1): Execute LLM decisions against MT5.
+Nodes (1): Strip markdown and parse JSON from LLM response.
 
 ### Community 86 - "Community 86"
 Cohesion: 1.0
-Nodes (1): Rule-based fallback when all LLMs are unavailable.         Applies conservative
+Nodes (1): Ask GPT-4o (with Claude Haiku fallback) to evaluate positions.         Falls bac
 
 ### Community 87 - "Community 87"
 Cohesion: 1.0
-Nodes (1): One evaluation cycle: fetch positions → market → decide → execute.
+Nodes (1): Enrich a raw MT5 position with derived metrics.
 
 ### Community 88 - "Community 88"
 Cohesion: 1.0
-Nodes (1): Main webhook endpoint - receives TradingView alerts.
+Nodes (1): Check if enough time has passed since last decision on this ticket.
 
 ### Community 89 - "Community 89"
 Cohesion: 1.0
-Nodes (1): Check server status and last signal.
+Nodes (1): Delete decisions_YYYY-MM-DD.json files older than 7 days.
 
 ### Community 90 - "Community 90"
 Cohesion: 1.0
-Nodes (1): Test endpoint — logs and responds but does NOT write to MT5 Common Files.     S
+Nodes (1): Execute LLM decisions against MT5.
 
 ### Community 91 - "Community 91"
 Cohesion: 1.0
-Nodes (1): MiroTrade Daily Startup & Operations Guide
+Nodes (1): Rule-based fallback when all LLMs are unavailable.         Applies conservative
 
 ### Community 92 - "Community 92"
 Cohesion: 1.0
-Nodes (1): live_price.json (price feed)
+Nodes (1): One evaluation cycle: fetch positions → market → decide → execute.
 
 ### Community 93 - "Community 93"
 Cohesion: 1.0
-Nodes (1): Rationale: Multi-Brain 3-Tier Routing for Cost Optimization
+Nodes (1): Main webhook endpoint - receives TradingView alerts.
 
 ### Community 94 - "Community 94"
 Cohesion: 1.0
-Nodes (1): MT5 Broker Credentials (MT5_LOGIN/PASSWORD/SERVER)
+Nodes (1): Check server status and last signal.
 
 ### Community 95 - "Community 95"
 Cohesion: 1.0
-Nodes (1): OpenAI API Key (GPT-4o)
+Nodes (1): Test endpoint — logs and responds but does NOT write to MT5 Common Files.     S
 
 ### Community 96 - "Community 96"
 Cohesion: 1.0
-Nodes (1): Anthropic API Key (Claude)
+Nodes (1): MiroTrade Daily Startup & Operations Guide
 
 ### Community 97 - "Community 97"
 Cohesion: 1.0
-Nodes (1): Telegram Bot Token & Chat ID
+Nodes (1): live_price.json (price feed)
 
 ### Community 98 - "Community 98"
 Cohesion: 1.0
-Nodes (1): NewsAPI Key
+Nodes (1): Rationale: Multi-Brain 3-Tier Routing for Cost Optimization
 
 ### Community 99 - "Community 99"
 Cohesion: 1.0
-Nodes (1): ngrok Auth Token & Domain (Mobile Tunnel)
+Nodes (1): MT5 Broker Credentials (MT5_LOGIN/PASSWORD/SERVER)
 
 ### Community 100 - "Community 100"
 Cohesion: 1.0
-Nodes (1): Dashboard UI (dashboard/)
+Nodes (1): OpenAI API Key (GPT-4o)
 
 ### Community 101 - "Community 101"
 Cohesion: 1.0
-Nodes (1): Pandas Data Processing Library
+Nodes (1): Anthropic API Key (Claude)
 
 ### Community 102 - "Community 102"
 Cohesion: 1.0
-Nodes (1): OpenAI Python SDK (>=1.0.0)
+Nodes (1): Telegram Bot Token & Chat ID
 
 ### Community 103 - "Community 103"
 Cohesion: 1.0
-Nodes (1): Flask Web Framework (>=3.0.0)
+Nodes (1): NewsAPI Key
 
 ### Community 104 - "Community 104"
 Cohesion: 1.0
-Nodes (1): NewsAPI Python Client
+Nodes (1): ngrok Auth Token & Domain (Mobile Tunnel)
 
 ### Community 105 - "Community 105"
 Cohesion: 1.0
-Nodes (1): BeautifulSoup4 Web Scraping
+Nodes (1): Dashboard UI (dashboard/)
 
 ### Community 106 - "Community 106"
 Cohesion: 1.0
-Nodes (1): TA-Lib Technical Analysis Library
+Nodes (1): Pandas Data Processing Library
 
 ### Community 107 - "Community 107"
 Cohesion: 1.0
-Nodes (1): MIRO Framework Startup Guide
+Nodes (1): OpenAI Python SDK (>=1.0.0)
 
 ### Community 108 - "Community 108"
 Cohesion: 1.0
-Nodes (1): Signal & Trade Entry Flow
+Nodes (1): Flask Web Framework (>=3.0.0)
 
 ### Community 109 - "Community 109"
+Cohesion: 1.0
+Nodes (1): NewsAPI Python Client
+
+### Community 110 - "Community 110"
+Cohesion: 1.0
+Nodes (1): BeautifulSoup4 Web Scraping
+
+### Community 111 - "Community 111"
+Cohesion: 1.0
+Nodes (1): TA-Lib Technical Analysis Library
+
+### Community 112 - "Community 112"
+Cohesion: 1.0
+Nodes (1): MIRO Framework Startup Guide
+
+### Community 113 - "Community 113"
+Cohesion: 1.0
+Nodes (1): Signal & Trade Entry Flow
+
+### Community 114 - "Community 114"
 Cohesion: 1.0
 Nodes (1): Confluence Scorer (Week 5-6 task, score >= 12/20)
 
 ## Knowledge Gaps
-- **298 isolated node(s):** `Test signal writer — writes status: DISABLED so the EA ignores it. Only used to`, `Full market structure analysis.`, `Find nearest support and resistance levels.`, `Get nearest active order blocks.`, `Get nearest unfilled FVGs.` (+293 more)
+- **308 isolated node(s):** `Test signal writer — writes status: DISABLED so the EA ignores it. Only used to`, `Full market structure analysis.`, `Find nearest support and resistance levels.`, `Get nearest active order blocks.`, `Get nearest unfilled FVGs.` (+303 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 45`** (2 nodes): `test_signal.py`, `Test signal writer — writes status: DISABLED so the EA ignores it. Only used to`
+- **Thin community `Community 44`** (2 nodes): `test_signal.py`, `Test signal writer — writes status: DISABLED so the EA ignores it. Only used to`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 45`** (2 nodes): `Risk Management Rules (1-2% per trade, 5% daily DD, 15% total DD)`, `Target Performance Metrics (65% WR, 1:2 RR, <15% DD)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 46`** (2 nodes): `Rationale: Go-Live Conditions (14-day paper trading gate)`, `EA Demo Days Counter (ea_demo_days.txt)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (2 nodes): `Risk Management Rules (1-2% per trade, 5% daily DD, 15% total DD)`, `Target Performance Metrics (65% WR, 1:2 RR, <15% DD)`
+- **Thin community `Community 47`** (1 nodes): `analyze_trades.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `analyze_trades.py`
+- **Thin community `Community 48`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 49`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `__init__.py`
+- **Thin community `Community 50`** (1 nodes): `Detect broker UTC offset by comparing last tick time to system UTC.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `Fetch comprehensive market data across multiple timeframes.         Returns stru`
+- **Thin community `Community 51`** (1 nodes): `Check SL/TP hits and update trailing stop.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `Load all specialist agent outputs into one dict for prompt injection.         Ea`
+- **Thin community `Community 52`** (1 nodes): `Return (allow: bool, reason: str). Gates mirror the main trader.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `Read self-learned thresholds from performance tracker.`
+- **Thin community `Community 53`** (1 nodes): `Check regime.json allowed_setups against the signal type.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `Get news intelligence from news brain + fallback to sentinel.`
+- **Thin community `Community 54`** (1 nodes): `If a setup type is underperforming (WR < 45%), raise its confidence threshold.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `Add derived metrics to each position.`
+- **Thin community `Community 55`** (1 nodes): `Send detailed weekly performance report on Sunday evenings.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `Build the comprehensive prompt for MIRO.`
+- **Thin community `Community 56`** (1 nodes): `Fetch comprehensive market data across multiple timeframes.         Returns stru`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 57`** (1 nodes): `Call GPT-4o with the master trader persona.`
+- **Thin community `Community 57`** (1 nodes): `Load all specialist agent outputs into one dict for prompt injection.         Ea`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 58`** (1 nodes): `Open a new position based on MIRO's signal.`
+- **Thin community `Community 58`** (1 nodes): `Read self-learned thresholds from performance tracker.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 59`** (1 nodes): `Execute MIRO's decision on an open position.`
+- **Thin community `Community 59`** (1 nodes): `Get news intelligence from news brain + fallback to sentinel.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 60`** (1 nodes): `Block same-direction entry for 15min after a TP1 partial close.`
+- **Thin community `Community 60`** (1 nodes): `Add derived metrics to each position.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 61`** (1 nodes): `Called by scale_out or position_manager after a TP1 partial close.`
+- **Thin community `Community 61`** (1 nodes): `Build the comprehensive prompt for MIRO.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 62`** (1 nodes): `Full analysis + decision + execution cycle.`
+- **Thin community `Community 62`** (1 nodes): `Call GPT-4o with the master trader persona.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 63`** (1 nodes): `Main autonomous loop.`
+- **Thin community `Community 63`** (1 nodes): `Open a new position based on MIRO's signal.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 64`** (1 nodes): `Close all open XAUUSD positions via MT5.`
+- **Thin community `Community 64`** (1 nodes): `Execute MIRO's decision on an open position.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 65`** (1 nodes): `Multi-symbol paper trader state + session stats.`
+- **Thin community `Community 65`** (1 nodes): `Block same-direction entry for 15min after a TP1 partial close.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 66`** (1 nodes): `Return the performance chart as a base64-encoded PNG.`
+- **Thin community `Community 66`** (1 nodes): `Called by scale_out or position_manager after a TP1 partial close.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 67`** (1 nodes): `Check SL/TP hits and update trailing stop.`
+- **Thin community `Community 67`** (1 nodes): `Full analysis + decision + execution cycle.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 68`** (1 nodes): `Place an MT5 market order to add to a position.`
+- **Thin community `Community 68`** (1 nodes): `Main autonomous loop.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 69`** (1 nodes): `Remove state entries for tickets that are no longer open.`
+- **Thin community `Community 69`** (1 nodes): `Close all open XAUUSD positions via MT5.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 70`** (1 nodes): `Write TP1 cooldown timestamp to state.json so master_trader blocks re-entry for`
+- **Thin community `Community 70`** (1 nodes): `Multi-symbol paper trader state + session stats.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 71`** (1 nodes): `True if MTF bias agrees with the trade direction and session is active.`
+- **Thin community `Community 71`** (1 nodes): `Return the performance chart as a base64-encoded PNG.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 72`** (1 nodes): `Main scale-out check — call every 15 seconds.`
+- **Thin community `Community 72`** (1 nodes): `Check SL/TP hits and update trailing stop.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 73`** (1 nodes): `Fetch all open XAUUSD positions from MT5.`
+- **Thin community `Community 73`** (1 nodes): `Place an MT5 market order to add to a position.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 74`** (1 nodes): `Fetch live market data from MT5: price, ATR, EMAs, RSI, session.`
+- **Thin community `Community 74`** (1 nodes): `Remove state entries for tickets that are no longer open.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 75`** (1 nodes): `Close a position (full or partial) via MT5.`
+- **Thin community `Community 75`** (1 nodes): `Write TP1 cooldown timestamp to state.json so master_trader blocks re-entry for`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 76`** (1 nodes): `Move SL of a position via MT5.`
+- **Thin community `Community 76`** (1 nodes): `True if MTF bias agrees with the trade direction and session is active.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 77`** (1 nodes): `Get state from other agents for LLM context.`
+- **Thin community `Community 77`** (1 nodes): `Main scale-out check — call every 15 seconds.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 78`** (1 nodes): `Non-negotiable rules applied before LLM.         Returns (action, reason, new_sl`
+- **Thin community `Community 78`** (1 nodes): `Fetch all open XAUUSD positions from MT5.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 79`** (1 nodes): `Build the shared prompt for either LLM.`
+- **Thin community `Community 79`** (1 nodes): `Fetch live market data from MT5: price, ATR, EMAs, RSI, session.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 80`** (1 nodes): `Strip markdown and parse JSON from LLM response.`
+- **Thin community `Community 80`** (1 nodes): `Close a position (full or partial) via MT5.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 81`** (1 nodes): `Ask GPT-4o (with Claude Haiku fallback) to evaluate positions.         Falls bac`
+- **Thin community `Community 81`** (1 nodes): `Move SL of a position via MT5.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 82`** (1 nodes): `Enrich a raw MT5 position with derived metrics.`
+- **Thin community `Community 82`** (1 nodes): `Get state from other agents for LLM context.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 83`** (1 nodes): `Check if enough time has passed since last decision on this ticket.`
+- **Thin community `Community 83`** (1 nodes): `Non-negotiable rules applied before LLM.         Returns (action, reason, new_sl`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 84`** (1 nodes): `Delete decisions_YYYY-MM-DD.json files older than 7 days.`
+- **Thin community `Community 84`** (1 nodes): `Build the shared prompt for either LLM.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 85`** (1 nodes): `Execute LLM decisions against MT5.`
+- **Thin community `Community 85`** (1 nodes): `Strip markdown and parse JSON from LLM response.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 86`** (1 nodes): `Rule-based fallback when all LLMs are unavailable.         Applies conservative`
+- **Thin community `Community 86`** (1 nodes): `Ask GPT-4o (with Claude Haiku fallback) to evaluate positions.         Falls bac`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 87`** (1 nodes): `One evaluation cycle: fetch positions → market → decide → execute.`
+- **Thin community `Community 87`** (1 nodes): `Enrich a raw MT5 position with derived metrics.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 88`** (1 nodes): `Main webhook endpoint - receives TradingView alerts.`
+- **Thin community `Community 88`** (1 nodes): `Check if enough time has passed since last decision on this ticket.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 89`** (1 nodes): `Check server status and last signal.`
+- **Thin community `Community 89`** (1 nodes): `Delete decisions_YYYY-MM-DD.json files older than 7 days.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 90`** (1 nodes): `Test endpoint — logs and responds but does NOT write to MT5 Common Files.     S`
+- **Thin community `Community 90`** (1 nodes): `Execute LLM decisions against MT5.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 91`** (1 nodes): `MiroTrade Daily Startup & Operations Guide`
+- **Thin community `Community 91`** (1 nodes): `Rule-based fallback when all LLMs are unavailable.         Applies conservative`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 92`** (1 nodes): `live_price.json (price feed)`
+- **Thin community `Community 92`** (1 nodes): `One evaluation cycle: fetch positions → market → decide → execute.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 93`** (1 nodes): `Rationale: Multi-Brain 3-Tier Routing for Cost Optimization`
+- **Thin community `Community 93`** (1 nodes): `Main webhook endpoint - receives TradingView alerts.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 94`** (1 nodes): `MT5 Broker Credentials (MT5_LOGIN/PASSWORD/SERVER)`
+- **Thin community `Community 94`** (1 nodes): `Check server status and last signal.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 95`** (1 nodes): `OpenAI API Key (GPT-4o)`
+- **Thin community `Community 95`** (1 nodes): `Test endpoint — logs and responds but does NOT write to MT5 Common Files.     S`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 96`** (1 nodes): `Anthropic API Key (Claude)`
+- **Thin community `Community 96`** (1 nodes): `MiroTrade Daily Startup & Operations Guide`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 97`** (1 nodes): `Telegram Bot Token & Chat ID`
+- **Thin community `Community 97`** (1 nodes): `live_price.json (price feed)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 98`** (1 nodes): `NewsAPI Key`
+- **Thin community `Community 98`** (1 nodes): `Rationale: Multi-Brain 3-Tier Routing for Cost Optimization`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 99`** (1 nodes): `ngrok Auth Token & Domain (Mobile Tunnel)`
+- **Thin community `Community 99`** (1 nodes): `MT5 Broker Credentials (MT5_LOGIN/PASSWORD/SERVER)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 100`** (1 nodes): `Dashboard UI (dashboard/)`
+- **Thin community `Community 100`** (1 nodes): `OpenAI API Key (GPT-4o)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 101`** (1 nodes): `Pandas Data Processing Library`
+- **Thin community `Community 101`** (1 nodes): `Anthropic API Key (Claude)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 102`** (1 nodes): `OpenAI Python SDK (>=1.0.0)`
+- **Thin community `Community 102`** (1 nodes): `Telegram Bot Token & Chat ID`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 103`** (1 nodes): `Flask Web Framework (>=3.0.0)`
+- **Thin community `Community 103`** (1 nodes): `NewsAPI Key`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 104`** (1 nodes): `NewsAPI Python Client`
+- **Thin community `Community 104`** (1 nodes): `ngrok Auth Token & Domain (Mobile Tunnel)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 105`** (1 nodes): `BeautifulSoup4 Web Scraping`
+- **Thin community `Community 105`** (1 nodes): `Dashboard UI (dashboard/)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 106`** (1 nodes): `TA-Lib Technical Analysis Library`
+- **Thin community `Community 106`** (1 nodes): `Pandas Data Processing Library`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 107`** (1 nodes): `MIRO Framework Startup Guide`
+- **Thin community `Community 107`** (1 nodes): `OpenAI Python SDK (>=1.0.0)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 108`** (1 nodes): `Signal & Trade Entry Flow`
+- **Thin community `Community 108`** (1 nodes): `Flask Web Framework (>=3.0.0)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 109`** (1 nodes): `Confluence Scorer (Week 5-6 task, score >= 12/20)`
+- **Thin community `Community 109`** (1 nodes): `NewsAPI Python Client`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 110`** (1 nodes): `BeautifulSoup4 Web Scraping`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 111`** (1 nodes): `TA-Lib Technical Analysis Library`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 112`** (1 nodes): `MIRO Framework Startup Guide`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 113`** (1 nodes): `Signal & Trade Entry Flow`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 114`** (1 nodes): `Confluence Scorer (Week 5-6 task, score >= 12/20)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `PositionManagerAgent` connect `Community 0` to `Community 6`?**
-  _High betweenness centrality (0.077) - this node is a cross-community bridge._
-- **Why does `MasterTraderAgent` connect `Community 7` to `Community 0`, `Community 2`, `Community 6`?**
-  _High betweenness centrality (0.072) - this node is a cross-community bridge._
-- **Why does `PaperTradingEngine` connect `Community 4` to `Community 0`, `Community 6`?**
-  _High betweenness centrality (0.056) - this node is a cross-community bridge._
+- **Why does `MasterTraderAgent` connect `Community 8` to `Community 0`, `Community 3`, `Community 7`?**
+  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+- **Why does `PositionManagerAgent` connect `Community 9` to `Community 0`, `Community 7`?**
+  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+- **Why does `MT5Bridge` connect `Community 4` to `Community 0`, `Community 7`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **Are the 19 inferred relationships involving `MasterTraderAgent` (e.g. with `Feature 2: Monitor critical agents and alert via Telegram on crashes.` and `Feature 1: Write consolidated session context for cross-session memory.`) actually correct?**
   _`MasterTraderAgent` has 19 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 28 inferred relationships involving `TelegramAlertAgent` (e.g. with `Feature 2: Monitor critical agents and alert via Telegram on crashes.` and `Feature 1: Write consolidated session context for cross-session memory.`) actually correct?**
