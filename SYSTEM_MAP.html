@@ -62,17 +62,17 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
 <body>
 
 <h1>MIROTRADE FRAMEWORK</h1>
-<div class="sub">COMPLETE SYSTEM MAP — XAUUSD AUTONOMOUS TRADING FRAMEWORK • UPDATED 2026-04-18</div>
+<div class="sub">COMPLETE SYSTEM MAP — XAUUSD AUTONOMOUS TRADING FRAMEWORK • UPDATED 2026-04-19</div>
 
 <!-- Stats -->
 <div class="stats">
-  <div class="stat"><div class="stat-n">55+</div><div class="stat-l">Python Files</div></div>
-  <div class="stat"><div class="stat-n">35</div><div class="stat-l">Live Threads</div></div>
+  <div class="stat"><div class="stat-n">60+</div><div class="stat-l">Python Files</div></div>
+  <div class="stat"><div class="stat-n">38</div><div class="stat-l">Live Threads</div></div>
   <div class="stat"><div class="stat-n">+1</div><div class="stat-l">TV Webhook (sep.)</div></div>
-  <div class="stat"><div class="stat-n">1</div><div class="stat-l">Live Dashboard</div></div>
+  <div class="stat"><div class="stat-n">3</div><div class="stat-l">Mobile+Dashboard+Tunnel</div></div>
   <div class="stat"><div class="stat-n">30</div><div class="stat-l">Nightly Combos</div></div>
   <div class="stat"><div class="stat-n">10</div><div class="stat-l">Intel Sources</div></div>
-  <div class="stat"><div class="stat-n">12</div><div class="stat-l">Risk Checks</div></div>
+  <div class="stat"><div class="stat-n">16</div><div class="stat-l">Agent Health Checks</div></div>
 </div>
 
 <!-- Legend -->
@@ -209,6 +209,40 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
       <div class="fbox green">Git Commit<br><span style="font-size:8px;color:#5a6478">Auto message</span></div>
       <span class="arrow g">→</span>
       <div class="fbox green">Telegram Diff<br><span style="font-size:8px;color:#5a6478">Before → After table</span></div>
+    </div>
+  </div>
+
+  <div class="f-gap"></div>
+
+  <!-- ── ROW 6: Multi-symbol paper trading ── -->
+  <div class="f-row">
+    <div class="f-label">multi-sym</div>
+    <div class="f-chain">
+      <div class="fbox blue">MT5 H1 Bars<br><span style="font-size:8px;color:#5a6478">EURUSD · GBPUSD · CL-OIL</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">v15F Signal<br><span style="font-size:8px;color:#5a6478">ATR-scaled SL/TP</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox warn">Risk Gate<br><span style="font-size:8px;color:#5a6478">0.5% / trade · max 2 open</span></div>
+      <span class="arrow g">→</span>
+      <div class="fbox green">Paper Trade<br><span style="font-size:8px;color:#5a6478">multi_symbol_state.json</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox blue">Dashboard Panel<br><span style="font-size:8px;color:#5a6478">Trade history table</span></div>
+    </div>
+  </div>
+
+  <div class="f-gap"></div>
+
+  <!-- ── ROW 7: Mobile access ── -->
+  <div class="f-row">
+    <div class="f-label">mobile</div>
+    <div class="f-chain">
+      <div class="fbox blue">pyngrok<br><span style="font-size:8px;color:#5a6478">NGROK_AUTHTOKEN .env</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox green">Public HTTPS URL<br><span style="font-size:8px;color:#5a6478">tunnels to :5055</span></div>
+      <span class="arrow g">→</span>
+      <div class="fbox green">Telegram push<br><span style="font-size:8px;color:#5a6478">startup + 6h re-ping</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox blue">Mobile Dashboard<br><span style="font-size:8px;color:#5a6478">responsive CSS · any phone</span></div>
     </div>
   </div>
 
@@ -491,6 +525,24 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
     <div class="card-detail">On successful nightly optimization, commits applied_params.json: "[MIRO Auto] v15F optimized: WR +X% PF +Y | param→value". Full Telegram diff sent.</div>
     <span class="badge b-done">LIVE</span>
   </div>
+
+  <div class="card new">
+    <div class="card-title">Multi-Symbol Paper Trader</div>
+    <div class="card-detail">Live paper trades on EURUSD, GBPUSD, CL-OIL. v15F ATR-based SL/TP. 0.5% risk/trade, max 2 concurrent. Validated: EURUSD 73.2%, GBPUSD 68.6%, CL-OIL 70.6% WR. Dashboard panel + trade history table.</div>
+    <span class="badge b-new">LIVE</span>
+  </div>
+
+  <div class="card new">
+    <div class="card-title">Performance Report (Weekly)</div>
+    <div class="card-detail">5-panel matplotlib chart: equity curve, session win rates, monthly breakdown, signal type, walk-forward. Auto-sent to Telegram every Sunday 02:30 UTC. Manual: /perfchart command.</div>
+    <span class="badge b-new">LIVE</span>
+  </div>
+
+  <div class="card new">
+    <div class="card-title">Mobile Tunnel</div>
+    <div class="card-detail">pyngrok HTTPS tunnel to :5055 dashboard. Public URL sent to Telegram on startup. Re-pings every 6h. Auto-restarts on drop. NGROK_AUTHTOKEN in .env for fixed URL. Dashboard mobile-responsive (CSS media queries).</div>
+    <span class="badge b-new">LIVE</span>
+  </div>
 </div>
 
 </div><!-- /grid -->
@@ -590,6 +642,7 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
     <div class="fbox red" style="padding:7px 12px"><span style="font-weight:700">/closeall</span><br><span style="font-size:8px;color:#5a6478">Close all XAUUSD positions<br>immediately via MT5</span></div>
     <div class="fbox" style="padding:7px 12px"><span style="font-weight:700">/report</span><br><span style="font-size:8px;color:#5a6478">Today's closed trades<br>W/L, win rate, P&amp;L</span></div>
     <div class="fbox" style="padding:7px 12px"><span style="font-weight:700">/risk</span><br><span style="font-size:8px;color:#5a6478">Current risk settings<br>+ consecutive losses</span></div>
+    <div class="fbox blue" style="padding:7px 12px"><span style="font-weight:700">/perfchart</span><br><span style="font-size:8px;color:#5a6478">5-panel performance chart<br>equity + sessions + monthly</span></div>
     <div class="fbox purple" style="padding:7px 12px"><span style="font-weight:700">Free text</span><br><span style="font-size:8px;color:#5a6478">Routes to GPT-4o MIRO<br>with market context</span></div>
   </div>
 </div>
@@ -598,23 +651,31 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
 <div class="flow">
   <div class="flow-title">Next Development Milestones</div>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <div class="fbox" style="padding:8px 14px">
-      <div style="font-size:10px;font-weight:700;margin-bottom:3px">Multi-Symbol Trading</div>
-      <div style="font-size:8px;color:#5a6478">Extend Master Trader to actually<br>trade EURUSD, US30, USOIL<br>(monitoring is done)</div>
+    <div class="fbox green" style="padding:8px 14px;opacity:.6">
+      <div style="font-size:10px;font-weight:700;margin-bottom:3px">&#10003; Multi-Symbol Trading</div>
+      <div style="font-size:8px;color:#5a6478">EURUSD/GBPUSD/CL-OIL live paper trades.<br>v15F validated. Dashboard panel done.</div>
     </div>
-    <div class="fbox" style="padding:8px 14px">
-      <div style="font-size:10px;font-weight:700;margin-bottom:3px">PDF Performance Reports</div>
-      <div style="font-size:8px;color:#5a6478">Weekly PDF via Telegram<br>Trade log + equity curve<br>+ pattern statistics</div>
+    <div class="fbox green" style="padding:8px 14px;opacity:.6">
+      <div style="font-size:10px;font-weight:700;margin-bottom:3px">&#10003; Performance Reports</div>
+      <div style="font-size:8px;color:#5a6478">5-panel chart via Telegram weekly.<br>/perfchart on-demand. Session heatmap.</div>
     </div>
-    <div class="fbox" style="padding:8px 14px">
+    <div class="fbox green" style="padding:8px 14px;opacity:.6">
+      <div style="font-size:10px;font-weight:700;margin-bottom:3px">&#10003; Mobile Access</div>
+      <div style="font-size:8px;color:#5a6478">ngrok tunnel. Responsive CSS.<br>URL pushed to Telegram on startup.</div>
+    </div>
+    <div class="fbox warn" style="padding:8px 14px">
       <div style="font-size:10px;font-weight:700;margin-bottom:3px">Live Deployment</div>
-      <div style="font-size:8px;color:#5a6478">12-point checklist at 100%<br>Paper trading → Live MT5<br>Risk approval required</div>
+      <div style="font-size:8px;color:#5a6478">12-point checklist at 100%<br>Accumulate 20+ paper trades<br>Risk approval required</div>
+    </div>
+    <div class="fbox" style="padding:8px 14px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:3px">Walk-Forward Validation</div>
+      <div style="font-size:8px;color:#5a6478">4-window WFO on live data<br>Confirm no curve-fitting<br>before live capital</div>
     </div>
   </div>
 </div>
 
 <div style="color:#5a6478;font-size:9px;margin-top:16px;letter-spacing:1px">
-  MIROTRADE-FRAMEWORK • ROHITH PALAKURTHI • ALL TIMES IST • LAST UPDATED 2026-04-18 • 35 AGENTS
+  MIROTRADE-FRAMEWORK • ROHITH PALAKURTHI • ALL TIMES IST • LAST UPDATED 2026-04-19 • 38 AGENTS
 </div>
 </body>
 </html>

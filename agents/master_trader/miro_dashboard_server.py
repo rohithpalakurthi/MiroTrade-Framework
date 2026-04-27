@@ -58,6 +58,8 @@ FILES = {
     "cot"            : "agents/master_trader/cot_data.json",
     "sentiment"      : "agents/master_trader/sentiment.json",
     "multi_symbol"   : "agents/master_trader/multi_symbol.json",
+    "session_stats"       : "agents/master_trader/session_stats.json",
+    "multi_sym_state"     : "agents/master_trader/multi_symbol_state.json",
 }
 
 PAUSE_FILE     = "agents/master_trader/miro_pause.json"
@@ -321,11 +323,15 @@ def _agent_health():
         "News Brain" : ("agents/master_trader/news_brain.json",              3600),   # 30min poll → stale after 1h
         "Perf Track" : ("agents/master_trader/performance.json",              600),
         "Circ Break" : ("agents/master_trader/circuit_breaker_state.json",    600),
-        "Scale Out"  : ("agents/master_trader/scale_out_state.json",        86400),   # only writes when positions open
-        "Breakeven"  : ("agents/master_trader/breakeven_state.json",        86400),   # same
-        "Price Feed" : ("dashboard/frontend/live_price.json",                  60),   # should update every 5s
+        "Scale Out"  : ("agents/master_trader/scale_out_state.json",        86400),
+        "Breakeven"  : ("agents/master_trader/breakeven_state.json",        86400),
+        "Price Feed" : ("dashboard/frontend/live_price.json",                  60),
         "Multi Brain": ("agents/master_trader/multi_brain.json",              600),
         "Setup Sup"  : ("agents/orchestrator/setup_supervisor.json",          180),
+        "Pattern Rec": ("agents/master_trader/patterns.json",                 700),
+        "COT Feed"   : ("agents/master_trader/cot_data.json",             604800),   # weekly
+        "Sentiment"  : ("agents/master_trader/sentiment.json",               600),
+        "MultiSymTrd": ("agents/master_trader/multi_symbol_state.json",      120),
     }
     result = []
     for name, (path, threshold) in checks.items():
@@ -722,6 +728,15 @@ def api_intel():
         "multi_symbol": _load("multi_symbol"),
     })
 
+@app.route("/api/multisym")
+def api_multisym():
+    """Multi-symbol paper trader state + session stats."""
+    ss = _load("session_stats") or {}
+    return jsonify({
+        "state"            : _load("multi_sym_state"),
+        "session_stats"    : ss,
+        "ms_backtest"      : ss.get("multi_symbol_backtest", {}),
+    })
 @app.route("/api/health")
 def api_health():
     return jsonify({"status": "ok", "time": str(datetime.now())})
@@ -730,6 +745,22 @@ def api_health():
 @app.route("/favicon.ico")
 def favicon():
     return Response(status=204)
+
+
+@app.route("/api/perfchart")
+def api_perfchart():
+    """Return the performance chart as a base64-encoded PNG."""
+    try:
+        import base64
+        from agents.master_trader.performance_report import generate_report_image, _run_backtest, _load_state
+        state     = _load_state()
+        bt_trades, bt_metrics = _run_backtest()
+        buf       = generate_report_image(state, bt_trades, bt_metrics)
+        img_b64   = base64.b64encode(buf.read()).decode("utf-8")
+        return jsonify({"ok": True, "img": img_b64,
+                        "metrics": bt_metrics if bt_metrics else {}})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)})
 
 
 # ── Dashboard HTML ─────────────────────────────────────────────────────────────
@@ -861,9 +892,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 
 /* ── Trades table ── */
 .trades-wrap{background:var(--bg2);padding:12px 14px;flex-shrink:0}
-.th{display:grid;grid-template-columns:50px 60px 60px 50px 58px 62px;gap:4px;font-size:9px;color:var(--muted);letter-spacing:1px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px;text-transform:uppercase}
-.tr{display:grid;grid-template-columns:50px 60px 60px 50px 58px 62px;gap:4px;font-size:10px;padding:4px 0;border-bottom:1px solid var(--border);align-items:center}
+.th{display:grid;grid-template-columns:44px 55px 70px 68px 52px 60px 60px 72px;gap:3px;font-size:8px;color:var(--muted);letter-spacing:1px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px;text-transform:uppercase}
+.tr{display:grid;grid-template-columns:44px 55px 70px 68px 52px 60px 60px 72px;gap:3px;font-size:9px;padding:3px 0;border-bottom:1px solid var(--border);align-items:center}
 .tr:last-child{border-bottom:none}
+.th-ms{display:grid;grid-template-columns:62px 44px 55px 70px 52px 60px 72px;gap:3px;font-size:8px;color:var(--muted);letter-spacing:1px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px;text-transform:uppercase}
+.tr-ms{display:grid;grid-template-columns:62px 44px 55px 70px 52px 60px 72px;gap:3px;font-size:9px;padding:3px 0;border-bottom:1px solid var(--border);align-items:center}
+.trade-scroll{max-height:240px;overflow-y:auto}
+.pnl-pos{color:var(--green)} .pnl-neg{color:var(--red)} .pnl-be{color:var(--muted)}
+.exit-reason{font-size:8px;color:var(--muted);font-family:var(--mono)}
 
 /* ── Intel panels (center/right) ── */
 .panel{background:var(--bg2);padding:12px 14px;flex-shrink:0}
@@ -986,6 +1022,29 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
 .g{color:var(--green)}.r{color:var(--red)}.w{color:var(--warn)}.b{color:var(--blue)}.mu{color:var(--muted)}
 .bold{font-weight:700}.mono{font-family:var(--mono)}
 .empty{font-size:10px;color:var(--muted);text-align:center;padding:10px 0}
+
+/* ── Mobile responsive ── */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr!important}
+  .stats-bar{grid-template-columns:repeat(3,1fr)!important}
+  .ctrl-grid{grid-template-columns:repeat(2,1fr)!important}
+  .toggle-row{flex-wrap:wrap;gap:6px}
+  .th,.tr{font-size:9px}
+  .th-ms,.tr-ms{font-size:9px}
+}
+@media(max-width:600px){
+  body{padding:8px!important}
+  .header{padding:8px 10px!important}
+  .stats-bar{grid-template-columns:repeat(2,1fr)!important}
+  .btn{padding:10px 12px!important;font-size:11px!important;min-height:40px}
+  .toggle-btn{padding:8px 10px!important;font-size:10px!important;min-height:38px}
+  .heatmap-bar{flex-direction:column;gap:8px}
+  .trade-scroll{max-height:60vh!important}
+  h1,h2{font-size:13px!important}
+  .card{padding:8px!important}
+  .pos-grid{grid-template-columns:repeat(2,1fr)!important}
+  .section{padding:8px!important}
+}
 </style>
 </head>
 <body>
@@ -1182,11 +1241,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div style="position:relative;width:100%;height:180px"><canvas id="equityChart"></canvas></div>
   </div>
 
-  <!-- Recent trades -->
+  <!-- Trade History (XAUUSD paper) -->
   <div class="trades-wrap">
-    <div class="chart-title">recent paper trades (last 10)</div>
-    <div class="th"><span>TYPE</span><span>ENTRY</span><span>EXIT</span><span>RESULT</span><span>P&L</span><span>BALANCE</span></div>
-    <div id="trade-rows"><div class="empty">No trades yet</div></div>
+    <div class="chart-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>xauusd paper trade history</span>
+      <span id="th-summary" style="font-size:9px;color:var(--muted)"></span>
+    </div>
+    <div class="th">
+      <span>DIR</span><span>TYPE</span><span>ENTRY</span><span>EXIT</span><span>REASON</span><span>P&amp;L</span><span>BALANCE</span><span>TIME</span>
+    </div>
+    <div class="trade-scroll">
+      <div id="trade-rows"><div class="empty">No trades yet</div></div>
+    </div>
+  </div>
+
+  <!-- Multi-Symbol Trade History -->
+  <div class="trades-wrap">
+    <div class="chart-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>multi-symbol paper trades</span>
+      <span id="ms-th-summary" style="font-size:9px;color:var(--muted)"></span>
+    </div>
+    <div class="th-ms">
+      <span>SYMBOL</span><span>DIR</span><span>TYPE</span><span>ENTRY</span><span>REASON</span><span>P&amp;L</span><span>TIME</span>
+    </div>
+    <div class="trade-scroll">
+      <div id="ms-trade-rows"><div class="empty">No multi-symbol trades yet — starts Monday</div></div>
+    </div>
   </div>
 
   <!-- Market Regime -->
@@ -1384,6 +1464,43 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div id="patterns-list" style="font-size:9px"></div>
   </div>
 
+  <!-- Session Heatmap -->
+  <div class="rp" id="sess-heatmap-panel">
+    <div class="chart-title">session win rate (v15f backtest)</div>
+    <div id="sess-bars" style="display:flex;gap:4px;align-items:flex-end;height:60px;margin-top:6px"></div>
+    <div id="sess-labels" style="display:flex;gap:4px;margin-top:4px;font-size:8px;color:var(--muted)"></div>
+    <div style="margin-top:6px;font-size:9px;color:var(--muted)" id="sess-meta"></div>
+  </div>
+
+  <!-- Multi-Symbol Paper Trades -->
+  <div class="rp">
+    <div class="chart-title">multi-symbol paper trading</div>
+    <!-- Backtest validation badges -->
+    <div id="ms-validation" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px"></div>
+    <div id="ms-open-positions" style="font-size:9px;margin-bottom:6px"></div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px">
+      <span>Closed trades</span><span id="ms-closed-count">0</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px">
+      <span>Capital</span><span id="ms-capital">$30,000</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted)">
+      <span>Win rate</span><span id="ms-wr">—</span>
+    </div>
+    <div id="ms-recent" style="margin-top:6px;font-size:8px;color:var(--muted)"></div>
+  </div>
+
+  <!-- Performance Chart Button -->
+  <div class="rp">
+    <div class="cbtn" onclick="loadPerfChart()" style="width:100%;text-align:center;padding:8px 0;font-size:11px">
+      PERFORMANCE CHART (v15F BACKTEST)
+    </div>
+    <div id="perf-chart-wrap" style="display:none;margin-top:8px">
+      <img id="perf-chart-img" src="" style="width:100%;border-radius:4px;border:1px solid var(--border)" />
+      <div id="perf-chart-status" style="font-size:9px;color:var(--muted);margin-top:4px;text-align:center"></div>
+    </div>
+  </div>
+
   <!-- MIRO Agent Health -->
   <div class="rp">
     <div class="chart-title">miro specialist agents</div>
@@ -1571,22 +1688,34 @@ function render(d){
       document.getElementById('chart-title').textContent='equity curve — paper trading ('+closed.length+' trades)';
     }
 
-    // trade table
+    // trade history table (XAUUSD)
     const trows=document.getElementById('trade-rows');
+    const thSummary=document.getElementById('th-summary');
     if(closed.length>0){
-      trows.innerHTML=closed.slice(-10).reverse().map(t=>{
-        const sig=t.signal||t.type||'--';
+      const allWins=closed.filter(t=>t.result==='win').length;
+      const totalPnl=closed.reduce((s,t)=>s+parseFloat(t.pnl||0),0);
+      if(thSummary) thSummary.textContent=closed.length+'t | WR:'+(allWins/closed.length*100).toFixed(0)+'% | P&L:$'+(totalPnl>=0?'+':'')+totalPnl.toFixed(0);
+      trows.innerHTML=[...closed].reverse().map(t=>{
+        const sig=t.signal||'--';
+        const stype=(t.signal_type||'').replace('BUY_','').replace('SELL_','');
         const pnl=parseFloat(t.pnl||0);
-        const balA=parseFloat(t.balance_after||bal);
+        const balA=parseFloat(t.balance_after||0);
+        const dt=(t.entry_time||'').substring(5,16);
+        const pnlCls=pnl>0?'pnl-pos':pnl<0?'pnl-neg':'pnl-be';
+        const reason=(t.reason||t.exit_reason||'').toUpperCase();
         return`<div class="tr">
           <span class="tag ${sig==='BUY'?'tag-buy':'tag-sell'}">${sig}</span>
-          <span class="mu">${parseFloat(t.entry_price||t.open_price||0).toFixed(0)}</span>
-          <span class="mu">${parseFloat(t.exit_price||0).toFixed(0)}</span>
-          <span style="color:${t.result==='win'?'var(--green)':'var(--red)'}">${(t.result||'').toUpperCase()}</span>
-          <span style="${fc(pnl)}">${pnl>=0?'+':'-'}$${Math.abs(pnl).toFixed(0)}</span>
-          <span>$${(balA/1000).toFixed(1)}K</span>
+          <span class="exit-reason" style="color:var(--text2)">${stype}</span>
+          <span class="mu">${parseFloat(t.entry_price||0).toFixed(1)}</span>
+          <span class="mu">${parseFloat(t.exit_price||0).toFixed(1)}</span>
+          <span class="exit-reason">${reason}</span>
+          <span class="${pnlCls}">${pnl>=0?'+':'-'}$${Math.abs(pnl).toFixed(0)}</span>
+          <span>$${balA>0?(balA/1000).toFixed(1)+'K':'--'}</span>
+          <span style="font-size:8px;color:var(--muted)">${dt}</span>
         </div>`;
       }).join('');
+    } else {
+      trows.innerHTML='<div class="empty">No closed trades yet</div>';
     }
 
     // checklist
@@ -1870,6 +1999,7 @@ async function refreshAll(){
     document.getElementById('last-update').textContent='API offline';
   }
   loadIntel();
+  loadMultiSym();
 }
 
 async function loadIntel(){
@@ -1939,6 +2069,149 @@ async function closeAllPositions(){
   if(d.errors.length>0)lines.push('\nFailed: '+d.errors.map(e=>e.ticket).join(', '));
   alert('Closed '+d.closed.length+' position(s)\nTotal P&L: $'+d.total_pnl+'\n\n'+lines.join('\n'));
   refreshAll();
+}
+
+// ── Session Heatmap + Multi-Symbol ────────────────────────────
+async function loadMultiSym(){
+  try{
+    const r=await fetch('/api/multisym');
+    const d=await r.json();
+    _renderSessionHeatmap(d.session_stats);
+    _renderMultiSymState(d.state);
+    _renderMsValidation(d.ms_backtest||{});
+  }catch(e){}
+}
+
+function _renderMsValidation(bt){
+  const el=document.getElementById('ms-validation');
+  if(!el||!Object.keys(bt).length) return;
+  el.innerHTML=Object.entries(bt).map(([sym,v])=>{
+    const ok=v.validated;
+    const col=ok?'var(--green)':'var(--red)';
+    return`<div style="border:1px solid ${col};border-radius:3px;padding:2px 5px;font-size:8px;color:${col};font-family:var(--mono)">
+      ${sym} ${v.win_rate}%WR ${v.profit_factor}PF ${ok?'✓':'✗'}
+    </div>`;
+  }).join('');
+}
+
+function _renderSessionHeatmap(ss){
+  if(!ss||!ss.sessions) return;
+  const bars=document.getElementById('sess-bars');
+  const lbls=document.getElementById('sess-labels');
+  const meta=document.getElementById('sess-meta');
+  if(!bars) return;
+  bars.innerHTML=''; lbls.innerHTML='';
+  const sessions=ss.sessions;
+  const maxT=Math.max(...Object.values(sessions).map(v=>v.t),1);
+  Object.entries(sessions).filter(([n,v])=>v.t>0).forEach(([name,v])=>{
+    const wr=v.t>0?Math.round(v.w/v.t*100):0;
+    const h=Math.max(4, Math.round((v.t/maxT)*54));
+    const col=wr>=65?'var(--green)':wr>=50?'var(--warn)':'var(--red)';
+    const bar=document.createElement('div');
+    bar.style.cssText='flex:1;height:'+h+'px;background:'+col+';border-radius:2px 2px 0 0;position:relative;cursor:default';
+    bar.title=name+': '+v.t+'t '+wr+'% WR';
+    // label inside bar
+    if(v.t>0){const lbl=document.createElement('div');lbl.style.cssText='position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:7px;color:var(--text);white-space:nowrap';lbl.textContent=wr+'%';bar.appendChild(lbl);}
+    bars.appendChild(bar);
+    const l=document.createElement('div');l.style.cssText='flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis';l.textContent=name.split('/')[0];
+    lbls.appendChild(l);
+  });
+  if(ss.total_trades) meta.textContent=ss.total_trades+'t | WR:'+ss.win_rate+'% | PF:'+ss.profit_factor+' | '+ss.bars+' H1 bars';
+}
+
+function _renderMultiSymState(state){
+  if(!state) return;
+  const cap=document.getElementById('ms-capital');
+  const wr=document.getElementById('ms-wr');
+  const cnt=document.getElementById('ms-closed-count');
+  const pos=document.getElementById('ms-open-positions');
+  const rec=document.getElementById('ms-recent');
+  if(cap) cap.textContent='$'+(state.capital||30000).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
+  const closed=state.closed_trades||[];
+  if(cnt) cnt.textContent=closed.length;
+  if(wr&&closed.length>0){
+    const wins=closed.filter(t=>t.result==='win').length;
+    wr.textContent=Math.round(wins/closed.length*100)+'% ('+wins+'/'+closed.length+')';
+  }
+  // Open positions
+  const open=state.open_positions||{};
+  if(pos){
+    const syms=Object.entries(open);
+    if(syms.length===0){pos.innerHTML='<span style="color:var(--muted)">No open positions</span>';}
+    else{
+      pos.innerHTML=syms.map(([sym,p])=>{
+        const col=p.direction==='BUY'?'var(--green)':'var(--red)';
+        return '<div style="display:flex;justify-content:space-between;margin-bottom:2px">'+
+          '<span style="color:'+col+'">'+sym+' '+p.direction+'</span>'+
+          '<span style="color:var(--muted)">'+p.sig_type+'</span>'+
+          '<span>'+p.entry+'</span></div>';
+      }).join('');
+    }
+  }
+  // Recent trades mini-text (right column)
+  if(rec&&closed.length>0){
+    const last3=closed.slice(-3).reverse();
+    rec.innerHTML='Recent: '+last3.map(t=>{
+      const icon=t.result==='win'?'✅':t.result==='be'?'⚪':'❌';
+      return icon+' '+t.symbol+' '+(t.pnl>0?'+':'')+t.pnl.toFixed(2);
+    }).join(' | ');
+  }
+  // Multi-symbol trade history table (center column)
+  const msTrows=document.getElementById('ms-trade-rows');
+  const msThSummary=document.getElementById('ms-th-summary');
+  if(msTrows){
+    if(closed.length>0){
+      const msWins=closed.filter(t=>t.result==='win').length;
+      const msTotalPnl=closed.reduce((s,t)=>s+parseFloat(t.pnl||0),0);
+      if(msThSummary) msThSummary.textContent=closed.length+'t | WR:'+(msWins/closed.length*100).toFixed(0)+'% | P&L:$'+(msTotalPnl>=0?'+':'')+msTotalPnl.toFixed(0);
+      msTrows.innerHTML=[...closed].reverse().map(t=>{
+        const sym=t.symbol||'--';
+        const dir=t.direction||'--';
+        const stype=(t.sig_type||'').replace('BUY_','').replace('SELL_','');
+        const pnl=parseFloat(t.pnl||0);
+        const pnlCls=pnl>0?'pnl-pos':pnl<0?'pnl-neg':'pnl-be';
+        const reason=(t.reason||'').toUpperCase();
+        const dt=(t.entry_time||'').substring(5,16);
+        return`<div class="tr-ms">
+          <span style="font-size:9px;font-weight:700;color:var(--text)">${sym}</span>
+          <span class="tag ${dir==='BUY'?'tag-buy':'tag-sell'}">${dir}</span>
+          <span class="exit-reason" style="color:var(--text2)">${stype}</span>
+          <span class="mu">${parseFloat(t.entry||0).toFixed(4)}</span>
+          <span class="exit-reason">${reason}</span>
+          <span class="${pnlCls}">${pnl>=0?'+':'-'}$${Math.abs(pnl).toFixed(0)}</span>
+          <span style="font-size:8px;color:var(--muted)">${dt}</span>
+        </div>`;
+      }).join('');
+    } else {
+      msTrows.innerHTML='<div class="empty">No multi-symbol trades yet — starts Monday</div>';
+    }
+  }
+}
+
+// ── Performance Chart ─────────────────────────────────────────
+let _perfChartLoaded = false;
+async function loadPerfChart(){
+  const wrap=document.getElementById('perf-chart-wrap');
+  const img=document.getElementById('perf-chart-img');
+  const status=document.getElementById('perf-chart-status');
+  if(_perfChartLoaded){wrap.style.display=wrap.style.display==='none'?'block':'none';return;}
+  wrap.style.display='block';
+  status.textContent='Fetching MT5 data and generating chart...';
+  img.src='';
+  try{
+    const r=await fetch('/api/perfchart');
+    const d=await r.json();
+    if(d.ok){
+      img.src='data:image/png;base64,'+d.img;
+      const m=d.metrics||{};
+      status.textContent='Trades:'+m.total_trades+' WR:'+m.win_rate+'% PF:'+m.profit_factor+' Ret:'+m.total_return+'%';
+      _perfChartLoaded=true;
+    }else{
+      status.textContent='Error: '+d.error;
+    }
+  }catch(e){
+    status.textContent='Chart load failed: '+e.message;
+  }
 }
 
 // ── Trading Config ────────────────────────────────────────────

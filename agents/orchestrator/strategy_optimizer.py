@@ -148,6 +148,7 @@ def _run_one(df, params):
         result["sharpe"] = 0.0
         return result
     except Exception as e:
+        print("[Optimizer] _run_one error: {}".format(e))
         return None
 
 

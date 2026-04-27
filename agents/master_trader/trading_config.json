@@ -1,0 +1,12 @@
+{
+  "risk_pct": 0.01,
+  "max_lots": 2.0,
+  "min_rr": 1.5,
+  "min_confidence": 7,
+  "max_open_positions": 3,
+  "max_same_direction": 2,
+  "news_block_enabled": true,
+  "orchestrator_gate_enabled": true,
+  "session_filter_enabled": true,
+  "tp1_cooldown_enabled": true
+}

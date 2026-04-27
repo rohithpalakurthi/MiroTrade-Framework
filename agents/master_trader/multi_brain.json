@@ -1,43 +1,49 @@
 {
-  "updated": "2026-04-17 20:16:28.295076",
+  "updated": "2026-04-18 03:18:55.519716",
   "models": [
     {
-      "action": "NEUTRAL",
-      "confidence": 0,
-      "score": 3,
-      "reasoning": "Price above EMA 8/21/50 (bullish); H4 + M15 trending up; RSI overbought (74); Stoch overbought (88); Regime: TRENDING_BULL",
+      "action": "BUY",
+      "confidence": 50,
+      "score": 9,
+      "reasoning": "H4 + M15 trending up; Strong bearish momentum; Regime: TRENDING_BULL; DXY/Yields bullish gold by 2; Price at demand zone 4824.3-4846.3",
       "name": "Rule-Based"
+    },
+    {
+      "action": "BUY",
+      "confidence": 62,
+      "reasoning": "Bullish market regime with price above all EMAs and upward EMA stack alignment supports long bias, though bullish DXY creates headwind and RSI at 64.7 suggests momentum without being overextended.",
+      "name": "Claude"
     }
   ],
   "consensus": {
-    "action": "NEUTRAL",
-    "confidence": 0,
-    "agreement": 0,
-    "buy_votes": 0,
+    "action": "BUY",
+    "confidence": 56,
+    "agreement": 100,
+    "buy_votes": 2,
     "sell_votes": 0,
-    "neutral_votes": 1,
-    "total_models": 1
+    "neutral_votes": 0,
+    "total_models": 2
   },
   "snapshot": {
-    "price": 4874.56,
-    "bid": 4874.52,
-    "ask": 4874.84,
-    "spread": 0.32,
-    "rsi": 74.0,
-    "stoch_k": 87.8,
-    "atr": 21.67,
-    "e8": 4833.14,
-    "e21": 4813.27,
-    "e50": 4805.96,
-    "e200": 4775.18,
-    "above_e8": true,
+    "price": 4832.47,
+    "bid": 4832.43,
+    "ask": 4832.74,
+    "spread": 0.31,
+    "rsi": 64.7,
+    "stoch_k": 48.5,
+    "atr": 22.0,
+    "e8": 4847.97,
+    "e21": 4831.48,
+    "e50": 4816.65,
+    "e200": 4779.07,
+    "above_e8": false,
     "above_e21": true,
     "above_e50": true,
     "above_e200": true,
-    "last5_bull": 3,
-    "m15_last_close": 4874.56,
+    "last5_bull": 0,
+    "m15_last_close": 4832.47,
     "m15_trend_up": true,
     "h4_trend_up": true
   },
-  "note": "3-model consensus: NEUTRAL 0% agreement (1/1 models)"
+  "note": "3-model consensus: BUY 100% agreement (2/2 models)"
 }
