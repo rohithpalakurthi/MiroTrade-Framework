@@ -39,7 +39,8 @@ if LIVE_MODE:
 SYMBOL          = "XAUUSD"
 INITIAL_BALANCE = 10000.0
 RISK_PCT        = 0.01
-MAX_OPEN_TRADES = 5
+MAX_OPEN_TRADES = 3
+MAX_DAILY_TRADES = 3
 LOG_DIR         = "paper_trading/logs"
 CHECK_INTERVAL  = 60
 
@@ -153,6 +154,14 @@ class PaperTradingEngine:
         return None, None
 
     def check_filters(self, signal):
+        # Daily trade limit
+        today_trades = sum(
+            1 for t in self.closed_trades
+            if t.get("entry_time", "")[:10] == datetime.now().strftime("%Y-%m-%d")
+        ) + len(self.open_trades)
+        if today_trades >= MAX_DAILY_TRADES:
+            return False, "DailyLimit({}/{})".format(today_trades, MAX_DAILY_TRADES)
+
         try:
             if os.path.exists("agents/news_sentinel/current_alert.json"):
                 with open("agents/news_sentinel/current_alert.json") as f:
@@ -167,6 +176,18 @@ class PaperTradingEngine:
             if os.path.exists("agents/orchestrator/last_decision.json"):
                 with open("agents/orchestrator/last_decision.json") as f:
                     if json.load(f).get("verdict") != "GO": return False, "NO-GO"
+        except: pass
+        # MTF direction block: if H1+H4 both bullish, don't SELL; both bearish, don't BUY
+        try:
+            if os.path.exists("agents/market_analyst/mtf_bias.json"):
+                with open("agents/market_analyst/mtf_bias.json") as f:
+                    mtf = json.load(f)
+                h1 = mtf.get("h1_bias", "neutral").lower()
+                h4 = mtf.get("h4_bias", "neutral").lower()
+                if signal == "SELL" and h1 == "bullish" and h4 == "bullish":
+                    return False, "MTF_BullishBlock(H1+H4 bull)"
+                if signal == "BUY" and h1 == "bearish" and h4 == "bearish":
+                    return False, "MTF_BearishBlock(H1+H4 bear)"
         except: pass
         return True, "Clear"
 

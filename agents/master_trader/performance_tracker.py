@@ -38,6 +38,9 @@ def send_telegram(message):
         pass
 
 
+PAPER_STATE_FILE = "paper_trading/logs/state.json"
+
+
 def load_trade_log():
     if not os.path.exists(LOG_FILE):
         return []
@@ -46,6 +49,49 @@ def load_trade_log():
             return json.load(f)
     except:
         return []
+
+
+def load_paper_trades():
+    """Load closed trades from paper trading state and normalize to trade_log format."""
+    if not os.path.exists(PAPER_STATE_FILE):
+        return []
+    try:
+        with open(PAPER_STATE_FILE) as f:
+            state = json.load(f)
+        normalized = []
+        # Only include post-reset trades (risk_amount < $200 = new code era)
+        for t in state.get("closed_trades", []):
+            if t.get("risk_amount", 9999) > 200:
+                continue  # skip old pre-reset trades with wrong lot sizing
+            normalized.append({
+                "event"   : "CLOSE_FULL",
+                "time"    : t.get("exit_time", t.get("entry_time", "")),
+                "profit"  : t.get("pnl", 0),
+                "r"       : t.get("pnl", 0) / t["risk_amount"] if t.get("risk_amount", 0) > 0 else 0,
+                "setup"   : t.get("signal_type", "UNKNOWN"),
+                "session" : _classify_session(t.get("entry_time", "")),
+                "strategy": t.get("strategy", ""),
+                "result"  : t.get("result", ""),
+            })
+        return normalized
+    except:
+        return []
+
+
+def _classify_session(entry_time_str):
+    """Classify trade entry into London/NY/Asian/Other based on UTC hour."""
+    try:
+        dt = datetime.fromisoformat(entry_time_str)
+        h = dt.hour
+        if 7 <= h < 12:
+            return "London"
+        if 12 <= h < 17:
+            return "London_NY"
+        if 17 <= h < 21:
+            return "NY"
+        return "Asian"
+    except:
+        return "UNKNOWN"
 
 
 def compute_stats(trades, label="ALL"):
@@ -94,6 +140,10 @@ def compute_adaptive_thresholds(stats_by_setup):
 def analyse_and_adapt():
     logs   = load_trade_log()
     closed = [l for l in logs if l.get("event") in ("CLOSE_FULL", "CLOSE_PARTIAL")]
+    # Merge in paper trading closes (post-reset only)
+    paper  = load_paper_trades()
+    closed = closed + paper
+    closed.sort(key=lambda x: x.get("time", ""))
 
     now       = datetime.now()
     last_7d   = [t for t in closed if (now - datetime.fromisoformat(t["time"])).days <= 7]

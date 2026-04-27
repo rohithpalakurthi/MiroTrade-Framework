@@ -34,27 +34,31 @@ SCAN_INTERVAL = 60
 TG_TOKEN   = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TG_CHAT    = os.getenv("TELEGRAM_CHAT_ID", "")
 
-INITIAL_CAPITAL = 10000.0
-RISK_PCT        = 0.005   # 0.5% per trade
-MAX_CONCURRENT  = 2       # total open across all symbols
+INITIAL_CAPITAL    = 10000.0
+RISK_PCT           = 0.005   # 0.5% per trade
+MAX_CONCURRENT     = 2       # total open across all symbols
+SL_COOLDOWN_SECS   = 1800    # 30-min cooldown per symbol after SL hit
 
 SYMBOLS = {
     "EURUSD": {
-        "params" : {**PARAMS, "require_volume": False, "min_score": 4, "allow_asian": True},
+        "params" : {**PARAMS, "require_volume": False, "min_score": 6, "allow_asian": True},
         "label"  : "EUR/USD",
         "emoji"  : "🇪🇺",
     },
     "GBPUSD": {
-        "params" : {**PARAMS, "require_volume": False, "min_score": 4, "allow_asian": True},
+        "params" : {**PARAMS, "require_volume": False, "min_score": 6, "allow_asian": True},
         "label"  : "GBP/USD",
         "emoji"  : "🇬🇧",
     },
     "CL-OIL": {
-        "params" : {**PARAMS, "require_volume": False, "min_score": 4, "sl_mult": 1.8, "allow_asian": True},
+        "params" : {**PARAMS, "require_volume": False, "min_score": 6, "sl_mult": 1.8, "allow_asian": True},
         "label"  : "WTI Crude",
         "emoji"  : "🛢",
     },
 }
+
+# Per-symbol SL cooldown tracker (in-memory, resets on restart — acceptable)
+_sl_cooldown_until = {}  # symbol -> unix timestamp after which re-entry is allowed
 
 
 def _tg(msg):
@@ -173,6 +177,9 @@ def _close_position(state, symbol, exit_price, reason, pnl):
         return
     state["capital"] = max(1000, state["capital"] + pnl)
     state["peak_capital"] = max(state["peak_capital"], state["capital"])
+    # Apply per-symbol cooldown after SL hit — prevents re-chasing the same failed signal
+    if reason == "SL":
+        _sl_cooldown_until[symbol] = time.time() + SL_COOLDOWN_SECS
 
     trade = {**pos, "exit": round(exit_price, 5), "exit_time": datetime.now().isoformat(),
              "reason": reason, "pnl": round(pnl, 2),
@@ -377,6 +384,13 @@ def scan_all_symbols():
                 # Check concurrent limit
                 n_open = len(state["open_positions"])
                 if n_open >= MAX_CONCURRENT:
+                    continue
+
+                # Per-symbol SL cooldown check
+                cooldown_until = _sl_cooldown_until.get(symbol, 0)
+                if time.time() < cooldown_until:
+                    remaining = int(cooldown_until - time.time()) // 60
+                    print("[MultiSym] {} SL cooldown — {}min remaining".format(symbol, remaining))
                     continue
 
                 # Gate check — circuit breaker, news, daily loss
