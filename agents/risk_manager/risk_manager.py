@@ -22,6 +22,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from core.state_schema import build_risk_report, load_json, save_json
+
 # --- Paths ---
 STATE_FILE = "paper_trading/logs/state.json"
 RISK_FILE  = "agents/risk_manager/risk_state.json"
@@ -42,10 +44,7 @@ class RiskManagerAgent:
 
     def load_state(self):
         """Load paper trading state."""
-        if not os.path.exists(STATE_FILE):
-            return None
-        with open(STATE_FILE, "r") as f:
-            return json.load(f)
+        return load_json(STATE_FILE)
 
     def get_consecutive_losses(self, closed_trades):
         """Count current consecutive losses."""
@@ -75,16 +74,19 @@ class RiskManagerAgent:
         """Calculate current drawdown %."""
         if not state:
             return 0
-        balance = state.get("balance", 10000)
-        peak    = state.get("peak_balance", 10000)
+        account = state.get("account", {})
+        balance = state.get("balance", account.get("balance", 10000))
+        peak    = state.get("peak_balance", account.get("peak_balance", 10000))
         return (peak - balance) / peak * 100 if peak > 0 else 0
 
     def calculate_portfolio_heat(self, state):
         """Calculate total open risk as % of balance."""
         if not state:
             return 0
-        open_trades = state.get("open_trades", [])
-        balance     = state.get("balance", 10000)
+        account = state.get("account", {})
+        positions = state.get("positions", {})
+        open_trades = state.get("open_trades", positions.get("open", []))
+        balance     = state.get("balance", account.get("balance", 10000))
         total_risk  = sum(t.get("risk_amount", 0) for t in open_trades)
         return (total_risk / balance * 100) if balance > 0 else 0
 
@@ -245,10 +247,13 @@ class RiskManagerAgent:
 
         state  = self.load_state()
         report = self.generate_risk_report(state)
+        report["base_risk_pct"] = BASE_RISK_PCT
+        report["max_risk_pct"] = MAX_RISK_PCT
+        report["min_risk_pct"] = MIN_RISK_PCT
+        report["max_portfolio_heat_pct"] = MAX_PORTFOLIO_HEAT
 
         # Save risk state
-        with open(RISK_FILE, "w") as f:
-            json.dump(report, f, indent=2)
+        save_json(RISK_FILE, build_risk_report(state, report))
 
         # Print report
         status = "APPROVED" if report["approved"] else "BLOCKED"

@@ -26,7 +26,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 # ── Config ──────────────────────────────────────────────────────────────
 CHECK_INTERVAL   = 30        # seconds between position checks
 MIN_DECISION_GAP = 300       # seconds before re-deciding on same position (5 min)
-LOG_FILE         = "agents/position_manager/decisions_log.json"
+LOG_DIR          = "agents/position_manager"
+LOG_FILE         = "agents/position_manager/decisions_log.json"  # legacy — kept for Telegram cmd compat
 STATE_FILE       = "agents/position_manager/pm_state.json"
 MTF_FILE         = "agents/market_analyst/mtf_bias.json"
 ORCH_FILE        = "agents/orchestrator/last_decision.json"
@@ -255,26 +256,41 @@ class PositionManagerAgent:
     def apply_hard_rules(self, pos_info):
         """
         Non-negotiable rules applied before LLM.
-        Returns (action, reason) or (None, None) if no hard rule triggered.
+        Returns (action, reason, new_sl) — new_sl only used for TIGHTEN_SL.
+        Returns (None, None, None) if no hard rule triggered.
         """
-        r_multiple = pos_info["r_multiple"]
-        age_min    = pos_info["age_minutes"]
-        direction  = pos_info["direction"]
+        r_multiple  = pos_info["r_multiple"]
+        age_min     = pos_info["age_minutes"]
+        direction   = pos_info["direction"]
+        entry       = pos_info["entry"]
+        sl_distance = pos_info["sl_distance"]
+        current_sl  = pos_info["sl"]
 
         # Hard cut: loss exceeds 2R
         if r_multiple <= HARD_CUT_LOSS_R:
             return "CLOSE_FULL", "Hard rule: loss {:.1f}R exceeds {:.1f}R limit".format(
-                r_multiple, HARD_CUT_LOSS_R)
+                r_multiple, HARD_CUT_LOSS_R), None
 
-        # Hard take: profit exceeds 4R
+        # 4R+ trail: ratchet SL to (R - 1.5)R floor instead of closing
         if r_multiple >= HARD_TAKE_PROFIT_R:
-            return "CLOSE_FULL", "Hard rule: profit {:.1f}R exceeds {:.1f}R target — locking in".format(
-                r_multiple, HARD_TAKE_PROFIT_R)
+            floor_r   = r_multiple - 1.5
+            trail_sl  = (
+                round(entry + floor_r * sl_distance, 2) if direction == "BUY"
+                else round(entry - floor_r * sl_distance, 2)
+            )
+            should_move = (
+                (direction == "BUY"  and trail_sl > current_sl) or
+                (direction == "SELL" and trail_sl < current_sl)
+            )
+            if should_move:
+                return "TIGHTEN_SL", "4R+ trail: {:.1f}R reached — SL ratcheted to {:.1f}R floor @ {}".format(
+                    r_multiple, floor_r, trail_sl), trail_sl
+            return None, None, None   # SL already ahead — let it run
 
         # Stale trade: flat for 2 hours
         if age_min >= STALE_TRADE_MINUTES and abs(r_multiple) < 0.3:
             return "CLOSE_FULL", "Hard rule: trade stale {}min with only {:.1f}R — freeing capital".format(
-                age_min, r_multiple)
+                age_min, r_multiple), None
 
         # London close: 17:00–17:05 UTC — close flat positions before dead zone
         utc_hour   = datetime.utcnow().hour
@@ -282,9 +298,9 @@ class PositionManagerAgent:
         at_london_close = (utc_hour == LONDON_CLOSE_UTC and utc_minute <= 5)
         if at_london_close and r_multiple < 0.5:
             return "CLOSE_FULL", "London close 17:00 UTC — closing flat {:.1f}R position before dead zone".format(
-                r_multiple)
+                r_multiple), None
 
-        return None, None
+        return None, None, None
 
     # ── LLM decision ────────────────────────────────────────────────────
 
@@ -461,10 +477,12 @@ RESPOND with JSON only — no explanation outside the JSON:
             pass
 
     def log_decision(self, ticket, action, reasoning, result_msg=""):
+        today     = datetime.now().strftime("%Y-%m-%d")
+        log_path  = os.path.join(LOG_DIR, "decisions_{}.json".format(today))
         logs = []
-        if os.path.exists(LOG_FILE):
+        if os.path.exists(log_path):
             try:
-                with open(LOG_FILE) as f:
+                with open(log_path) as f:
                     logs = json.load(f)
             except:
                 logs = []
@@ -475,9 +493,22 @@ RESPOND with JSON only — no explanation outside the JSON:
             "reasoning": reasoning,
             "result"   : result_msg,
         })
-        logs = logs[-500:]
-        with open(LOG_FILE, "w") as f:
+        os.makedirs(LOG_DIR, exist_ok=True)
+        with open(log_path, "w") as f:
             json.dump(logs, f, indent=2)
+        self._rotate_old_logs()
+
+    def _rotate_old_logs(self):
+        """Delete decisions_YYYY-MM-DD.json files older than 7 days."""
+        try:
+            cutoff = datetime.now().timestamp() - 7 * 86400
+            for fname in os.listdir(LOG_DIR):
+                if fname.startswith("decisions_") and fname.endswith(".json") and fname != "decisions_log.json":
+                    fpath = os.path.join(LOG_DIR, fname)
+                    if os.path.getmtime(fpath) < cutoff:
+                        os.remove(fpath)
+        except:
+            pass
 
     def execute_decisions(self, decisions_raw, positions_info, market_ctx):
         """Execute LLM decisions against MT5."""
@@ -662,10 +693,10 @@ RESPOND with JSON only — no explanation outside the JSON:
                 print("[PosMgr]   ticket {} in cooldown — skipping".format(p["ticket"]))
                 continue
 
-            action, reason = self.apply_hard_rules(p)
+            action, reason, new_sl = self.apply_hard_rules(p)
             if action:
                 hard_decisions.append({"ticket": p["ticket"], "action": action,
-                                       "reasoning": reason, "new_sl": None})
+                                       "reasoning": reason, "new_sl": new_sl})
                 print("[PosMgr]   HARD RULE → {} | {}".format(action, reason))
             else:
                 llm_positions.append(p)

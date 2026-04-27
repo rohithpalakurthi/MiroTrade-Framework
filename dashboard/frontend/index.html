@@ -44,6 +44,8 @@ body{background:#0a0c0f;color:#e8ecf0;font-family:'Space Mono',monospace;font-si
 .cbtn.active{background:rgba(0,229,160,.1);border-color:var(--accent);color:var(--accent)}
 .cbtn.danger{color:var(--red);border-color:rgba(224,48,64,.3)}
 .cbtn.danger:hover{background:rgba(224,48,64,.08)}
+.tiny-input{width:100%;margin-top:6px;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 8px;font-size:10px;border-radius:3px;font-family:'Space Mono',monospace}
+.tiny-note{font-size:9px;color:var(--muted);margin-top:6px;line-height:1.5}
 /* Agents */
 .agent-row{display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:var(--bg3);border-radius:3px;margin-bottom:3px;font-size:10px}
 .adot{width:6px;height:6px;border-radius:50%;margin-right:6px;display:inline-block;flex-shrink:0}
@@ -180,6 +182,20 @@ body{background:#0a0c0f;color:#e8ecf0;font-family:'Space Mono',monospace;font-si
     <div class="bar-bg" style="height:5px"><div class="bar-fill" id="readiness-bar" style="background:var(--accent);width:50%;height:5px;border-radius:2px"></div></div>
   </div>
   <div id="checklist-rows" style="font-size:10px"></div>
+  <div style="margin-top:10px;padding:8px;background:var(--bg3);border:1px solid var(--border);border-radius:3px">
+    <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">strategy promotion</div>
+    <div id="promotion-status" style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--warn)">CANDIDATE</div>
+    <div id="promotion-approval" style="font-size:10px;color:var(--muted);margin-top:2px">research_only</div>
+    <div id="promotion-summary" style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.5">Waiting for promotion data...</div>
+    <input id="promotion-note" class="tiny-input" placeholder="Review note for override">
+    <div class="ctrl-grid" style="margin-top:6px">
+      <div class="cbtn" onclick="refreshPromotion()">REFRESH</div>
+      <div class="cbtn" onclick="clearPromotionOverride()">RESET</div>
+      <div class="cbtn" onclick="setPromotionStage('paper_approved')">APPROVE PAPER</div>
+      <div class="cbtn" onclick="setPromotionStage('demo_approved')">APPROVE DEMO</div>
+    </div>
+    <div id="promotion-manual" class="tiny-note">No manual override active.</div>
+  </div>
 
   <div class="sec">one-click controls</div>
   <div class="ctrl-grid">
@@ -283,6 +299,7 @@ body{background:#0a0c0f;color:#e8ecf0;font-family:'Space Mono',monospace;font-si
 <script>
 // ── Chart ────────────────────────────────────────────────
 let equityChart=null;
+const PROMOTION_API='http://localhost:5055/api/promotion';
 function initChart(){
   equityChart=new Chart(document.getElementById('equityChart'),{
     type:'line',
@@ -390,19 +407,22 @@ const CL_ITEMS=[
 function updateChecklist(state){
   const rows=document.getElementById('checklist-rows');
   if(!rows)return;
-  const closed=state.closed_trades||[];
+  const metrics=state.metrics||{};
+  const account=state.account||{};
+  const trades=state.trades||{};
+  const closed=state.closed_trades||trades.closed||[];
   const wins=closed.filter(t=>parseFloat(t.pnl||0)>0).length;
   const wr=closed.length>0?((wins/closed.length)*100).toFixed(1):0;
   const grossP=closed.filter(t=>parseFloat(t.pnl||0)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
   const grossL=Math.abs(closed.filter(t=>parseFloat(t.pnl||0)<=0).reduce((a,t)=>a+parseFloat(t.pnl||0),0));
   const pf=grossL>0?(grossP/grossL):0;
-  const peak=parseFloat(state.peak_balance||10000);
-  const bal=parseFloat(state.balance||10000);
+  const peak=parseFloat(state.peak_balance||account.peak_balance||10000);
+  const bal=parseFloat(state.balance||account.balance||10000);
   const dd=peak>0?((peak-bal)/peak*100):0;
-  const eaDays=state.ea_days||0;
+  const eaDays=state.ea_days||metrics.ea_days||0;
 
   const checks=[
-    closed.length>=20, state.paper_days>=14, parseFloat(wr)>=50,
+    closed.length>=20, (state.paper_days||metrics.paper_days||0)>=14, parseFloat(wr)>=50,
     pf>=1.5, dd<10, (state.risk_score||0)>=7,
     false, // orchestrator GO - loaded separately
     eaDays>=7, true, true // backtest always passes
@@ -463,30 +483,36 @@ async function loadState(){
     if(!r.ok)throw new Error('no state');
     const s=await r.json();
 
-    const closed=s.closed_trades||[];
-    const open=s.open_trades||[];
-    const bal=parseFloat(s.balance||10000);
-    const peak=parseFloat(s.peak_balance||bal);
+    const account=s.account||{};
+    const metrics=s.metrics||{};
+    const signal=s.signal||s.signal_score||{};
+    const trades=s.trades||{};
+    const positions=s.positions||{};
+    const system=s.system||{};
+    const closed=s.closed_trades||trades.closed||[];
+    const open=s.open_trades||positions.open||[];
+    const bal=parseFloat(s.balance||account.balance||10000);
+    const peak=parseFloat(s.peak_balance||account.peak_balance||bal);
 
     // Balance - use paper trading balance
     document.getElementById('balance-display').textContent='$'+bal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    document.getElementById('equity-display').textContent='$'+bal.toFixed(2);
+    document.getElementById('equity-display').textContent='$'+parseFloat(account.equity||bal).toFixed(2);
 
     // Stats
-    const wins=closed.filter(t=>parseFloat(t.pnl||0)>0).length;
-    const losses=closed.length-wins;
-    const wr=closed.length>0?((wins/closed.length)*100).toFixed(1):0;
-    const netPnl=closed.reduce((a,t)=>a+parseFloat(t.pnl||0),0);
+    const wins=metrics.wins!=null?metrics.wins:closed.filter(t=>parseFloat(t.pnl||0)>0).length;
+    const losses=metrics.losses!=null?metrics.losses:closed.length-wins;
+    const wr=metrics.win_rate!=null?Number(metrics.win_rate).toFixed(1):(closed.length>0?((wins/closed.length)*100).toFixed(1):0);
+    const netPnl=metrics.realized_pnl!=null?parseFloat(metrics.realized_pnl):closed.reduce((a,t)=>a+parseFloat(t.pnl||0),0);
     const grossP=closed.filter(t=>parseFloat(t.pnl||0)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
     const grossL=Math.abs(closed.filter(t=>parseFloat(t.pnl||0)<=0).reduce((a,t)=>a+parseFloat(t.pnl||0),0));
-    const pf=grossL>0?(grossP/grossL).toFixed(2):'--';
-    const dd=peak>0?((peak-bal)/peak*100).toFixed(2):0;
-    const ret=((bal-10000)/10000*100).toFixed(1);
+    const pf=metrics.profit_factor!=null?Number(metrics.profit_factor).toFixed(2):(grossL>0?(grossP/grossL).toFixed(2):'--');
+    const dd=account.drawdown_pct!=null?Number(account.drawdown_pct).toFixed(2):(peak>0?((peak-bal)/peak*100).toFixed(2):0);
+    const ret=account.return_pct!=null?Number(account.return_pct).toFixed(1):((bal-10000)/10000*100).toFixed(1);
 
-    document.getElementById('total-trades').textContent=closed.length;
+    document.getElementById('total-trades').textContent=metrics.total_closed_trades!=null?metrics.total_closed_trades:closed.length;
     document.getElementById('total-wins').textContent=wins;
     document.getElementById('total-losses').textContent=losses;
-    document.getElementById('open-count').textContent=open.length;
+    document.getElementById('open-count').textContent=metrics.open_trades!=null?metrics.open_trades:open.length;
     document.getElementById('net-pnl').textContent=(netPnl>=0?'+$':'-$')+Math.abs(netPnl).toFixed(0);
     document.getElementById('net-pnl').style.color=netPnl>=0?'var(--green)':'var(--red)';
     document.getElementById('wr-display').textContent=wr+'%';
@@ -498,17 +524,32 @@ async function loadState(){
     document.getElementById('ret-display').style.color=ret>=0?'var(--accent)':'var(--red)';
 
     // Today P&L
-    const prof=parseFloat(s.today_pnl||0);
+    const prof=parseFloat(s.today_pnl||account.today_pnl||0);
     const pe=document.getElementById('today-pnl');
     pe.textContent=(prof>=0?'+':'')+prof.toFixed(2)+' today';
     pe.style.color=prof>=0?'var(--green)':'var(--red)';
 
     // Real agent status
-    if(s.agents_status) renderAgents(s.agents_status);
-    if(s.agents_alive!=null&&s.agents_total!=null){
+    if(s.agents_status||system.agents_status) renderAgents(s.agents_status||system.agents_status);
+    if((s.agents_alive!=null&&s.agents_total!=null)||(system.agents_alive!=null&&system.agents_total!=null)){
       const badge=document.getElementById('agents-badge');
-      if(badge){badge.textContent=s.agents_alive+'/'+s.agents_total+' AGENTS';badge.className='hbadge '+(s.agents_alive>=10?'green':s.agents_alive>=6?'warn':'red');}
+      const alive=s.agents_alive!=null?s.agents_alive:system.agents_alive;
+      const total=s.agents_total!=null?s.agents_total:system.agents_total;
+      if(badge){badge.textContent=alive+'/'+total+' AGENTS';badge.className='hbadge '+(alive>=10?'green':alive>=6?'warn':'red');}
     }
+
+    // Signal
+    const score=parseFloat(signal.score||0);
+    const maxScore=parseFloat(signal.max_score||20)||20;
+    const direction=(signal.direction||'NONE').toUpperCase();
+    const scorePct=Math.max(0,Math.min(100,(score/maxScore)*100));
+    const sigTag=document.getElementById('signal-tag');
+    sigTag.textContent=direction;
+    sigTag.className='sig-tag '+(direction==='BUY'?'sig-buy':direction==='SELL'?'sig-sell':'sig-none');
+    document.getElementById('score-display').textContent=score+'/'+maxScore;
+    document.getElementById('bull-bar').style.width=scorePct+'%';
+    document.getElementById('ring-num').textContent=Math.round(score);
+    document.getElementById('score-ring').style.strokeDashoffset=String(239-(239*scorePct/100));
 
     // Open trades
     const otc=document.getElementById('open-trades-center');
@@ -543,7 +584,7 @@ async function loadState(){
       equityChart.data.labels=eq.map((_,i)=>i===0?'Start':i===eq.length-1?'Now':'');
       equityChart.data.datasets[0].data=eq;
       equityChart.update('none');
-      document.getElementById('chart-title').textContent='equity curve — paper trading ('+closed.length+' trades)';
+      document.getElementById('chart-title').textContent='equity curve — paper trading ('+(metrics.total_closed_trades!=null?metrics.total_closed_trades:closed.length)+' trades)';
     }
 
     // Trade rows
@@ -611,9 +652,65 @@ async function loadState(){
       if(tv){tv.textContent=b.alert_count||0;tv.style.color='var(--text)';}
     }
   }catch(e){}
+
+  await loadPromotionPanel();
 }
 
 function refreshAll(){loadLivePrice();loadState();}
+
+async function loadPromotionPanel(){
+  try{
+    const r=await fetch(PROMOTION_API+'?t='+Date.now());
+    if(!r.ok)throw new Error('promotion api unavailable');
+    const payload=await r.json();
+    const promo=payload.promotion||{};
+    const research=payload.research_summary||{};
+    const status=(promo.status||'candidate').toUpperCase();
+    const approval=promo.approved_for||'research_only';
+    const statusEl=document.getElementById('promotion-status');
+    statusEl.textContent=status;
+    statusEl.style.color=status==='LIVE_APPROVED'||status==='DEMO_APPROVED'||status==='PAPER_APPROVED'?'var(--green)':'var(--warn)';
+    document.getElementById('promotion-approval').textContent=approval;
+    const wf=research.latest_walk_forward||{};
+    const experiments=research.total_experiments||0;
+    const active=wf.active_window_count!=null?wf.active_window_count:'?';
+    const ratio=wf.profitable_window_ratio!=null?Number(wf.profitable_window_ratio).toFixed(2):'--';
+    const summary=(promo.reasons||[]).slice(0,2).join(' | ') || 'Promotion checks passed';
+    document.getElementById('promotion-summary').textContent=
+      'Experiments: '+experiments+' | WF active: '+active+' | WF ratio: '+ratio+' | '+summary;
+    const manual=promo.manual_override||null;
+    document.getElementById('promotion-manual').textContent=
+      manual?'Manual override: '+(manual.override_stage||'candidate')+' by '+(manual.actor||'unknown')+(manual.note?' | '+manual.note:'')
+            :'No manual override active.';
+  }catch(e){
+    document.getElementById('promotion-summary').textContent='Promotion API offline. Start the unified dashboard server on port 5055.';
+  }
+}
+
+async function refreshPromotion(){
+  try{
+    await fetch(PROMOTION_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'refresh'})});
+  }catch(e){}
+  await loadPromotionPanel();
+}
+
+async function setPromotionStage(stage){
+  const noteEl=document.getElementById('promotion-note');
+  const note=noteEl?noteEl.value.trim():'';
+  try{
+    await fetch(PROMOTION_API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'override',stage:stage,note:note,actor:'god_view'})});
+    if(noteEl)noteEl.value='';
+  }catch(e){}
+  await loadPromotionPanel();
+}
+
+async function clearPromotionOverride(){
+  try{
+    await fetch(PROMOTION_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'clear_override'})});
+  }catch(e){}
+  await loadPromotionPanel();
+}
 
 // ── Run ───────────────────────────────────────────────────
 loadLivePrice();

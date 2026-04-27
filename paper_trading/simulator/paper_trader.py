@@ -18,6 +18,12 @@ from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
+from backtesting.research.autonomous_discovery import load_strategy_portfolio, latest_candidate_signal
+from backtesting.research.promotion import is_approved_for, resolve_promotion
+from core.state_schema import build_paper_state, load_json, save_json
+from live_execution.safety import evaluate_live_safety
+from strategies.registry import registry
+from strategies.scalper_v15.strategy import V15FStrategy  # ensure registration
 from strategies.scalper_v15.scalper_v15 import run_v15f, rr_tp2_for_type, breakeven_sl
 
 # ---------------------------------------------------------------------------
@@ -44,6 +50,7 @@ LOG_DIR         = "paper_trading/logs"
 CHECK_INTERVAL  = 60
 
 APPLIED_PARAMS_FILE = "agents/orchestrator/applied_params.json"
+PAUSE_FILE = "agents/master_trader/miro_pause.json"
 
 def _load_optimized_params():
     """Load auto-applied optimized params if available, else use defaults."""
@@ -74,6 +81,7 @@ H1_SCAN_INTERVAL = 300   # re-scan H1 every 5 min (catch intra-candle RSI recove
 class PaperTradingEngine:
 
     def __init__(self):
+        self.strategy = registry.get("v15f")
         self.balance        = INITIAL_BALANCE
         self.peak_balance   = INITIAL_BALANCE
         self.open_trades    = []
@@ -85,41 +93,107 @@ class PaperTradingEngine:
         self.last_h1_scan_ts  = 0.0   # unix timestamp — time-based H1 rescan
         self.last_m5_candle   = None  # candle-based M5 dedup
         self.last_signal_score = {}   # latest confluence snapshot for dashboard
+        self.promotion_status = {}
+        self.strategy_portfolio = {}
         os.makedirs(LOG_DIR, exist_ok=True)
         self.load_state()
 
     def load_state(self):
         sp = os.path.join(LOG_DIR, "state.json")
         if os.path.exists(sp):
-            with open(sp) as f:
-                s = json.load(f)
+            s = load_json(sp, {})
+            account = s.get("account", {})
+            metrics = s.get("metrics", {})
+            positions = s.get("positions", {})
+            trades = s.get("trades", {})
             self.balance      = s.get("balance", INITIAL_BALANCE)
+            if account:
+                self.balance = account.get("balance", self.balance)
             self.peak_balance = s.get("peak_balance", INITIAL_BALANCE)
+            if account:
+                self.peak_balance = account.get("peak_balance", self.peak_balance)
             # Filter out MT5-bridge trades (they have "ticket") — paper trader manages its own
-            self.open_trades  = [t for t in s.get("open_trades", []) if "ticket" not in t]
-            self.closed_trades= s.get("closed_trades", [])
+            raw_open = s.get("open_trades", positions.get("open", []))
+            raw_closed = s.get("closed_trades", trades.get("closed", []))
+            self.open_trades  = [t for t in raw_open if "ticket" not in t]
+            self.closed_trades= raw_closed
             self.trade_id     = s.get("trade_id", 1)
-            self.today_pnl    = s.get("today_pnl", 0.0)
-            self.paper_days        = s.get("paper_days", 0)
-            self.ea_days           = s.get("ea_days", 0)
-            self.last_signal_score = s.get("signal_score", {})
+            self.today_pnl    = s.get("today_pnl", account.get("today_pnl", 0.0))
+            self.paper_days   = s.get("paper_days", metrics.get("paper_days", 0))
+            self.ea_days      = s.get("ea_days", metrics.get("ea_days", 0))
+            self.last_signal_score = s.get("signal_score", s.get("signal", {}))
             print("State loaded: ${} | Open:{} Closed:{}".format(
                 round(self.balance,2), len(self.open_trades), len(self.closed_trades)))
 
     def save_state(self):
-        with open(os.path.join(LOG_DIR, "state.json"), "w") as f:
-            json.dump({
-                "balance"       : round(self.balance, 2),
-                "peak_balance"  : round(self.peak_balance, 2),
-                "open_trades"   : self.open_trades,
-                "closed_trades" : self.closed_trades,
-                "trade_id"      : self.trade_id,
-                "today_pnl"     : round(self.today_pnl, 2),
-                "paper_days"    : self.paper_days,
-                "ea_days"       : self.ea_days,
-                "last_update"   : str(datetime.now()),
-                "signal_score"  : self.last_signal_score,
-            }, f, indent=2, default=str)
+        path = os.path.join(LOG_DIR, "state.json")
+        existing = load_json(path, {}) or {}
+        system = existing.get("system", {})
+        payload = build_paper_state(
+            balance=self.balance,
+            peak_balance=self.peak_balance,
+            open_trades=self.open_trades,
+            closed_trades=self.closed_trades,
+            trade_id=self.trade_id,
+            today_pnl=self.today_pnl,
+            paper_days=self.paper_days,
+            ea_days=self.ea_days,
+            signal_score=self.last_signal_score,
+            agents_alive=existing.get("agents_alive", system.get("agents_alive")),
+            agents_total=existing.get("agents_total", system.get("agents_total")),
+            agents_status=existing.get("agents_status", system.get("agents_status", {})),
+        )
+        payload.setdefault("system", {})
+        payload["system"]["promotion"] = self.promotion_status or {}
+        payload.setdefault("legacy_compat", {})
+        payload["promotion"] = self.promotion_status or {}
+        save_json(path, payload)
+
+    def refresh_promotion_status(self):
+        try:
+            self.promotion_status = resolve_promotion("v15f")
+        except Exception as exc:
+            self.promotion_status = {
+                "status": "candidate",
+                "approved_for": "research_only",
+                "reasons": ["Promotion status unavailable: {}".format(exc)],
+            }
+        return self.promotion_status
+
+    def allow_paper_execution(self):
+        status = self.refresh_promotion_status()
+        allowed = is_approved_for("paper", "v15f")
+        if not allowed:
+            reasons = status.get("reasons", [])
+            reason = reasons[0] if reasons else "Promotion gate not satisfied"
+            print("[PaperTrader] PAPER GATE BLOCKED: {}".format(reason))
+        return allowed
+
+    def allow_live_execution(self):
+        status = self.refresh_promotion_status()
+        account = {}
+        positions = []
+        if _bridge:
+            try:
+                account = _bridge.get_account_info() or {}
+                positions = _bridge.get_open_positions() or []
+            except Exception:
+                account = {}
+                positions = []
+        live_status = evaluate_live_safety(
+            strategy="v15f",
+            mt5_account=account,
+            open_positions=positions,
+            requested_risk_pct=RISK_PCT,
+        )
+        self.promotion_status = dict(status)
+        self.promotion_status["live_safety"] = live_status
+        allowed = bool(live_status.get("allowed"))
+        if not allowed:
+            reasons = live_status.get("reasons", []) or status.get("reasons", [])
+            reason = reasons[0] if reasons else "Promotion gate not satisfied"
+            print("[PaperTrader] LIVE GATE BLOCKED: {}".format(reason))
+        return allowed
 
     def connect_mt5(self):
         if not mt5.initialize(): return False
@@ -146,6 +220,11 @@ class PaperTradingEngine:
         return None, None
 
     def check_filters(self, signal):
+        try:
+            if os.path.exists(PAUSE_FILE):
+                pause = load_json(PAUSE_FILE, {}) or {}
+                return False, "Paused: {}".format(pause.get("reason", "manual/system pause"))
+        except: pass
         try:
             if os.path.exists("agents/news_sentinel/current_alert.json"):
                 with open("agents/news_sentinel/current_alert.json") as f:
@@ -200,7 +279,7 @@ class PaperTradingEngine:
                 round(self.balance,2)))
 
         # --- LIVE_MODE: mirror this paper trade to MT5 via bridge ---
-        if LIVE_MODE and _bridge:
+        if LIVE_MODE and _bridge and self.allow_live_execution():
             try:
                 if not _bridge.connected:
                     _bridge.connect()
@@ -223,6 +302,8 @@ class PaperTradingEngine:
                     signal, strategy, mt5_lots, round(sl,2), round(tp2,2)))
             except Exception as _e:
                 print("[PaperTrader] LIVE_MODE: bridge send failed (trade still open in paper): {}".format(_e))
+        elif LIVE_MODE and _bridge:
+            print("[PaperTrader] LIVE_MODE disabled for this trade by promotion gate")
 
         return trade
 
@@ -358,7 +439,7 @@ class PaperTradingEngine:
         df = self.fetch(tf, candles)
         if df is None or len(df) < 250: return None, 0, 0
 
-        df  = run_v15f(df, params)
+        df  = self.strategy.analyze(df, params=params)
         row = df.iloc[-1]   # live forming candle — catches intra-candle setups
 
         bull = int(row.get("score_bull", 0))
@@ -370,7 +451,7 @@ class PaperTradingEngine:
         score   = bull if is_bull else bear
         self.last_signal_score = {
             "score"     : score,
-            "max_score" : 10,
+            "max_score" : 20,
             "direction" : "BUY" if is_bull else "SELL",
             "timeframe" : tf_name,
             "updated"   : str(datetime.now()),
@@ -413,20 +494,13 @@ class PaperTradingEngine:
               bull, 10, fbs, scup3,
               lt, lre, lr, bc, consol, sess))
 
-        signal   = None
-        sig_type = None
-
-        if lt or lre or lr:
-            signal   = "BUY"
-            sig_type = ("BUY_TREND"    if lt  else
-                        "BUY_REENTRY"  if lre else "BUY_REVERSAL")
-        elif (row.get("short_trend_base") or row.get("short_reentry_base")
-              or row.get("short_reversal")):
-            signal   = "SELL"
-            sig_type = ("SELL_TREND"   if row.get("short_trend_base")   else
-                        "SELL_REENTRY" if row.get("short_reentry_base") else "SELL_REVERSAL")
+        latest_signal = self.strategy.latest_signal(df, params=params, timeframe=tf_name, symbol=SYMBOL)
+        signal = latest_signal.direction if latest_signal else None
+        sig_type = latest_signal.signal_type if latest_signal else None
 
         if signal and atr > 0:
+            if not self.allow_paper_execution():
+                return None, bull, bear
             ok, reason = self.check_filters(signal)
             dupe = any(t.get("signal")==signal and t.get("strategy")==tf_name
                       for t in self.open_trades if "ticket" not in t)
@@ -449,6 +523,62 @@ class PaperTradingEngine:
                 print("  {} {} BLOCKED: already open".format(tf_name, signal))
 
         return signal, bull, bear
+
+    def scan_candidate_strategies(self, bid, ask):
+        try:
+            self.strategy_portfolio = load_strategy_portfolio()
+            candidates = self.strategy_portfolio.get("active", [])
+        except Exception as exc:
+            print("[PaperTrader] Candidate portfolio unavailable: {}".format(exc))
+            return None
+
+        if not candidates:
+            return None
+
+        df_m5 = self.fetch(mt5.TIMEFRAME_M5, 500)
+        if df_m5 is None or len(df_m5) < 300:
+            return None
+
+        for candidate in candidates:
+            try:
+                signal = latest_candidate_signal(df_m5, candidate)
+            except Exception as exc:
+                print("[PaperTrader] Candidate {} error: {}".format(candidate.get("name", "?"), exc))
+                continue
+            if not signal:
+                continue
+
+            ok, reason = self.check_filters(signal["direction"])
+            dupe = any(
+                t.get("signal") == signal["direction"] and t.get("strategy") == signal["strategy"]
+                for t in self.open_trades if "ticket" not in t
+            )
+            if ok and not dupe and len(self.open_trades) < MAX_OPEN_TRADES:
+                entry = ask if signal["direction"] == "BUY" else bid
+                self.open_trade(
+                    signal["direction"],
+                    entry,
+                    signal["sl"],
+                    signal["tp1"],
+                    signal["tp2"],
+                    signal["strategy"],
+                    signal["signal_type"],
+                    signal["atr"],
+                )
+                self.last_signal_score = {
+                    "score": signal["score"],
+                    "max_score": 20,
+                    "direction": signal["direction"],
+                    "timeframe": signal["timeframe"],
+                    "updated": str(datetime.now()),
+                    "factors": {"autonomous_candidate": True, "family": signal["family"]},
+                }
+                return signal
+            if not ok:
+                print("  {} {} BLOCKED: {}".format(signal["strategy"], signal["direction"], reason))
+            elif dupe:
+                print("  {} {} BLOCKED: already open".format(signal["strategy"], signal["direction"]))
+        return None
 
     def print_status(self, h1_sig, m5_sig, h1_bull, h1_bear):
         wins   = sum(1 for t in self.closed_trades if t.get("result")=="win")
@@ -481,6 +611,7 @@ class PaperTradingEngine:
 
     def run(self):
         print("Paper Trading Engine v2 | v15F H1 + v15F M5")
+        self.refresh_promotion_status()
         if not self.connect_mt5():
             print("MT5 connection failed"); return
 
@@ -522,6 +653,9 @@ class PaperTradingEngine:
                         self.last_m5_candle = cur_m5
                         m5_sig, _, _ = self.scan_and_trade(
                             mt5.TIMEFRAME_M5, "v15F_M5", PARAMS_M5, bid, ask)
+                        candidate_sig = self.scan_candidate_strategies(bid, ask)
+                        if candidate_sig:
+                            m5_sig = candidate_sig["direction"]
 
                 self.print_status(h1_sig, m5_sig, h1_bull, h1_bear)
                 self.save_state()

@@ -14,6 +14,7 @@ Commands:
   /help      — list all commands
 """
 
+import io
 import json
 import os
 import sys
@@ -27,10 +28,18 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 TOKEN        = os.getenv("TELEGRAM_BOT_TOKEN", "")
 CHAT_ID      = str(os.getenv("TELEGRAM_CHAT_ID", ""))
-PAUSE_FILE   = "agents/master_trader/paused.flag"
+PAUSE_FILE    = "agents/master_trader/miro_pause.json"
+PATTERNS_FILE = "agents/master_trader/patterns.json"
+COT_FILE      = "agents/master_trader/cot_data.json"
+SENTIMENT_FILE= "agents/master_trader/sentiment.json"
+MULTISYM_FILE = "agents/master_trader/multi_symbol.json"
 LOG_FILE     = "agents/master_trader/trade_log.json"
 BRIEF_FILE   = "agents/master_trader/last_brief.json"
 STATE_FILE   = "agents/master_trader/state.json"
+REGIME_FILE  = "agents/master_trader/regime.json"
+BRAIN_FILE   = "agents/master_trader/multi_brain.json"
+DXY_FILE     = "agents/master_trader/dxy_yields.json"
+DEC_LOG      = "agents/position_manager/decisions_log.json"
 
 BASE_URL     = "https://api.telegram.org/bot{}".format(TOKEN)
 
@@ -42,6 +51,127 @@ def send(text):
                       timeout=5)
     except:
         pass
+
+
+def send_photo(buf, caption=""):
+    """Send a matplotlib chart buffer as a Telegram photo."""
+    try:
+        requests.post(
+            BASE_URL + "/sendPhoto",
+            data={"chat_id": CHAT_ID, "caption": caption, "parse_mode": "HTML"},
+            files={"photo": ("chart.png", buf, "image/png")},
+            timeout=10
+        )
+    except:
+        pass
+
+
+def _build_price_chart(symbol="XAUUSD", bars=60):
+    """Generate a H1 candlestick chart as PNG bytes. Returns None if matplotlib/MT5 unavailable."""
+    try:
+        import MetaTrader5 as mt5
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as mpatches
+        import pandas as pd
+
+        if not mt5.initialize():
+            return None
+        rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_H1, 0, bars)
+        mt5.shutdown()
+        if rates is None:
+            return None
+
+        df = pd.DataFrame(rates)
+        df["time"] = pd.to_datetime(df["time"], unit="s")
+
+        fig, ax = plt.subplots(figsize=(10, 4), facecolor="#0d0d0d")
+        ax.set_facecolor("#0d0d0d")
+
+        for i, row in df.iterrows():
+            color = "#26a69a" if row["close"] >= row["open"] else "#ef5350"
+            ax.plot([i, i], [row["low"], row["high"]], color=color, linewidth=0.8)
+            rect = plt.Rectangle((i - 0.3, min(row["open"], row["close"])),
+                                  0.6, abs(row["close"] - row["open"]),
+                                  color=color)
+            ax.add_patch(rect)
+
+        ax.set_xlim(-1, len(df))
+        ax.set_xticks([])
+        ax.tick_params(colors="#aaaaaa")
+        ax.spines[:].set_color("#333333")
+        last_close = df["close"].iloc[-1]
+        ax.set_title("{} H1 — Last: ${:.2f}".format(symbol, last_close),
+                     color="#ffffff", fontsize=11, pad=6)
+        ax.yaxis.set_tick_params(labelcolor="#aaaaaa")
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", dpi=120, bbox_inches="tight",
+                    facecolor="#0d0d0d")
+        plt.close(fig)
+        buf.seek(0)
+        return buf.read()
+    except:
+        return None
+
+
+def cmd_chart():
+    send("<b>MIRO</b>: Generating chart...")
+    img = _build_price_chart("XAUUSD", bars=72)
+    if img:
+        regime = _load_json(REGIME_FILE)
+        brain  = _load_json(BRAIN_FILE)
+        action = brain.get("consensus", {}).get("action", "?")
+        conf   = brain.get("consensus", {}).get("confidence", 0)
+        caption = ("<b>XAUUSD H1 Chart</b>\n"
+                   "Regime: {} | Brain: {} {}%".format(
+                       regime.get("regime", "?"), action, conf))
+        send_photo(img, caption)
+    else:
+        send("Chart unavailable — MT5 or matplotlib not ready.")
+
+
+def cmd_intel():
+    patterns  = _load_json(PATTERNS_FILE)
+    cot       = _load_json(COT_FILE)
+    sentiment = _load_json(SENTIMENT_FILE)
+    ms        = _load_json(MULTISYM_FILE)
+
+    pat_list = patterns.get("patterns", [])
+    pat_str  = "\n".join("  • {} ({}) conf:{}/10".format(
+        p["type"], p["bias"], p["confidence"]) for p in pat_list[:3]) or "  None detected"
+
+    cot_bias = cot.get("institutional_bias", "?")
+    cot_net  = cot.get("noncomm_net", 0)
+    cot_date = cot.get("report_date", "?")
+
+    sent_score = sentiment.get("composite_score", "?")
+    sent_bias  = sentiment.get("bias", "?")
+
+    risk = ms.get("risk_sentiment", "?")
+    usd  = ms.get("usd_strength", "?")
+    gold = ms.get("gold_implication", "?")
+
+    syms = ms.get("symbols", {})
+    sym_lines = "\n".join("  {} {} | {}% 24h".format(
+        s, d.get("bias","?"), d.get("change_24h", 0))
+        for s, d in syms.items())
+
+    lines = [
+        "<b>MIRO INTELLIGENCE REPORT</b>",
+        "━━━━━━━━━━━━━━━━━━━━",
+        "<b>Patterns (H4):</b>",
+        pat_str,
+        "━━━━━━━━━━━━━━━━━━━━",
+        "<b>COT ({}):</b> {} | NC Net: {:,}".format(cot_date, cot_bias, cot_net),
+        "<b>Sentiment:</b> {}/10 → {}".format(sent_score, sent_bias),
+        "━━━━━━━━━━━━━━━━━━━━",
+        "<b>Multi-Symbol:</b>",
+        sym_lines or "  No data",
+        "<b>Risk:</b> {} | <b>USD:</b> {} | <b>Gold:</b> {}".format(risk, usd, gold),
+    ]
+    send("\n".join(lines))
 
 
 def is_paused():
@@ -115,41 +245,89 @@ def close_all_positions():
         return []
 
 
+def _load_json(path):
+    try:
+        if os.path.exists(path):
+            with open(path) as f:
+                return json.load(f)
+    except: pass
+    return {}
+
+
 def cmd_status():
     positions = get_positions()
     account   = get_account()
-    brief     = {}
-    try:
-        if os.path.exists(BRIEF_FILE):
-            with open(BRIEF_FILE) as f:
-                brief = json.load(f)
-    except:
-        pass
+    regime    = _load_json(REGIME_FILE)
+    brain     = _load_json(BRAIN_FILE)
+    dxy       = _load_json(DXY_FILE)
+    state     = _load_json(STATE_FILE)
 
-    paused_note = "\n⏸ <b>TRADING PAUSED</b>" if is_paused() else ""
-    bal  = round(account.balance, 2) if account else "?"
-    eq   = round(account.equity,  2) if account else "?"
-    pnl  = round(account.profit,  2) if account else "?"
+    # Account info
+    bal = "${:,.2f}".format(account.balance) if account else "?"
+    eq  = "${:,.2f}".format(account.equity)  if account else "?"
+    pnl = "${:+.2f}".format(account.profit)  if account else "?"
 
-    lines = ["<b>MIRO STATUS</b>{}".format(paused_note)]
-    lines.append("Balance: ${} | Equity: ${} | Open P&L: ${:+}".format(bal, eq, pnl))
-    lines.append("Regime: {} | {}".format(
-        brief.get("regime", "?"), brief.get("assessment", "")[:80]))
-    lines.append("")
+    # Daily trades
+    daily_done  = state.get("daily_trades", 0)
+    daily_limit = 5
+    entries_str = "{}/{}".format(daily_done, daily_limit)
+
+    # Regime
+    reg_name = regime.get("regime", "?")
+    reg_conf = regime.get("confidence", 0)
+    reg_note = regime.get("note", "")
+
+    # Multi-brain consensus
+    consensus   = brain.get("consensus", {})
+    brain_action = consensus.get("action", "?")
+    brain_conf   = consensus.get("confidence", 0)
+    brain_agree  = consensus.get("agreement", 0)
+    brain_models = len(brain.get("models", []))
+
+    # DXY
+    dxy_val  = dxy.get("dxy", "?")
+    dxy_bias = dxy.get("gold_bias", "?")
+    y10      = dxy.get("yield_10y", "?")
+
+    # Session
+    utc_h = datetime.utcnow().hour
+    if   7  <= utc_h < 9:  session = "LONDON PRIME"
+    elif 9  <= utc_h < 13: session = "LONDON"
+    elif 13 <= utc_h < 16: session = "OVERLAP"
+    elif 16 <= utc_h < 21: session = "NEW YORK"
+    elif 0  <= utc_h < 7:  session = "ASIAN"
+    else:                  session = "DEAD ZONE"
+
+    paused_str = "⏸ PAUSED" if is_paused() else "▶ ACTIVE"
+
+    lines = [
+        "<b>MIRO STATUS — {}</b>".format(datetime.now().strftime("%H:%M:%S")),
+        "━━━━━━━━━━━━━━━━━━━━",
+        "<b>Trading:</b>  {} | Session: {}".format(paused_str, session),
+        "<b>Balance:</b>  {} | Equity: {}".format(bal, eq),
+        "<b>Open P&amp;L:</b> {} | Entries today: {}".format(pnl, entries_str),
+        "━━━━━━━━━━━━━━━━━━━━",
+        "<b>Regime:</b>   {} ({}% conf)".format(reg_name, reg_conf),
+        "<b>Brain:</b>    {} {}% conf | {}% agree | {}/3 models".format(
+            brain_action, brain_conf, brain_agree, brain_models),
+        "<b>DXY:</b>      {} | 10Y: {}% | Gold: {}".format(dxy_val, y10, dxy_bias),
+        "━━━━━━━━━━━━━━━━━━━━",
+    ]
 
     if positions:
-        lines.append("<b>{} position(s) open:</b>".format(len(positions)))
+        lines.append("<b>{} open position(s):</b>".format(len(positions)))
         for p in positions:
             direction = "BUY" if p.type == 0 else "SELL"
             age_min   = int((datetime.now() - datetime.fromtimestamp(p.time)).total_seconds() / 60)
-            lines.append("  {} {}L @ {} | P&L: ${:+.2f} | {}min".format(
+            sl_dist   = abs(p.price_open - p.sl) if p.sl > 0 else 1
+            cur_price = brain.get("snapshot", {}).get("price", p.price_current)
+            r = ((cur_price - p.price_open) / sl_dist if direction == "BUY"
+                 else (p.price_open - cur_price) / sl_dist) if sl_dist > 0 else 0
+            lines.append("  <b>{}</b> {}L @ {} | P&amp;L: {} | <b>{:+.1f}R</b> | {}min".format(
                 direction, p.volume, round(p.price_open, 2),
-                round(p.profit, 2), age_min))
+                "${:+.2f}".format(round(p.profit, 2)), round(r, 1), age_min))
     else:
         lines.append("No open positions")
-
-    if brief.get("next_watch"):
-        lines.append("\nWatching: {}".format(brief["next_watch"]))
 
     send("\n".join(lines))
 
@@ -277,6 +455,8 @@ def cmd_help():
         "<b>MIRO COMMANDS</b>\n\n"
         "/status   — positions + market read\n"
         "/analyse  — run full analysis now\n"
+        "/chart    — XAUUSD H1 price chart\n"
+        "/intel    — patterns + COT + sentiment\n"
         "/pause    — stop new entries\n"
         "/resume   — re-enable entries\n"
         "/closeall — close all positions\n"
@@ -290,6 +470,8 @@ COMMANDS = {
     "/status"  : cmd_status,
     "/analyse" : cmd_analyse,
     "/analyze" : cmd_analyse,
+    "/chart"   : cmd_chart,
+    "/intel"   : cmd_intel,
     "/pause"   : cmd_pause,
     "/resume"  : cmd_resume,
     "/closeall": cmd_closeall,

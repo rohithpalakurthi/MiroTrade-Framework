@@ -95,6 +95,23 @@ def load_tp_targets():
     return {}
 
 
+def _mark_tp1_cooldown(direction):
+    """Write TP1 cooldown timestamp to state.json so master_trader blocks re-entry for 15min."""
+    try:
+        state_file = "agents/master_trader/state.json"
+        s = {}
+        if os.path.exists(state_file):
+            with open(state_file) as f:
+                s = json.load(f)
+        cooldown = s.get("tp1_cooldown", {})
+        cooldown[direction] = datetime.now().isoformat()
+        s["tp1_cooldown"] = cooldown
+        with open(state_file, "w") as f:
+            json.dump(s, f, indent=2)
+    except:
+        pass
+
+
 def is_trend_favorable(direction):
     """True if MTF bias agrees with the trade direction and session is active."""
     try:
@@ -235,6 +252,7 @@ def check_scale_out():
                         s["tp1_done"]   = True
                         s["tier1_done"] = True   # prevent double-fire at +1R
                         changed = True
+                        _mark_tp1_cooldown(direction)
                         print("[ScaleOut] TP1 HIT (trail) ticket {} | closed 50% ({}L) @ {} | "
                               "SL→BE | trailing to TP2 {}".format(
                               ticket, close_lots, fill_px, tp2_price))
@@ -257,6 +275,7 @@ def check_scale_out():
                         s["tier1_done"] = True
                         s["tier2_done"] = True
                         changed = True
+                        _mark_tp1_cooldown(direction)
                         pts_gain = round(abs(fill_px - entry), 2)
                         print("[ScaleOut] TP1 HIT (full close) ticket {} | {}L @ {} | +{} pts | {}".format(
                             ticket, lots, fill_px, pts_gain, reason))

@@ -9,105 +9,212 @@
 body{background:#0a0c0f;color:#e8ecf0;font-family:'Space Mono',monospace;font-size:11px;padding:24px;line-height:1.5}
 h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0;margin-bottom:4px}
 .sub{color:#5a6478;font-size:10px;letter-spacing:2px;margin-bottom:32px}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px}
 .col{display:flex;flex-direction:column;gap:8px}
 .col-title{font-family:'Syne',sans-serif;font-size:9px;letter-spacing:3px;color:#5a6478;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid #1e2330;margin-bottom:4px}
 .card{background:#111318;border:1px solid #1e2330;border-radius:3px;padding:9px 10px}
 .card.done{border-left:3px solid #00c87a}
 .card.partial{border-left:3px solid #e0a000}
 .card.new{border-left:3px solid #3b82f6;border-top:1px solid rgba(59,130,246,.3)}
+.card.updated{border-left:3px solid #a855f7;border-top:1px solid rgba(168,85,247,.15)}
 .card-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;margin-bottom:3px}
 .card-detail{font-size:9px;color:#5a6478;line-height:1.6}
 .badge{display:inline-block;font-size:8px;padding:1px 6px;border-radius:2px;margin-top:4px;font-weight:700;letter-spacing:.5px}
 .b-done{background:rgba(0,200,122,.15);color:#00c87a}
 .b-partial{background:rgba(224,160,0,.15);color:#e0a000}
 .b-new{background:rgba(59,130,246,.15);color:#3b82f6}
+.b-updated{background:rgba(168,85,247,.15);color:#a855f7}
 .flow{background:#0e1015;border:1px solid #1e2330;border-radius:4px;padding:20px 24px;margin-bottom:24px;overflow-x:auto}
-.flow-title{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:3px;color:#5a6478;text-transform:uppercase;margin-bottom:16px}
-.flow-row{display:flex;align-items:center;gap:0;margin-bottom:8px;flex-wrap:nowrap;min-width:600px}
-.fbox{background:#111318;border:1px solid #1e2330;border-radius:3px;padding:6px 10px;font-size:10px;white-space:nowrap;flex-shrink:0}
+.flow-title{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:3px;color:#5a6478;text-transform:uppercase;margin-bottom:20px}
+.f-row{display:flex;align-items:center;min-width:900px;margin-bottom:0}
+.f-label{font-family:'Syne',sans-serif;font-size:8px;letter-spacing:2px;color:#2d3748;text-transform:uppercase;width:76px;min-width:76px;text-align:right;padding-right:12px;margin-right:12px;border-right:1px solid #1a2230;align-self:stretch;display:flex;align-items:center;justify-content:flex-end;flex-shrink:0}
+.f-chain{display:flex;align-items:center;flex-wrap:nowrap;padding:8px 0}
+.f-divider{height:1px;background:#161b24;margin:6px 0 6px 88px}
+.f-gap{height:4px}
+.f-feed{padding-left:88px;font-size:9px;color:#2d3748;margin:2px 0;letter-spacing:1px}
+.fbox{background:#111318;border:1px solid #1e2330;border-radius:3px;padding:7px 11px;font-size:10px;white-space:nowrap;flex-shrink:0;line-height:1.4}
 .fbox.green{border-color:rgba(0,200,122,.4);color:#00c87a}
 .fbox.red{border-color:rgba(224,48,64,.4);color:#e03040}
 .fbox.blue{border-color:rgba(59,130,246,.4);color:#3b82f6}
 .fbox.warn{border-color:rgba(224,160,0,.4);color:#e0a000}
 .fbox.purple{border-color:rgba(168,85,247,.4);color:#a855f7}
-.arrow{color:#1e2330;margin:0 6px;font-size:14px;flex-shrink:0}
+.fbox.teal{border-color:rgba(20,184,166,.4);color:#14b8a6}
+.fbox.dim{opacity:.4}
+.arrow{color:#252d3d;margin:0 5px;font-size:13px;flex-shrink:0}
 .arrow.g{color:#00c87a}
 .arrow.r{color:#e03040}
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:24px}
+.arrow.b{color:#3b82f6}
+.arrow.p{color:#a855f7}
+.arrow.w{color:#e0a000}
+.plus{color:#a855f7;margin:0 4px;font-size:11px;flex-shrink:0}
+/* flow-row kept for other flows below */
+.flow-row{display:flex;align-items:center;gap:0;margin-bottom:8px;flex-wrap:nowrap;min-width:600px}
+.stats{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:24px}
 .stat{background:#111318;border:1px solid #1e2330;border-radius:3px;padding:10px;text-align:center}
 .stat-n{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:#00e5a0}
 .stat-l{font-size:9px;color:#5a6478;letter-spacing:1px;margin-top:2px;text-transform:uppercase}
-.legend{display:flex;gap:16px;margin-bottom:20px}
+.legend{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
 .leg{display:flex;align-items:center;gap:6px;font-size:9px;color:#5a6478}
 .leg-dot{width:10px;height:10px;border-radius:1px;flex-shrink:0}
+.section-label{font-family:'Syne',sans-serif;font-size:9px;letter-spacing:3px;color:#5a6478;text-transform:uppercase;margin-bottom:10px;margin-top:20px}
 </style>
 </head>
 <body>
 
 <h1>MIROTRADE FRAMEWORK</h1>
-<div class="sub">COMPLETE SYSTEM MAP — XAUUSD AUTONOMOUS TRADING FRAMEWORK • GENERATED 2026-04-17</div>
+<div class="sub">COMPLETE SYSTEM MAP — XAUUSD AUTONOMOUS TRADING FRAMEWORK • UPDATED 2026-04-18</div>
 
 <!-- Stats -->
 <div class="stats">
-  <div class="stat"><div class="stat-n">50+</div><div class="stat-l">Python Files</div></div>
-  <div class="stat"><div class="stat-n">31</div><div class="stat-l">Live Threads</div></div>
+  <div class="stat"><div class="stat-n">55+</div><div class="stat-l">Python Files</div></div>
+  <div class="stat"><div class="stat-n">35</div><div class="stat-l">Live Threads</div></div>
   <div class="stat"><div class="stat-n">+1</div><div class="stat-l">TV Webhook (sep.)</div></div>
   <div class="stat"><div class="stat-n">1</div><div class="stat-l">Live Dashboard</div></div>
   <div class="stat"><div class="stat-n">30</div><div class="stat-l">Nightly Combos</div></div>
-  <div class="stat"><div class="stat-n">10</div><div class="stat-l">Risk Checks</div></div>
+  <div class="stat"><div class="stat-n">10</div><div class="stat-l">Intel Sources</div></div>
+  <div class="stat"><div class="stat-n">12</div><div class="stat-l">Risk Checks</div></div>
 </div>
 
 <!-- Legend -->
 <div class="legend">
   <div class="leg"><div class="leg-dot" style="background:#00c87a"></div>Built &amp; Running</div>
   <div class="leg"><div class="leg-dot" style="background:#e0a000"></div>Built, Needs Data</div>
-  <div class="leg"><div class="leg-dot" style="background:#3b82f6"></div>New This Session</div>
+  <div class="leg"><div class="leg-dot" style="background:#3b82f6"></div>New This Session (Apr 18)</div>
+  <div class="leg"><div class="leg-dot" style="background:#a855f7"></div>Updated This Session</div>
 </div>
 
-<!-- Signal Flow -->
+<!-- ── SIGNAL FLOW ──────────────────────────────────── -->
 <div class="flow">
-  <div class="flow-title">Signal &amp; Trade Flow</div>
-  <div class="flow-row">
-    <div class="fbox blue">MT5 XAUUSD<br><span style="font-size:8px;color:#5a6478">H1 + M5 bars</span></div>
-    <span class="arrow">→</span>
-    <div class="fbox">v15F Strategy<br><span style="font-size:8px;color:#5a6478">EMA+Stoch+RSI+VWAP+OBV</span></div>
-    <span class="arrow">→</span>
-    <div class="fbox warn">Confluence Score<br><span style="font-size:8px;color:#5a6478">9 factors / 10</span></div>
-    <span class="arrow">→</span>
-    <div class="fbox">News Sentinel<br><span style="font-size:8px;color:#5a6478">Block if high-impact</span></div>
-    <span class="arrow">→</span>
-    <div class="fbox">Risk Manager<br><span style="font-size:8px;color:#5a6478">Kelly sizing</span></div>
-    <span class="arrow">→</span>
-    <div class="fbox">Orchestrator<br><span style="font-size:8px;color:#5a6478">GO / NO-GO</span></div>
-    <span class="arrow g">→</span>
-    <div class="fbox green">Paper Trader<br><span style="font-size:8px;color:#5a6478">Execute + Manage</span></div>
+  <div class="flow-title">Signal &amp; Trade Entry Flow</div>
+
+  <!-- ── ROW 1: Intelligence sources ── -->
+  <div class="f-row">
+    <div class="f-label">intel</div>
+    <div class="f-chain">
+      <div class="fbox purple">Pattern Rec<br><span style="font-size:8px;color:#5a6478">H&amp;S/DTop/Flag · H4</span></div>
+      <span class="plus">+</span>
+      <div class="fbox purple">COT Feed<br><span style="font-size:8px;color:#5a6478">CFTC NC Net weekly</span></div>
+      <span class="plus">+</span>
+      <div class="fbox purple">DXY / Yields<br><span style="font-size:8px;color:#5a6478">USD index · 10Y</span></div>
+      <span class="plus">+</span>
+      <div class="fbox purple">Multi-Brain<br><span style="font-size:8px;color:#5a6478">GPT-4o+Claude+Rules</span></div>
+      <span class="plus">+</span>
+      <div class="fbox purple">Multi-Symbol<br><span style="font-size:8px;color:#5a6478">EURUSD/US30/Oil/JPY</span></div>
+      <span class="plus">+</span>
+      <div class="fbox purple">News Brain<br><span style="font-size:8px;color:#5a6478">GPT-4o bias · 30min</span></div>
+      <span class="arrow p">→</span>
+      <div class="fbox blue" style="border-width:2px">Sentiment Score<br><span style="font-size:8px;color:#5a6478">0–10 composite · 5min</span></div>
+    </div>
   </div>
-  <div class="flow-row" style="margin-top:12px">
-    <div class="fbox" style="opacity:.4">TradingView Webhook</div>
-    <span class="arrow">→</span>
-    <div class="fbox blue">TV Bridge<br><span style="font-size:8px;color:#5a6478">:5056 listener</span></div>
-    <span class="arrow">→</span>
-    <div class="fbox">MT5 Bridge<br><span style="font-size:8px;color:#5a6478">Live execution</span></div>
-    <span class="arrow g">→</span>
-    <div class="fbox green">Telegram Alert<br><span style="font-size:8px;color:#5a6478">Instant notify</span></div>
+
+  <!-- feed-down indicator -->
+  <div class="f-feed">↓ all 10 intel blocks injected into LLM prompt</div>
+
+  <!-- ── ROW 2: Entry pipeline ── -->
+  <div class="f-row">
+    <div class="f-label">entry</div>
+    <div class="f-chain">
+      <div class="fbox blue">MT5 XAUUSD<br><span style="font-size:8px;color:#5a6478">H4+H1+M15+M5 bars</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">v15F Strategy<br><span style="font-size:8px;color:#5a6478">EMA+Stoch+RSI+VWAP+OBV</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox warn">Confluence<br><span style="font-size:8px;color:#5a6478">9 factors / 10</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox green" style="border-width:2px">Master Trader<br><span style="font-size:8px;color:#5a6478">GPT-4o · every 30s</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">News Gate<br><span style="font-size:8px;color:#5a6478">NFP/CPI/FOMC block</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">Session Filter<br><span style="font-size:8px;color:#5a6478">Kill zone / dead zone</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">Risk / Kelly<br><span style="font-size:8px;color:#5a6478">1% · min SL 10pts</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">Orchestrator<br><span style="font-size:8px;color:#5a6478">GO / NO-GO · 60s</span></div>
+      <span class="arrow g">→</span>
+      <div class="fbox green" style="border-width:2px">EXECUTE<br><span style="font-size:8px;color:#5a6478">MT5 live order</span></div>
+    </div>
   </div>
-  <div class="flow-row" style="margin-top:12px">
-    <div class="fbox purple">Nightly Optimizer<br><span style="font-size:8px;color:#5a6478">18:30 IST</span></div>
-    <span class="arrow">→</span>
-    <div class="fbox">v15F Backtest<br><span style="font-size:8px;color:#5a6478">30 param combos</span></div>
-    <span class="arrow">→</span>
-    <div class="fbox warn">Confidence Gate<br><span style="font-size:8px;color:#5a6478">WR+3% PF+0.15 DD&lt;18%</span></div>
-    <span class="arrow g">→</span>
-    <div class="fbox green">Auto-Apply<br><span style="font-size:8px;color:#5a6478">applied_params.json</span></div>
-    <span class="arrow g">→</span>
-    <div class="fbox green">Git Commit<br><span style="font-size:8px;color:#5a6478">Auto message</span></div>
-    <span class="arrow g">→</span>
-    <div class="fbox green">Telegram Diff<br><span style="font-size:8px;color:#5a6478">Before → After</span></div>
+
+  <div class="f-divider"></div>
+  <div class="f-gap"></div>
+
+  <!-- ── ROW 3: Position management ── -->
+  <div class="f-row">
+    <div class="f-label">position</div>
+    <div class="f-chain">
+      <div class="fbox green">Open Position<br><span style="font-size:8px;color:#5a6478">SL ≥ 10pts · max 5/day</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">Breakeven Guard<br><span style="font-size:8px;color:#5a6478">SL → entry at +1R · 10s</span></div>
+      <span class="arrow w">→</span>
+      <div class="fbox warn">TP1 Smart Exit<br><span style="font-size:8px;color:#5a6478">≤ 15pts from entry</span></div>
+      <span class="arrow g" style="font-size:10px">✓trend→</span>
+      <div class="fbox">50% close + trail<br><span style="font-size:8px;color:#5a6478">SL→BE · trail to TP2</span></div>
+      <span class="arrow r" style="font-size:10px">✗trend→</span>
+      <div class="fbox red">100% close<br><span style="font-size:8px;color:#5a6478">Profit secured</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox blue">TP1 Cooldown<br><span style="font-size:8px;color:#5a6478">15min same-dir block</span></div>
+    </div>
   </div>
+
+  <!-- ── ROW 3b: Remaining tiers ── -->
+  <div class="f-row" style="margin-top:2px">
+    <div class="f-label" style="color:transparent">.</div>
+    <div class="f-chain">
+      <div style="width:140px;flex-shrink:0"></div><!-- spacer aligns with Open Position box -->
+      <span class="arrow" style="color:transparent">→</span>
+      <div class="fbox dim" style="font-size:9px">if TP1 trail active:</div>
+      <span class="arrow">→</span>
+      <div class="fbox">+2R → 30% close<br><span style="font-size:8px;color:#5a6478">SL tightens</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">+3R → trail<br><span style="font-size:8px;color:#5a6478">1.5 × ATR stop</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox warn">4R+ → ratchet<br><span style="font-size:8px;color:#5a6478">SL floor at R−1.5</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">Pos. Manager AI<br><span style="font-size:8px;color:#5a6478">GPT-4o+Claude · 30s</span></div>
+    </div>
+  </div>
+
+  <div class="f-divider"></div>
+  <div class="f-gap"></div>
+
+  <!-- ── ROW 4: TradingView webhook ── -->
+  <div class="f-row">
+    <div class="f-label">tv signals</div>
+    <div class="f-chain">
+      <div class="fbox dim">TradingView Alert<br><span style="font-size:8px;color:#5a6478">Pine Script trigger</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox blue">TV Bridge :5056<br><span style="font-size:8px;color:#5a6478">Flask webhook listener</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">MT5 Bridge<br><span style="font-size:8px;color:#5a6478">Validate + route</span></div>
+      <span class="arrow g">→</span>
+      <div class="fbox green">MT5 Execute<br><span style="font-size:8px;color:#5a6478">Live order placed</span></div>
+      <span class="arrow g">→</span>
+      <div class="fbox green">Telegram Alert<br><span style="font-size:8px;color:#5a6478">Instant notification</span></div>
+    </div>
+  </div>
+
+  <div class="f-gap"></div>
+
+  <!-- ── ROW 5: Nightly optimizer ── -->
+  <div class="f-row">
+    <div class="f-label">nightly</div>
+    <div class="f-chain">
+      <div class="fbox purple">Scheduler 18:30 IST<br><span style="font-size:8px;color:#5a6478">Python schedule</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox">v15F Backtest<br><span style="font-size:8px;color:#5a6478">30 param combos</span></div>
+      <span class="arrow">→</span>
+      <div class="fbox warn">Confidence Gate<br><span style="font-size:8px;color:#5a6478">WR+3% · PF+0.15 · DD&lt;18%</span></div>
+      <span class="arrow g">→</span>
+      <div class="fbox green">Auto-Apply Params<br><span style="font-size:8px;color:#5a6478">applied_params.json</span></div>
+      <span class="arrow g">→</span>
+      <div class="fbox green">Git Commit<br><span style="font-size:8px;color:#5a6478">Auto message</span></div>
+      <span class="arrow g">→</span>
+      <div class="fbox green">Telegram Diff<br><span style="font-size:8px;color:#5a6478">Before → After table</span></div>
+    </div>
+  </div>
+
 </div>
 
-<!-- Main grid -->
+<!-- ── MAIN AGENT GRID ───────────────────────────────── -->
 <div class="grid">
 
 <!-- Column 1: Strategy & Backtesting -->
@@ -116,13 +223,13 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
 
   <div class="card done">
     <div class="card-title">v15F Scalper</div>
-    <div class="card-detail">Pure Python port of Pine Script v15F. TYPE 1/2/3 signals. EMA8/21/50/200 stack, Stoch, RSI, VWAP, OBV, volume, candle patterns.</div>
+    <div class="card-detail">Pure Python port of Pine Script v15F. TYPE 1/2/3 signals. EMA 8/21/50/200 stack, Stoch, RSI, VWAP, OBV, volume, candle patterns.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
     <div class="card-title">MT5 Backtest Engine</div>
-    <div class="card-detail">Bar-by-bar simulation. SL/TP1/TP2 trail. Reports: WR, PF, Sharpe, DD, Return. CSV + JSON output.</div>
+    <div class="card-detail">Bar-by-bar simulation on live H1 bars. SL/TP1/TP2 trail. Reports: WR, PF, Sharpe, DD, Return. CSV + JSON output.</div>
     <span class="badge b-done">BUILT</span>
   </div>
 
@@ -134,227 +241,380 @@ h1{font-family:'Syne',sans-serif;font-size:22px;letter-spacing:4px;color:#00e5a0
 
   <div class="card done">
     <div class="card-title">Multi-Timeframe Analysis</div>
-    <div class="card-detail">H4+H1 bias detection. Directional consensus written to mtf_bias.json. Orchestrator reads it.</div>
+    <div class="card-detail">H4+H1 directional bias. Consensus written to mtf_bias.json. Orchestrator reads for GO/NO-GO gate.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
     <div class="card-title">Market Regime Detector</div>
-    <div class="card-detail">TRENDING_BULL / BEAR / RANGING / HIGH_VOLATILITY / CHOPPY. Adjusts signal thresholds.</div>
+    <div class="card-detail">TRENDING_BULL / BEAR / RANGING / HIGH_VOL / CHOPPY. Adjusts allowed setups, size multiplier, min confidence.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">v15F Nightly Optimizer</div>
+    <div class="card-detail">Tests 30 param combos on live MT5 data nightly. Confidence gate: WR+3%, PF+0.15, DD&lt;18%. Auto-applies best. Git commit + Telegram diff sent.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">M5 Scalper</div>
+    <div class="card-detail">London/NY kill zone scalper. Separate strategy running on 5-min bars. Parallel to H1 system.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 </div>
 
-<!-- Column 2: Intelligence Layer -->
+<!-- Column 2: MIRO Intelligence -->
 <div class="col">
-  <div class="col-title">Intelligence Layer</div>
+  <div class="col-title">MIRO Intelligence</div>
 
-  <div class="card done">
+  <div class="card updated">
     <div class="card-title">Multi-Model Brain</div>
-    <div class="card-detail">GPT-4o + Claude Haiku + Rule-based consensus. Weighted vote. Writes multi_brain.json. Dashboard reads it.</div>
-    <span class="badge b-done">LIVE</span>
-  </div>
-
-  <div class="card done">
-    <div class="card-title">News Sentinel</div>
-    <div class="card-detail">Rule-based + AI (Claude Haiku) news analysis. Blocks trading 30min before/after high-impact events (NFP/CPI/FOMC).</div>
-    <span class="badge b-done">LIVE</span>
-  </div>
-
-  <div class="card partial">
-    <div class="card-title">News Brain</div>
-    <div class="card-detail">NewsAPI + GPT-4o bias analysis. Gold bullish/bearish sentiment. Fixed: 1 query/30min (was hitting 100/day limit). Recovers tonight.</div>
-    <span class="badge b-partial">RECOVERING</span>
-  </div>
-
-  <div class="card done">
-    <div class="card-title">Market Analyst</div>
-    <div class="card-detail">Generates market narrative every cycle. Reads regime + MTF + news + price. Written to market_narrative.json.</div>
-    <span class="badge b-done">LIVE</span>
+    <div class="card-detail">GPT-4o + Claude Sonnet + Rule-based consensus. Weighted vote. Fixed: DXY flat field mapping, Claude model updated to claude-sonnet-4-6. Writes multi_brain.json.</div>
+    <span class="badge b-updated">UPDATED</span>
   </div>
 
   <div class="card done">
     <div class="card-title">DXY &amp; Yields Feed</div>
-    <div class="card-detail">US Dollar Index + 10Y yield. Gold inverse correlation scoring. Adjusts BUY/SELL confidence.</div>
+    <div class="card-detail">US Dollar Index + 10Y yield. Flat JSON fields: dxy, dxy_change, yield_10y, gold_bias, buy/sell_confidence_adj. Every 5min.</div>
     <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card new">
+    <div class="card-title">Pattern Recognition</div>
+    <div class="card-detail">H4 chart patterns: Head &amp; Shoulders, Inverse H&S, Double Top, Double Bottom, Bull Flag, Bear Flag. Pivot algorithm, confidence scoring. Every 10min → patterns.json.</div>
+    <span class="badge b-new">NEW</span>
+  </div>
+
+  <div class="card new">
+    <div class="card-title">COT Data Feed</div>
+    <div class="card-detail">CFTC Commitment of Traders — Gold futures (COMEX). Non-commercial net positioning. Derives STRONG_BULLISH→STRONG_BEARISH institutional bias. Updates weekly (Tuesdays) → cot_data.json.</div>
+    <span class="badge b-new">NEW</span>
+  </div>
+
+  <div class="card new">
+    <div class="card-title">Composite Sentiment Score</div>
+    <div class="card-detail">Weighted 0-10 score: COT 25% + News 20% + Brain 25% + DXY 15% + Patterns 10% + Multi-Symbol 5%. Buy/sell confidence adjustments fed to Master Trader. Every 5min → sentiment.json.</div>
+    <span class="badge b-new">NEW</span>
+  </div>
+
+  <div class="card new">
+    <div class="card-title">Multi-Symbol Monitor</div>
+    <div class="card-detail">Tracks EURUSD, US30, USOIL, USDJPY via MT5 H1. Derives: risk_sentiment (RISK_ON/OFF), usd_strength (STRONG/WEAK), gold_implication (BULLISH/BEARISH). Every 5min → multi_symbol.json.</div>
+    <span class="badge b-new">NEW</span>
   </div>
 
   <div class="card done">
     <div class="card-title">Economic Calendar</div>
-    <div class="card-detail">Checks upcoming high-impact events. Pre-blocks trading window. Integrates with News Sentinel.</div>
-    <span class="badge b-done">BUILT</span>
+    <div class="card-detail">Pre-blocks trading 30min before/after NFP/CPI/FOMC. Calendar pause active flag. Integrates with News Sentinel and Orchestrator.</div>
+    <span class="badge b-done">LIVE</span>
   </div>
 </div>
 
-<!-- Column 3: Risk & Position -->
+<!-- Column 3: News & Market Context -->
 <div class="col">
-  <div class="col-title">Risk &amp; Position Mgmt</div>
+  <div class="col-title">News &amp; Market Context</div>
 
   <div class="card done">
-    <div class="card-title">Risk Manager</div>
-    <div class="card-detail">Kelly Criterion sizing. Max 2% daily loss. Score 0-10. Writes risk_state.json. Orchestrator gates on it.</div>
+    <div class="card-title">AI News Sentinel v3</div>
+    <div class="card-detail">Claude Haiku powered. DuckDuckGo web search fallback. Auto-selected over rule-based when ANTHROPIC_API_KEY present. Blocks on high-impact events. Every 30min.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
-    <div class="card-title">Circuit Breaker</div>
-    <div class="card-detail">Halts trading at 2% daily loss. Progressive: warn at 1%, stop at 2%. Auto-resets next session.</div>
+    <div class="card-title">News Brain</div>
+    <div class="card-detail">NewsAPI + GPT-4o bias analysis. Fixed: 1 query/30min (was 4x/5min hitting 100/day limit). Gold bullish/bearish sentiment, risk level, key driver. Writes news_brain.json.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
-    <div class="card-title">Breakeven Guard</div>
-    <div class="card-detail">Moves SL to entry+1pt when TP1 hit. Protects floating profit. Runs every 15s.</div>
-    <span class="badge b-done">LIVE</span>
-  </div>
-
-  <div class="card done">
-    <div class="card-title">Scale Out (3-Tier)</div>
-    <div class="card-detail">25% close at TP1, 50% at TP2, trail runner. Only writes state when positions open — idle otherwise.</div>
-    <span class="badge b-done">LIVE</span>
-  </div>
-
-  <div class="card done">
-    <div class="card-title">Partial Entry Scaling</div>
-    <div class="card-detail">T1 40% / T2 30% / T3 30%. T2 adds on 30-60% retracement. T3 runner at +0.5R. Reduces average entry risk.</div>
-    <span class="badge b-done">BUILT</span>
-  </div>
-
-  <div class="card done">
-    <div class="card-title">Correlation Guard</div>
-    <div class="card-detail">Blocks trades when XAUUSD overexposed vs DXY correlation. Risk diversification guard.</div>
-    <span class="badge b-done">LIVE</span>
-  </div>
-
-  <div class="card done">
-    <div class="card-title">Fibonacci Levels</div>
-    <div class="card-detail">Auto H1 swing fib. 23.6/38.2/50/61.8/78.6 plotted. Dashboard + trade decisions use these.</div>
+    <div class="card-title">Market Analyst</div>
+    <div class="card-detail">GPT-4o narrative every cycle. Reads regime + MTF + news + price. Written to market_narrative.json. Master Trader uses for context.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
     <div class="card-title">Supply &amp; Demand Zones</div>
-    <div class="card-detail">Auto H1 S&amp;D detection. Demand/supply zones shown on dashboard with price pills.</div>
+    <div class="card-detail">Auto H1 S&amp;D zone detection. Demand/supply zones with strength scoring. Dashboard pills. Writes supply_demand_zones.json. Every 5min.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">Fibonacci Levels</div>
+    <div class="card-detail">Auto H1 swing fib. 23.6/38.2/50/61.8/78.6 calculated. Key level pills on dashboard. Writes fib_levels.json. Every 5min.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">Correlation Guard</div>
+    <div class="card-detail">Blocks trades when XAUUSD overexposed vs DXY correlation. Kelly half-f sizing. Writes risk_guard.json. Runs every 2min.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 </div>
 
-<!-- Column 4: Execution & Comms -->
+<!-- Column 4: Risk & Position Management -->
 <div class="col">
-  <div class="col-title">Execution &amp; Comms</div>
+  <div class="col-title">Risk &amp; Position Mgmt</div>
 
   <div class="card done">
-    <div class="card-title">Paper Trader</div>
-    <div class="card-detail">v15F H1 + M5 running simultaneously. State persisted to state.json. Reads optimized params. 9-factor confluence score captured.</div>
+    <div class="card-title">Risk Manager</div>
+    <div class="card-detail">Kelly Criterion sizing. Max 2% daily loss. Score 0-10. Writes risk_state.json. Orchestrator gates on it. Every 5min.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
+    <div class="card-title">Circuit Breaker</div>
+    <div class="card-detail">Halts trading at 2% daily loss. Progressive: warn at 1%, stop at 2%. Auto-resets next session. Runs every 10s.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">Breakeven Guard</div>
+    <div class="card-detail">Moves SL to entry+1pt when TP1 hit. Protects floating profit. Checks scale_out_state to prevent double-fire. Runs every 10s.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card updated">
+    <div class="card-title">Scale Out (Smart TP)</div>
+    <div class="card-detail">TP1 capped at 15pts from entry. Smart exit: if MTF trend favorable → close 50% + SL to BE + trail to TP2. Else → close 100%. Marks TP1 cooldown in state.json. Tier 2: +2R 30%. Tier 3: +3R trail. 4R+: ratchet SL to R-1.5 floor.</div>
+    <span class="badge b-updated">UPDATED</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">Partial Entry Scaling</div>
+    <div class="card-detail">T1 40% / T2 30% / T3 30%. T2 adds on 30-60% retracement. T3 runner at +0.5R. Reduces average entry risk. Runs every 15s.</div>
+    <span class="badge b-done">BUILT</span>
+  </div>
+
+  <div class="card updated">
+    <div class="card-title">Position Manager</div>
+    <div class="card-detail">GPT-4o + Claude Sonnet AI decisions. Hard rules: -2R cut, 4R+ ratchet trail (SL→R-1.5 floor), stale trade 120min close, London close 17:00 UTC. LLM fallback alert rate-limited to 1/hr. Only CLOSE/TIGHTEN logged (no HOLD spam). Every 30s.</div>
+    <span class="badge b-updated">UPDATED</span>
+  </div>
+</div>
+
+<!-- Column 5: Execution & Comms -->
+<div class="col">
+  <div class="col-title">Execution &amp; Comms</div>
+
+  <div class="card done">
     <div class="card-title">Orchestrator</div>
-    <div class="card-detail">Master GO/NO-GO brain. 5 checks: News + Portfolio Health + Risk + Capacity + MTF. Runs every 60s.</div>
+    <div class="card-detail">Master GO/NO-GO gate. 5 checks: News + Portfolio Health + Risk + Capacity + MTF. Runs every 60s. Writes last_decision.json.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
     <div class="card-title">MT5 Bridge</div>
-    <div class="card-detail">Live order execution. Market/limit orders, SL/TP management, magic number 20260001. Reads orchestrator verdict.</div>
+    <div class="card-detail">Live order execution + position sync to dashboard. Auto-reconnect on disconnect (null-guard on account_info). Sync every 30s. Checks TP1 hits.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
     <div class="card-title">TradingView Webhook</div>
-    <div class="card-detail">Flask :5056 listener. Receives TV alerts → validates → routes to MT5 Bridge. Bridge status JSON.</div>
+    <div class="card-detail">Flask :5056 listener. Receives TV alerts → validates signature → routes to MT5 Bridge. Bridge status JSON written every cycle.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
     <div class="card-title">Telegram Agent</div>
-    <div class="card-detail">Trade alerts, morning/evening briefings, command handler. Sends entry/exit/scale-in/scale-out notifications.</div>
+    <div class="card-detail">Trade alerts, morning 9am IST / evening 22pm IST briefings. Entry/exit/scale-in/scale-out push notifications.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
-  <div class="card done">
+  <div class="card updated">
     <div class="card-title">Telegram Commands</div>
-    <div class="card-detail">/status /pause /resume /balance /positions via Telegram bot. Remote control from phone.</div>
-    <span class="badge b-done">LIVE</span>
+    <div class="card-detail">/status (R multiples, regime, brain, DXY) /analyse /pause /resume /closeall /report /risk /help. NEW: /chart — H1 candlestick chart photo via sendPhoto. /intel — patterns + COT + sentiment + multi-symbol text report.</div>
+    <span class="badge b-updated">UPDATED</span>
   </div>
 
   <div class="card done">
     <div class="card-title">Price Feed</div>
-    <div class="card-detail">MT5 bid/ask/spread every 5s → live_price.json. Dashboard reads. Stale threshold: 60s.</div>
+    <div class="card-detail">MT5 bid/ask/spread every 5s → live_price.json. Dashboard live ticker. Stale threshold: 60s.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">Paper Trader</div>
+    <div class="card-detail">v15F H1+M5 running simultaneously. State persisted to state.json. Reads optimized applied_params.json. 9-factor confluence score captured.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 </div>
 
-<!-- Column 5: Dashboard & Self-Improvement -->
+<!-- Column 6: Dashboard & Self-Improvement -->
 <div class="col">
   <div class="col-title">Dashboard &amp; Self-Improvement</div>
 
-  <div class="card new">
+  <div class="card updated">
     <div class="card-title">Unified Dashboard v4</div>
-    <div class="card-detail">Single-page 3-column layout at :5055. Replaces both old dashboards. Paper trading + MIRO intelligence merged. Chart.js equity curve, SVG confluence ring.</div>
-    <span class="badge b-new">NEW THIS SESSION</span>
+    <div class="card-detail">3-column layout at :5055. Trading config controls: Risk%, Min RR, Confidence, Max Pos, Daily Trade Limit (new), Min SL pts (new). Toggles: News Block / Orch Gate / Session Filter / TP1 Cooldown (new). Intelligence panel: Sentiment bar, COT, multi-symbol risk/USD/gold, pattern list.</div>
+    <span class="badge b-updated">UPDATED</span>
   </div>
 
-  <div class="card new">
-    <div class="card-title">v15F Nightly Optimizer</div>
-    <div class="card-detail">Tests 30 param combos on live MT5 H1 data. Confidence gate: WR+3%, PF+0.15, DD&lt;18%. Auto-applies best params. Full diff sent via Telegram.</div>
-    <span class="badge b-new">NEW THIS SESSION</span>
-  </div>
-
-  <div class="card new">
-    <div class="card-title">Auto Git Commit</div>
-    <div class="card-detail">On successful optimization, commits applied_params.json with message: "[MIRO Auto] v15F optimized: WR +X% PF +Y | param→value".</div>
-    <span class="badge b-new">NEW THIS SESSION</span>
+  <div class="card updated">
+    <div class="card-title">Master Trader (MIRO)</div>
+    <div class="card-detail">Autonomous GPT-4o brain. Entry controls: TP1 cap ≤ 15pts, Min SL ≥ 10pts, Daily limit 5/day, TP1 re-entry cooldown 15min (toggle). All 10 intel sources in LLM prompt: regime, fib, S&D, DXY, Kelly, brain, patterns, COT, sentiment, multi-symbol. Runs every 30s.</div>
+    <span class="badge b-updated">UPDATED</span>
   </div>
 
   <div class="card done">
     <div class="card-title">Performance Tracker</div>
-    <div class="card-detail">Tracks win streaks, avg R, best/worst trades. Writes performance.json. Dashboard equity curve + stats.</div>
+    <div class="card-detail">Tracks win streaks, avg R, best/worst trades. Writes performance.json. Dashboard equity curve + stats bar. Self-learned thresholds. Every 10min.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
     <div class="card-title">Trade Journal</div>
-    <div class="card-detail">Auto-grades each trade A-D. Captures setup quality, lesson learned, outcome. Last 5 shown on dashboard.</div>
+    <div class="card-detail">GPT-4o auto-grades each trade A–D. Captures setup quality, lesson learned, outcome. Last 5 shown on dashboard journal panel.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">Scheduler</div>
+    <div class="card-detail">Morning briefing 3:30 UTC. Daily P&amp;L summary 16:30 UTC (22:00 IST). Nightly optimization 18:30 UTC. Python schedule package.</div>
+    <span class="badge b-done">LIVE</span>
+  </div>
+
+  <div class="card done">
+    <div class="card-title">Decisions Log (Rotated)</div>
+    <div class="card-detail">Date-based files: decisions_YYYY-MM-DD.json. Auto-deletes files &gt;7 days old. Only CLOSE/TIGHTEN logged — HOLD suppressed. Used by daily P&amp;L summary.</div>
     <span class="badge b-done">LIVE</span>
   </div>
 
   <div class="card done">
     <div class="card-title">Deployment Checklist</div>
-    <div class="card-detail">12-point go-live gate: paper WR, streak, drawdown, news, MT5 connection, config, etc. Shows readiness % on dashboard.</div>
+    <div class="card-detail">12-point go-live gate: paper WR, streak, drawdown, news, MT5 connection, config checks. Shows readiness % on dashboard.</div>
     <span class="badge b-done">BUILT</span>
   </div>
 
   <div class="card done">
-    <div class="card-title">Scheduler</div>
-    <div class="card-detail">Morning briefing 3:30 IST. Evening summary 16:30 IST. Nightly optimization 18:30 IST. Python schedule package.</div>
+    <div class="card-title">Auto Git Commit</div>
+    <div class="card-detail">On successful nightly optimization, commits applied_params.json: "[MIRO Auto] v15F optimized: WR +X% PF +Y | param→value". Full Telegram diff sent.</div>
     <span class="badge b-done">LIVE</span>
-  </div>
-
-  <div class="card new">
-    <div class="card-title">AI News Sentinel v3</div>
-    <div class="card-detail">Claude Haiku powered. DuckDuckGo web search fallback. Auto-selected over rule-based when ANTHROPIC_API_KEY is set.</div>
-    <span class="badge b-new">NEW THIS SESSION</span>
   </div>
 </div>
 
 </div><!-- /grid -->
 
-<!-- What's NOT built -->
+<!-- ── INTELLIGENCE LAYER DETAIL ───────────────────── -->
 <div class="flow">
-  <div class="flow-title">Remaining on 20-Feature Roadmap (Not Yet Built)</div>
+  <div class="flow-title">Intelligence Aggregation Detail — 10 Sources → Master Trader LLM Prompt</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px">
+    <div class="fbox purple" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">REGIME DETECTOR</div>
+      <div style="font-size:8px;color:#5a6478">TRENDING / RANGING / CHOPPY<br>Size mult + min conf</div>
+    </div>
+    <div class="fbox purple" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">DXY / YIELDS</div>
+      <div style="font-size:8px;color:#5a6478">USD Index + 10Y<br>gold_bias + adj</div>
+    </div>
+    <div class="fbox purple" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">MULTI-BRAIN</div>
+      <div style="font-size:8px;color:#5a6478">GPT-4o + Claude Sonnet<br>+ Rule-based consensus</div>
+    </div>
+    <div class="fbox blue" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">PATTERN REC</div>
+      <div style="font-size:8px;color:#5a6478">H&amp;S / DTop / DBott<br>Bull/Bear Flag · H4</div>
+    </div>
+    <div class="fbox blue" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">COT FEED</div>
+      <div style="font-size:8px;color:#5a6478">CFTC Non-Comm Net<br>Weekly institutional</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px">
+    <div class="fbox purple" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">FIB LEVELS</div>
+      <div style="font-size:8px;color:#5a6478">Auto H1 swing<br>38.2/50/61.8/78.6</div>
+    </div>
+    <div class="fbox purple" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">SUPPLY &amp; DEMAND</div>
+      <div style="font-size:8px;color:#5a6478">H1 order blocks<br>Demand/supply zones</div>
+    </div>
+    <div class="fbox purple" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">KELLY GUARD</div>
+      <div style="font-size:8px;color:#5a6478">Half-f position size<br>Recovery mode flag</div>
+    </div>
+    <div class="fbox blue" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">SENTIMENT</div>
+      <div style="font-size:8px;color:#5a6478">0-10 composite<br>Buy/sell conf adj</div>
+    </div>
+    <div class="fbox blue" style="padding:8px 10px">
+      <div style="font-size:9px;font-weight:700;margin-bottom:4px">MULTI-SYMBOL</div>
+      <div style="font-size:8px;color:#5a6478">EURUSD/US30/USOIL<br>Risk-on/off · USD str.</div>
+    </div>
+  </div>
+  <div class="flow-row" style="justify-content:center">
+    <div style="color:#5a6478;font-size:9px;margin-right:12px">All 10 blocks →</div>
+    <div class="fbox green" style="padding:10px 20px;text-align:center">
+      <div style="font-weight:700;margin-bottom:3px">MASTER TRADER LLM PROMPT</div>
+      <div style="font-size:8px;color:#5a6478">GPT-4o • Full context • JSON decision • Entry/SL/TP/confidence</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TP1 FLOW ────────────────────────────────────── -->
+<div class="flow">
+  <div class="flow-title">TP1 Smart Exit &amp; Re-Entry Cooldown Flow</div>
+  <div class="flow-row">
+    <div class="fbox green">Position open<br><span style="font-size:8px;color:#5a6478">SL ≥ 10pts guaranteed</span></div>
+    <span class="arrow">→</span>
+    <div class="fbox">Price hits TP1<br><span style="font-size:8px;color:#5a6478">entry ± 15pts max</span></div>
+    <span class="arrow">→</span>
+    <div class="fbox warn">MTF Trend check<br><span style="font-size:8px;color:#5a6478">is_trend_favorable()</span></div>
+    <span class="arrow g">→ YES →</span>
+    <div class="fbox green">Close 50%<br><span style="font-size:8px;color:#5a6478">SL to BE, trail to TP2</span></div>
+    <span class="arrow r">→ NO →</span>
+    <div class="fbox red">Close 100%<br><span style="font-size:8px;color:#5a6478">Profit secured</span></div>
+  </div>
+  <div class="flow-row" style="margin-top:8px">
+    <div class="fbox blue">TP1 Cooldown written<br><span style="font-size:8px;color:#5a6478">state.json[tp1_cooldown][DIR]</span></div>
+    <span class="arrow b">→</span>
+    <div class="fbox blue">Master Trader checks<br><span style="font-size:8px;color:#5a6478">_tp1_reentry_ok(direction)</span></div>
+    <span class="arrow r">→ within 15min →</span>
+    <div class="fbox red">Block same-dir entry<br><span style="font-size:8px;color:#5a6478">cooldown {elapsed}/{900}s</span></div>
+    <span class="arrow g">→ after 15min →</span>
+    <div class="fbox green">Re-entry allowed<br><span style="font-size:8px;color:#5a6478">Normal entry checks resume</span></div>
+    <span class="arrow">→</span>
+    <div class="fbox warn">Toggle in Dashboard<br><span style="font-size:8px;color:#5a6478">TP1 COOLDOWN ON/OFF</span></div>
+  </div>
+</div>
+
+<!-- ── TELEGRAM COMMANDS ──────────────────────────── -->
+<div class="flow">
+  <div class="flow-title">Telegram Command Interface — All Commands</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <div class="fbox green" style="padding:7px 12px"><span style="font-weight:700">/status</span><br><span style="font-size:8px;color:#5a6478">Balance/equity/P&amp;L, positions with R multiples,<br>regime, brain consensus, DXY, session, daily entries</span></div>
+    <div class="fbox blue" style="padding:7px 12px"><span style="font-weight:700">/chart</span><br><span style="font-size:8px;color:#5a6478">H1 XAUUSD candlestick chart<br>photo via sendPhoto API (matplotlib)</span></div>
+    <div class="fbox blue" style="padding:7px 12px"><span style="font-weight:700">/intel</span><br><span style="font-size:8px;color:#5a6478">Patterns + COT + Sentiment<br>+ Multi-Symbol report</span></div>
+    <div class="fbox" style="padding:7px 12px"><span style="font-weight:700">/analyse</span><br><span style="font-size:8px;color:#5a6478">Trigger full MasterTrader<br>analysis cycle now</span></div>
+    <div class="fbox warn" style="padding:7px 12px"><span style="font-weight:700">/pause / /resume</span><br><span style="font-size:8px;color:#5a6478">Toggle new entries<br>miro_pause.json flag</span></div>
+    <div class="fbox red" style="padding:7px 12px"><span style="font-weight:700">/closeall</span><br><span style="font-size:8px;color:#5a6478">Close all XAUUSD positions<br>immediately via MT5</span></div>
+    <div class="fbox" style="padding:7px 12px"><span style="font-weight:700">/report</span><br><span style="font-size:8px;color:#5a6478">Today's closed trades<br>W/L, win rate, P&amp;L</span></div>
+    <div class="fbox" style="padding:7px 12px"><span style="font-weight:700">/risk</span><br><span style="font-size:8px;color:#5a6478">Current risk settings<br>+ consecutive losses</span></div>
+    <div class="fbox purple" style="padding:7px 12px"><span style="font-weight:700">Free text</span><br><span style="font-size:8px;color:#5a6478">Routes to GPT-4o MIRO<br>with market context</span></div>
+  </div>
+</div>
+
+<!-- ── NEXT MILESTONES ────────────────────────────── -->
+<div class="flow">
+  <div class="flow-title">Next Development Milestones</div>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <div class="fbox" style="opacity:.5">Pattern Recognition<br><span style="font-size:8px;color:#5a6478">Head&amp;Shoulders, Double Top/Bot</span></div>
-    <div class="fbox" style="opacity:.5">COT Data Feed<br><span style="font-size:8px;color:#5a6478">CFTC positioning data</span></div>
-    <div class="fbox" style="opacity:.5">Sentiment Score<br><span style="font-size:8px;color:#5a6478">Retail vs institutional bias</span></div>
-    <div class="fbox" style="opacity:.5">Multi-Symbol<br><span style="font-size:8px;color:#5a6478">EURUSD / Crude / US30</span></div>
-    <div class="fbox" style="opacity:.5">Rich Telegram Alerts<br><span style="font-size:8px;color:#5a6478">Screenshots + PDF reports</span></div>
+    <div class="fbox" style="padding:8px 14px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:3px">Multi-Symbol Trading</div>
+      <div style="font-size:8px;color:#5a6478">Extend Master Trader to actually<br>trade EURUSD, US30, USOIL<br>(monitoring is done)</div>
+    </div>
+    <div class="fbox" style="padding:8px 14px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:3px">PDF Performance Reports</div>
+      <div style="font-size:8px;color:#5a6478">Weekly PDF via Telegram<br>Trade log + equity curve<br>+ pattern statistics</div>
+    </div>
+    <div class="fbox" style="padding:8px 14px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:3px">Live Deployment</div>
+      <div style="font-size:8px;color:#5a6478">12-point checklist at 100%<br>Paper trading → Live MT5<br>Risk approval required</div>
+    </div>
   </div>
 </div>
 
 <div style="color:#5a6478;font-size:9px;margin-top:16px;letter-spacing:1px">
-  MIROTRADE-FRAMEWORK • ROHITH PALAKURTHI • ALL TIMES IST • LAST UPDATED 2026-04-17
+  MIROTRADE-FRAMEWORK • ROHITH PALAKURTHI • ALL TIMES IST • LAST UPDATED 2026-04-18 • 35 AGENTS
 </div>
 </body>
 </html>

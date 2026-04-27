@@ -23,6 +23,8 @@ from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
+from core.state_schema import build_orchestrator_snapshot, load_json, save_json
+
 import os as _os
 if _os.getenv("ANTHROPIC_API_KEY"):
     from agents.news_sentinel.news_sentinel_ai import AINewsSentinel as NewsSentinelAgent
@@ -55,17 +57,14 @@ class OrchestratorAgent:
 
     def load_paper_trading_state(self):
         """Load current paper trading state."""
-        if not os.path.exists(STATE_FILE):
-            return None
-        with open(STATE_FILE, "r") as f:
-            return json.load(f)
+        return load_json(STATE_FILE)
 
     def load_risk_state(self):
         """Load risk manager state."""
-        if not os.path.exists(RISK_FILE):
+        risk_state = load_json(RISK_FILE)
+        if not risk_state:
             return {"approved": True, "score": 10, "reason": "Default approval"}
-        with open(RISK_FILE, "r") as f:
-            return json.load(f)
+        return risk_state
 
     def check_news_safety(self):
         """Check if news sentinel is blocking trading."""
@@ -77,10 +76,13 @@ class OrchestratorAgent:
         if not state:
             return 5, "No state data"
 
-        balance       = state.get("balance", 10000)
-        peak          = state.get("peak_balance", 10000)
-        closed        = state.get("closed_trades", [])
-        open_trades   = state.get("open_trades", [])
+        account       = state.get("account", {})
+        trades        = state.get("trades", {})
+        positions     = state.get("positions", {})
+        balance       = state.get("balance", account.get("balance", 10000))
+        peak          = state.get("peak_balance", account.get("peak_balance", 10000))
+        closed        = state.get("closed_trades", trades.get("closed", []))
+        open_trades   = state.get("open_trades", positions.get("open", []))
 
         # Drawdown score
         dd = (peak - balance) / peak * 100 if peak > 0 else 0
@@ -221,22 +223,17 @@ class OrchestratorAgent:
 
     def save_decision(self, decision):
         """Save latest decision for other agents to read."""
-        with open(DECISION_FILE, "w") as f:
-            json.dump(decision, f, indent=2)
+        state = self.load_paper_trading_state()
+        save_json(DECISION_FILE, build_orchestrator_snapshot(decision, state=state))
 
         # Append to log
         logs = []
         if os.path.exists(LOG_FILE):
-            with open(LOG_FILE, "r") as f:
-                try:
-                    logs = json.load(f)
-                except:
-                    logs = []
+            logs = load_json(LOG_FILE, []) or []
         logs.append(decision)
         # Keep last 100 decisions only
         logs = logs[-100:]
-        with open(LOG_FILE, "w") as f:
-            json.dump(logs, f, indent=2)
+        save_json(LOG_FILE, logs)
 
     def print_decision(self, decision):
         """Print decision to terminal."""

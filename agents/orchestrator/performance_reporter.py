@@ -12,6 +12,8 @@ import json
 import os
 from datetime import datetime, timedelta
 
+from core.state_schema import load_json
+
 STATE_FILE   = "paper_trading/logs/state.json"
 REPORT_DIR   = "backtesting/reports"
 BACKTEST_CSV = "backtesting/reports/backtest_results.csv"
@@ -23,10 +25,7 @@ class PerformanceReporter:
         os.makedirs(REPORT_DIR, exist_ok=True)
 
     def load_state(self):
-        if not os.path.exists(STATE_FILE):
-            return None
-        with open(STATE_FILE, "r") as f:
-            return json.load(f)
+        return load_json(STATE_FILE)
 
     def generate_report(self, state=None):
         """Generate full performance report."""
@@ -37,10 +36,13 @@ class PerformanceReporter:
             print("No trading data found. Run paper trader first.")
             return
 
-        closed      = state.get("closed_trades", [])
-        open_trades = state.get("open_trades", [])
-        balance     = state.get("balance", 10000)
-        peak        = state.get("peak_balance", 10000)
+        account     = state.get("account", {})
+        trades      = state.get("trades", {})
+        positions   = state.get("positions", {})
+        closed      = state.get("closed_trades", trades.get("closed", []))
+        open_trades = state.get("open_trades", positions.get("open", []))
+        balance     = state.get("balance", account.get("balance", 10000))
+        peak        = state.get("peak_balance", account.get("peak_balance", 10000))
         initial     = 10000.0
 
         # Core metrics

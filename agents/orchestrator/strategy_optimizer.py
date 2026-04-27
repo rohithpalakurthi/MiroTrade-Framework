@@ -28,6 +28,10 @@ from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
+from backtesting.research.experiment_registry import register_experiment
+from backtesting.research.promotion import evaluate_promotion
+from backtesting.research.strategy_research import get_strategy, load_research_dataframe
+from backtesting.research.walk_forward import run_backtest_summary, walk_forward_validate
 from strategies.scalper_v15.scalper_v15 import backtest_v15f, PARAMS as V15F_DEFAULT_PARAMS
 
 RESULTS_DIR  = "backtesting/reports"
@@ -73,10 +77,18 @@ def _tg(msg):
 
 
 # ── MT5 data fetch ──────────────────────────────────────────────
-def _fetch_mt5_bars(bars=3000):
+def _fetch_mt5_bars(timeframe="M5", bars=3000):
     try:
         import MetaTrader5 as mt5
         import pandas as pd
+        tf_map = {
+            "M1": mt5.TIMEFRAME_M1,
+            "M5": mt5.TIMEFRAME_M5,
+            "M15": mt5.TIMEFRAME_M15,
+            "M30": mt5.TIMEFRAME_M30,
+            "H1": mt5.TIMEFRAME_H1,
+            "H4": mt5.TIMEFRAME_H4,
+        }
         if not mt5.initialize():
             return None
         login    = int(os.getenv("MT5_LOGIN", 0))
@@ -84,7 +96,7 @@ def _fetch_mt5_bars(bars=3000):
         server   = os.getenv("MT5_SERVER", "")
         if login:
             mt5.login(login, password=password, server=server)
-        rates = mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_H1, 0, bars)
+        rates = mt5.copy_rates_from_pos("XAUUSD", tf_map.get(timeframe.upper(), mt5.TIMEFRAME_M5), 0, bars)
         mt5.shutdown()
         if rates is None or len(rates) == 0:
             return None
@@ -92,7 +104,7 @@ def _fetch_mt5_bars(bars=3000):
         df["time"] = pd.to_datetime(df["time"], unit="s")
         df.set_index("time", inplace=True)
         df.rename(columns={"tick_volume": "volume"}, inplace=True)
-        print("[Optimizer] Fetched {} H1 bars from MT5".format(len(df)))
+        print("[Optimizer] Fetched {} {} bars from MT5".format(len(df), timeframe.upper()))
         return df
     except Exception as e:
         print("[Optimizer] MT5 fetch error: {}".format(e))
@@ -129,36 +141,12 @@ def _score(r):
 # ── Single backtest wrapper ─────────────────────────────────────
 def _run_one(df, params):
     try:
-        import statistics
-        result = backtest_v15f(df.copy(), params=params)
-        if not result or not result.get("trades"):
+        result = run_backtest_summary(df.copy(), params)
+        if not result or result.get("total_trades", 0) == 0:
             return None
-        trades = result["trades"]
-        n      = len(trades)
-        if n == 0:
-            return None
-        wins   = [t for t in trades if t.get("result") == "win"]
-        losses = [t for t in trades if t.get("result") != "win"]
-        wr     = len(wins) / n * 100
-        pnls   = [t.get("pnl", 0) for t in trades]
-        gp     = sum(p for p in pnls if p > 0)
-        gl     = abs(sum(p for p in pnls if p <= 0))
-        pf     = gp / gl if gl > 0 else 9.99
-        bal    = result.get("final_balance", 10000)
-        peak   = result.get("peak_balance", bal)
-        dd     = (peak - bal) / peak * 100 if peak > 0 else 0
-        ret    = (bal - 10000) / 10000 * 100
-        sh     = (sum(pnls) / n) / statistics.stdev(pnls) if n > 1 and statistics.stdev(pnls) > 0 else 0
-        return {
-            "total_trades" : n,
-            "win_rate"     : round(wr, 2),
-            "profit_factor": round(pf, 2),
-            "net_pnl"      : round(bal - 10000, 2),
-            "return_pct"   : round(ret, 2),
-            "max_drawdown" : round(dd, 2),
-            "sharpe"       : round(sh, 4),
-            "final_balance": round(bal, 2),
-        }
+        result.pop("trades", None)
+        result["sharpe"] = 0.0
+        return result
     except Exception as e:
         return None
 
@@ -179,21 +167,30 @@ def _git_commit(msg):
 class StrategyOptimizer:
 
     def __init__(self):
+        self.strategy = get_strategy("v15f")
         print("[Optimizer] v15F Strategy Optimizer v2.0 initialized")
 
     def run_optimization(self, max_combinations=30):
         print("")
         print("=" * 60)
-        print("  MIRO NIGHTLY OPTIMIZER — v15F")
+        print("  MIRO NIGHTLY OPTIMIZER - v15F")
         print("  {}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         print("=" * 60)
 
         # 1. Fetch data
-        df = _fetch_mt5_bars(bars=3000)
+        research_tf = getattr(self.strategy, "preferred_research_timeframe", "M5")
+        dataset_path = getattr(self.strategy, "preferred_research_data", None)
+        df = _fetch_mt5_bars(timeframe=research_tf, bars=5000)
+        source = "mt5_{}".format(research_tf.lower())
         if df is None:
-            print("[Optimizer] No MT5 data — aborting")
-            _tg("<b>⚠️ OPTIMIZER</b>\nCould not fetch MT5 data. Skipped.")
-            return None
+            try:
+                df, dataset_path = load_research_dataframe("v15f", dataset_path)
+                source = dataset_path
+                print("[Optimizer] Using local research dataset {}".format(dataset_path))
+            except Exception:
+                print("[Optimizer] No research data available - aborting")
+                _tg("<b>⚠️ OPTIMIZER</b>\nCould not fetch MT5 data and no local research CSV was found. Skipped.")
+                return None
 
         # 2. Load current baseline params
         current_full, current_delta = _load_current_params()
@@ -203,11 +200,11 @@ class StrategyOptimizer:
         baseline = _run_one(df, current_full)
         if baseline:
             baseline["composite_score"] = _score(baseline)
-            print("[Optimizer] Baseline → WR:{}% PF:{} DD:{}% Trades:{}".format(
+            print("[Optimizer] Baseline -> WR:{}% PF:{} DD:{}% Trades:{}".format(
                 baseline["win_rate"], baseline["profit_factor"],
                 baseline["max_drawdown"], baseline["total_trades"]))
         else:
-            print("[Optimizer] Baseline failed — too few trades")
+            print("[Optimizer] Baseline failed - too few trades")
 
         # 4. Build search grid
         keys   = list(PARAM_GRID.keys())
@@ -239,6 +236,17 @@ class StrategyOptimizer:
         results.sort(key=lambda x: x["composite_score"], reverse=True)
         best = results[0]
         top5 = results[:5]
+        walk_forward = None
+        try:
+            walk_forward = walk_forward_validate(
+                df,
+                {**current_full, **best["params"]},
+                train_bars=1500,
+                test_bars=300,
+                step_bars=300,
+            )
+        except Exception as e:
+            print("[Optimizer] Walk-forward skipped: {}".format(e))
 
         # 5. Decide whether to auto-apply
         applied   = False
@@ -247,8 +255,9 @@ class StrategyOptimizer:
             wr_delta = best["win_rate"]      - baseline["win_rate"]
             pf_delta = best["profit_factor"] - baseline["profit_factor"]
             dd_ok    = best["max_drawdown"]  <= MAX_DD_PCT
+            wf_ok    = bool(walk_forward and walk_forward.get("profitable_window_ratio", 0) >= 0.5 and walk_forward.get("average_profit_factor", 0) >= 1.1)
 
-            gate_pass = wr_delta >= MIN_WR_DELTA and pf_delta >= MIN_PF_DELTA and dd_ok
+            gate_pass = wr_delta >= MIN_WR_DELTA and pf_delta >= MIN_PF_DELTA and dd_ok and wf_ok
             if gate_pass:
                 # Merge only the tuned keys
                 new_applied = {**current_delta, **best["params"]}
@@ -265,27 +274,28 @@ class StrategyOptimizer:
                 # Build param diff string
                 changed = {k: v for k, v in best["params"].items()
                            if current_full.get(k) != v}
-                diff_lines = ["  {} : {} → {}".format(
+                diff_lines = ["  {} : {} -> {}".format(
                     k, current_full.get(k, "?"), v) for k, v in changed.items()]
                 diff_str = "\n".join(diff_lines) if diff_lines else "  (no key changes)"
                 auto_msg = "AUTO-APPLIED ({} params changed)".format(len(changed))
                 commit_msg = "[MIRO Auto] v15F optimized: WR {:+.1f}% PF {:+.2f} | {}".format(
                     wr_delta, pf_delta,
-                    ", ".join("{}→{}".format(k, v) for k, v in changed.items())[:80])
+                    ", ".join("{}->{}".format(k, v) for k, v in changed.items())[:80])
                 _git_commit(commit_msg)
-                print("[Optimizer] AUTO-APPLIED — changes committed to git")
+                print("[Optimizer] AUTO-APPLIED - changes committed to git")
                 print(diff_str)
             else:
                 reasons = []
                 if wr_delta < MIN_WR_DELTA:  reasons.append("WR delta {:.1f}% < {:.1f}%".format(wr_delta, MIN_WR_DELTA))
                 if pf_delta < MIN_PF_DELTA:  reasons.append("PF delta {:.2f} < {:.2f}".format(pf_delta, MIN_PF_DELTA))
                 if not dd_ok:                reasons.append("DD {:.1f}% > {:.1f}%".format(best["max_drawdown"], MAX_DD_PCT))
-                auto_msg = "NOT APPLIED — " + " | ".join(reasons)
+                if not wf_ok:                reasons.append("walk-forward quality too low")
+                auto_msg = "NOT APPLIED - " + " | ".join(reasons)
                 diff_str = "  (params unchanged)"
                 changed  = {}
                 print("[Optimizer] NOT applied: {}".format(auto_msg))
         else:
-            auto_msg = "NOT APPLIED — no baseline or insufficient trades"
+            auto_msg = "NOT APPLIED - no baseline or insufficient trades"
             diff_str = "  (params unchanged)"
             changed  = {}
 
@@ -306,6 +316,7 @@ class StrategyOptimizer:
             "best_result"   : best,
             "baseline"      : baseline,
             "improvement"   : imp,
+            "walk_forward"  : walk_forward,
             "top5"          : top5,
             "applied"       : applied,
             "auto_msg"      : auto_msg,
@@ -313,6 +324,16 @@ class StrategyOptimizer:
 
         with open(IMPROVE_LOG, "w") as f:
             json.dump(report, f, indent=2, default=str)
+
+        register_experiment(
+            strategy="v15f",
+            experiment_type="optimization",
+            dataset={"source": source, "bars": len(df), "timeframe": research_tf, "max_combinations": len(combos)},
+            params={**current_full, **best["params"]},
+            results=report,
+            notes="Nightly optimizer run",
+        )
+        evaluate_promotion("v15f")
 
         # 7. Rich Telegram report
         _send_telegram_report(report, baseline, best, imp, applied, auto_msg,

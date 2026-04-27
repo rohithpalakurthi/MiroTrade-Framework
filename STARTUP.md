@@ -59,6 +59,13 @@ cd "D:/Trading Project/MiroTrade-Framework"
 python dashboard/backend/price_feed.py
 ```
 
+### Research Data Refresh — optional but recommended
+Exports fresh MT5 candles for optimizer and walk-forward research.
+```bash
+cd "D:/Trading Project/MiroTrade-Framework"
+python backtesting/data/export_mt5_data.py --symbol XAUUSD --timeframe M5 --days 365
+```
+
 ### Terminal 3 — TradingView Webhook Bridge (only if using TV alerts)
 Starts Flask server on port 5000 + ngrok tunnel. Sends webhook URL to Telegram.
 ```bash

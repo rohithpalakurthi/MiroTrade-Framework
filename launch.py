@@ -17,6 +17,8 @@ from dotenv import load_dotenv
 load_dotenv()
 sys.path.append(os.getcwd())
 
+from core.state_schema import load_json, save_json
+
 # Global agent status tracker
 AGENT_STATUS = {}
 STATUS_FILE  = "paper_trading/logs/agents_status.json"
@@ -273,6 +275,59 @@ def run_performance_report():
     except Exception as e:
         print("[REPORTER] Error: {}".format(e))
 
+def run_survival_manager():
+    set_status("SurvivalMgr", "starting")
+    try:
+        from agents.orchestrator.survival_manager import SurvivalManager
+        set_status("SurvivalMgr", "running", "Self-quarantine every 5min")
+        SurvivalManager().run(interval_seconds=300)
+    except Exception as e:
+        set_status("SurvivalMgr", "error", str(e))
+        print("[SURVIVAL] Fatal: {}".format(e))
+
+def run_setup_supervisor():
+    set_status("SetupSupervisor", "starting")
+    try:
+        from agents.orchestrator.setup_supervisor import SetupSupervisor
+        set_status("SetupSupervisor", "running", "Setup and agent health every 60s")
+        SetupSupervisor().run(interval_seconds=60)
+    except Exception as e:
+        set_status("SetupSupervisor", "error", str(e))
+        print("[SETUP SUPERVISOR] Fatal: {}".format(e))
+
+def run_autonomous_discovery_loop():
+    set_status("StrategyDiscovery", "starting")
+    try:
+        from backtesting.research.autonomous_discovery import run_autonomous_discovery
+        set_status("StrategyDiscovery", "running", "Daily candidate research")
+        last_run = ""
+        while True:
+            today = datetime.now().date().isoformat()
+            hour = datetime.now().hour
+            if last_run != today and hour >= 3:
+                print("[Discovery] Running autonomous strategy discovery...")
+                try:
+                    run_autonomous_discovery(max_candidates=20, max_specs=60, max_bars=30000)
+                    last_run = today
+                    set_status("StrategyDiscovery", "running", "Last discovery {}".format(today))
+                except Exception as e:
+                    set_status("StrategyDiscovery", "warn", str(e))
+                    print("[Discovery] Error: {}".format(e))
+            time.sleep(900)
+    except Exception as e:
+        set_status("StrategyDiscovery", "error", str(e))
+        print("[DISCOVERY] Fatal: {}".format(e))
+
+def run_strategy_lifecycle_loop():
+    set_status("StrategyLifecycle", "starting")
+    try:
+        from backtesting.research.lifecycle_manager import StrategyLifecycleManager
+        set_status("StrategyLifecycle", "running", "Promote/demote every 5min")
+        StrategyLifecycleManager().run(interval_seconds=300)
+    except Exception as e:
+        set_status("StrategyLifecycle", "error", str(e))
+        print("[LIFECYCLE] Fatal: {}".format(e))
+
 # ── MIRO Specialist Agents ──────────────────────────────────────
 
 def run_scale_out():
@@ -400,6 +455,49 @@ def run_partial_entry():
     except Exception as e:
         set_status("PartialEntry", "error", str(e))
         print("[PARTIAL ENTRY] Fatal: {}".format(e))
+
+def run_pattern_recognition():
+    set_status("PatternRec", "starting")
+    time.sleep(20)
+    try:
+        from agents.master_trader.pattern_recognition import run
+        set_status("PatternRec", "running", "H&S/DTop/Flag detection every 10min")
+        run()
+    except Exception as e:
+        set_status("PatternRec", "error", str(e))
+        print("[PATTERN REC] Fatal: {}".format(e))
+
+def run_cot_feed():
+    set_status("COTFeed", "starting")
+    try:
+        from agents.master_trader.cot_feed import run
+        set_status("COTFeed", "running", "CFTC Gold COT weekly")
+        run()
+    except Exception as e:
+        set_status("COTFeed", "error", str(e))
+        print("[COT FEED] Fatal: {}".format(e))
+
+def run_sentiment_score():
+    set_status("SentimentScore", "starting")
+    time.sleep(30)
+    try:
+        from agents.master_trader.sentiment_score import run
+        set_status("SentimentScore", "running", "Composite sentiment every 5min")
+        run()
+    except Exception as e:
+        set_status("SentimentScore", "error", str(e))
+        print("[SENTIMENT] Fatal: {}".format(e))
+
+def run_multi_symbol():
+    set_status("MultiSymbol", "starting")
+    time.sleep(15)
+    try:
+        from agents.master_trader.multi_symbol_monitor import run
+        set_status("MultiSymbol", "running", "EURUSD/US30/USOIL/USDJPY every 5min")
+        run()
+    except Exception as e:
+        set_status("MultiSymbol", "error", str(e))
+        print("[MULTI SYM] Fatal: {}".format(e))
 
 def run_scheduler():
     set_status("Scheduler", "starting")
@@ -576,6 +674,10 @@ if __name__ == "__main__":
         threading.Thread(target=run_crypto_extension,    daemon=True, name="Crypto"),
         threading.Thread(target=run_scheduler,           daemon=True, name="Scheduler"),
         threading.Thread(target=run_performance_report,  daemon=True, name="Reporter"),
+        threading.Thread(target=run_survival_manager,    daemon=True, name="SurvivalMgr"),
+        threading.Thread(target=run_setup_supervisor,     daemon=True, name="SetupSupervisor"),
+        threading.Thread(target=run_autonomous_discovery_loop, daemon=True, name="StrategyDiscovery"),
+        threading.Thread(target=run_strategy_lifecycle_loop, daemon=True, name="StrategyLifecycle"),
         threading.Thread(target=run_price_feed,          daemon=True, name="PriceFeed"),
         # ── MIRO specialist agents ──
         threading.Thread(target=run_scale_out,           daemon=True, name="ScaleOut"),
@@ -587,71 +689,142 @@ if __name__ == "__main__":
         threading.Thread(target=run_trade_journal,       daemon=True, name="TradeJournal"),
         threading.Thread(target=run_supply_demand,       daemon=True, name="SupplyDemand"),
         threading.Thread(target=run_correlation_guard,   daemon=True, name="CorrelationGuard"),
-        threading.Thread(target=run_multi_brain,         daemon=True, name="MultiBrain"),
-        threading.Thread(target=run_miro_dashboard,      daemon=True, name="MiroDashboard"),
-        threading.Thread(target=run_partial_entry,       daemon=True, name="PartialEntry"),
+        threading.Thread(target=run_multi_brain,          daemon=True, name="MultiBrain"),
+        threading.Thread(target=run_miro_dashboard,       daemon=True, name="MiroDashboard"),
+        threading.Thread(target=run_partial_entry,        daemon=True, name="PartialEntry"),
+        # ── New intelligence agents ──
+        threading.Thread(target=run_pattern_recognition,  daemon=True, name="PatternRec"),
+        threading.Thread(target=run_cot_feed,             daemon=True, name="COTFeed"),
+        threading.Thread(target=run_sentiment_score,      daemon=True, name="SentimentScore"),
+        threading.Thread(target=run_multi_symbol,         daemon=True, name="MultiSymbol"),
     ]
     if tg_ok:
         threads.append(threading.Thread(target=run_telegram_agent, daemon=True, name="Telegram"))
 
-    # Staggered launch — silent per-agent, show progress bar
+    # Staggered launch — agents print their own init messages, we just stagger
     total = len(threads)
-    for i, t in enumerate(threads):
+    print("  Starting {} agents (1s stagger)...".format(total))
+    print("")
+    for t in threads:
         t.start()
-        bar = "█" * (i + 1) + "░" * (total - i - 1)
-        print("  Launching [{bar}] {cur}/{tot}\r".format(
-            bar=bar[:30], cur=i+1, tot=total), end="", flush=True)
         time.sleep(1)
-    print("")  # newline after progress bar
 
-    # ── Key status ───────────────────────────────────────────
-    openai_ok    = "✓ set" if os.getenv("OPENAI_API_KEY",    "").startswith("sk-") else "✗ MISSING"
-    anthropic_ok = "✓ set" if os.getenv("ANTHROPIC_API_KEY", "").startswith("sk-") else "✗ MISSING"
+    # Wait for init noise to settle, then print clean summary
+    time.sleep(3)
+
+    openai_ok    = "OK" if os.getenv("OPENAI_API_KEY",    "").startswith("sk-") else "MISSING"
+    anthropic_ok = "OK" if os.getenv("ANTHROPIC_API_KEY", "").startswith("sk-") else "MISSING"
 
     print("")
-    print("  {:<22} {:<10} {}".format("AGENT", "INTERVAL", "ROLE"))
-    print("  " + "─" * 54)
+    print("=" * 60)
+    print("  ALL {} AGENTS RUNNING".format(total))
+    print("=" * 60)
+    print("  {:<20} {:<8} {}".format("AGENT", "EVERY", "ROLE"))
+    print("  " + "-" * 56)
     rows = [
-        ("MasterTrader",    "30s",   "MIRO — autonomous AI entries"),
+        ("MasterTrader",    "30s",   "MIRO autonomous AI entries"),
         ("PositionManager", "30s",   "AI position management"),
-        ("ScaleOut",        "15s",   "3-tier TP: +1R / +2R / +3R"),
-        ("BreakevenGuard",  "10s",   "SL → entry at +1R"),
+        ("ScaleOut",        "15s",   "TP tiers +1R/+2R/+3R"),
+        ("BreakevenGuard",  "10s",   "SL to entry at +1R"),
         ("CircuitBreaker",  "10s",   "Daily loss limit"),
         ("Orchestrator",    "60s",   "GO/NO-GO gate"),
-        ("MarketAnalyst",   "1hr",   "MTF narrative"),
-        ("NewsSentinel",    "30min", "High-impact news block"),
-        ("RiskManager",     "5min",  "Kelly sizing + drawdown"),
-        ("DXYYields",       "5min",  "DXY / US10Y correlation"),
-        ("RegimeDetector",  "5min",  "Bull/bear/chop regime"),
-        ("MultiBrain",      "5min",  "3-model AI consensus"),
-        ("SupplyDemand",    "5min",  "S&D order block zones"),
+        ("NewsSentinel",    "30min", "News block"),
+        ("RiskManager",     "5min",  "Kelly sizing"),
+        ("DXYYields",       "5min",  "DXY / US10Y"),
+        ("RegimeDetector",  "5min",  "Bull/bear/chop"),
+        ("MultiBrain",      "5min",  "3-model consensus"),
+        ("SupplyDemand",    "5min",  "S&D zones"),
         ("Fibonacci",       "5min",  "Auto fib levels"),
-        ("EconCalendar",    "live",  "NFP/CPI/FOMC pause guard"),
+        ("EconCalendar",    "live",  "NFP/CPI/FOMC guard"),
         ("MT5Bridge",       "30s",   "Live MT5 sync"),
-        ("MiroDashboard",   "live",  "UI → localhost:5055"),
+        ("PatternRec",      "10min", "H&S/Double Top/Flag"),
+        ("COTFeed",         "weekly","CFTC institutional positioning"),
+        ("SentimentScore",  "5min",  "Composite 0-10 sentiment"),
+        ("MultiSymbol",     "5min",  "EURUSD/US30/USOIL/USDJPY"),
+        ("MiroDashboard",   "live",  "localhost:5055"),
     ]
     for name, interval, role in rows:
-        print("  {:<22} {:<10} {}".format(name, interval, role))
-    print("  " + "─" * 54)
-    print("  OpenAI API key   : {}".format(openai_ok))
-    print("  Anthropic API key: {}".format(anthropic_ok))
-    print("")
-    print("  {} agents running  |  Dashboard → http://localhost:5055".format(total))
-    print("  Press Ctrl+C to stop")
+        print("  {:<20} {:<8} {}".format(name, interval, role))
+    print("  " + "-" * 56)
+    print("  OpenAI  : {}  |  Anthropic : {}".format(openai_ok, anthropic_ok))
+    print("  Dashboard  -->  http://localhost:5055")
+    print("  Ctrl+C to stop")
     print("=" * 60)
+    print("")
 
-    # Startup Telegram
+    # Startup Telegram — rich alert with live market snapshot
+    _launch_time = datetime.now()
     if tg_ok:
         try:
             time.sleep(5)
-            from agents.telegram.telegram_agent import TelegramAlertAgent
-            TelegramAlertAgent().send_message(
-                "<b>MIROTRADE v3.0 ONLINE</b>\n"
-                "{} agents launched\n"
-                "Regime | Fib | S&D | DXY | Kelly | Brain | Journal | Calendar | Partial Entry\n"
-                "Dashboard: http://localhost:5055\n"
-                "Time: {}".format(len(threads), datetime.now().strftime("%H:%M:%S IST")))
-        except: pass
+            import requests as _req
+
+            # Read live context
+            _regime, _price, _dxy, _bias, _balance, _session = "?", "?", "?", "?", "?", "?"
+            try:
+                with open("agents/master_trader/regime.json") as _f:
+                    _r = json.load(_f)
+                _regime = _r.get("regime", "?")
+            except: pass
+            try:
+                with open("agents/master_trader/dxy_yields.json") as _f:
+                    _d = json.load(_f)
+                _price = _d.get("dxy", "?")
+                _dxy   = _d.get("dxy", "?")
+                _bias  = _d.get("gold_bias", "?")
+            except: pass
+            try:
+                with open("agents/master_trader/multi_brain.json") as _f:
+                    _mb = json.load(_f)
+                _price = _mb.get("snapshot", {}).get("price", _price)
+            except: pass
+            try:
+                with open("agents/risk_manager/risk_state.json") as _f:
+                    _rs = json.load(_f)
+                _balance = "${}".format(_rs.get("balance", "?"))
+            except: pass
+
+            _utc_h = datetime.utcnow().hour
+            if   7  <= _utc_h < 9:  _session = "LONDON PRIME"
+            elif 9  <= _utc_h < 13: _session = "LONDON"
+            elif 13 <= _utc_h < 16: _session = "OVERLAP"
+            elif 16 <= _utc_h < 21: _session = "NEW YORK"
+            elif 0  <= _utc_h < 7:  _session = "ASIAN"
+            else:                   _session = "DEAD ZONE"
+
+            _openai_ok    = "OK" if os.getenv("OPENAI_API_KEY",    "").startswith("sk-") else "MISSING"
+            _anthropic_ok = "OK" if os.getenv("ANTHROPIC_API_KEY", "").startswith("sk-") else "MISSING"
+            _alive = sum(1 for t in threads if t.is_alive())
+
+            _msg = (
+                "<b>MIRO v3.0 ONLINE</b>\n"
+                "━━━━━━━━━━━━━━━━━━━━\n"
+                "<b>Time:</b>     {time}  IST\n"
+                "<b>Session:</b>  {session}\n"
+                "<b>Agents:</b>   {alive}/{total} running\n"
+                "━━━━━━━━━━━━━━━━━━━━\n"
+                "<b>Gold:</b>     ${price}\n"
+                "<b>Regime:</b>   {regime}\n"
+                "<b>DXY Bias:</b> {bias}\n"
+                "<b>Balance:</b>  {balance}\n"
+                "━━━━━━━━━━━━━━━━━━━━\n"
+                "<b>GPT-4o:</b>   {gpt}  |  <b>Claude:</b> {claude}\n"
+                "<b>Dashboard:</b> localhost:5055\n"
+                "<i>Ready to trade. Commands: /analyse /status /pause /resume /closeall</i>"
+            ).format(
+                time=_launch_time.strftime("%H:%M:%S"),
+                session=_session,
+                alive=_alive, total=len(threads),
+                price=_price, regime=_regime, bias=_bias, balance=_balance,
+                gpt=_openai_ok, claude=_anthropic_ok
+            )
+            _req.post(
+                "https://api.telegram.org/bot{}/sendMessage".format(os.getenv("TELEGRAM_BOT_TOKEN")),
+                data={"chat_id": os.getenv("TELEGRAM_CHAT_ID"), "text": _msg, "parse_mode": "HTML"},
+                timeout=10
+            )
+        except Exception as _e:
+            print("[LAUNCHER] Startup Telegram failed: {}".format(_e))
 
     # Main loop - write alive count every 60s
     try:
@@ -667,19 +840,67 @@ if __name__ == "__main__":
             try:
                 sp = "paper_trading/logs/state.json"
                 if os.path.exists(sp):
-                    with open(sp) as f: st = json.load(f)
+                    st = load_json(sp, {}) or {}
                     st["agents_alive"] = alive
                     st["agents_total"] = len(threads)
                     st["agents_status"] = AGENT_STATUS
-                    with open(sp, "w") as f: json.dump(st, f, indent=2)
+                    st.setdefault("system", {})
+                    st["system"]["agents_alive"] = alive
+                    st["system"]["agents_total"] = len(threads)
+                    st["system"]["agents_status"] = AGENT_STATUS
+                    save_json(sp, st)
             except: pass
             time.sleep(60)
     except KeyboardInterrupt:
         print("\nShutting down MiroTrade...")
         if tg_ok:
             try:
-                from agents.telegram.telegram_agent import TelegramAlertAgent
-                TelegramAlertAgent().send_message("<b>MIROTRADE OFFLINE</b>\nStopped: {}".format(
-                    datetime.now().strftime("%H:%M:%S")))
+                import requests as _req
+                _uptime  = datetime.now() - _launch_time
+                _hours   = int(_uptime.total_seconds() // 3600)
+                _minutes = int((_uptime.total_seconds() % 3600) // 60)
+                _alive   = sum(1 for t in threads if t.is_alive())
+                _stopped = [t.name for t in threads if not t.is_alive()]
+
+                # Today's trade count
+                _entries, _closes = 0, 0
+                try:
+                    with open("agents/master_trader/state.json") as _f:
+                        _entries = json.load(_f).get("daily_trades", 0)
+                except: pass
+                try:
+                    _today = datetime.now().strftime("%Y-%m-%d")
+                    with open("agents/position_manager/decisions_log.json") as _f:
+                        _logs = json.load(_f)
+                    _closes = sum(1 for l in _logs
+                                  if l.get("time","").startswith(_today)
+                                  and l.get("action") in ("CLOSE_FULL","CLOSE_PARTIAL"))
+                except: pass
+
+                _stopped_str = ", ".join(_stopped) if _stopped else "none"
+                _msg = (
+                    "<b>MIRO OFFLINE</b>\n"
+                    "━━━━━━━━━━━━━━━━━━━━\n"
+                    "<b>Stopped:</b>  {time} IST\n"
+                    "<b>Uptime:</b>   {h}h {m}m\n"
+                    "<b>Agents:</b>   {alive}/{total} were alive\n"
+                    "━━━━━━━━━━━━━━━━━━━━\n"
+                    "<b>Today entries:</b>  {entries}\n"
+                    "<b>Today closes:</b>   {closes}\n"
+                    "<b>Crashed agents:</b> {stopped}\n"
+                    "━━━━━━━━━━━━━━━━━━━━\n"
+                    "<i>Restart launch.py to resume trading</i>"
+                ).format(
+                    time=datetime.now().strftime("%H:%M:%S"),
+                    h=_hours, m=_minutes,
+                    alive=_alive, total=len(threads),
+                    entries=_entries, closes=_closes,
+                    stopped=_stopped_str
+                )
+                _req.post(
+                    "https://api.telegram.org/bot{}/sendMessage".format(os.getenv("TELEGRAM_BOT_TOKEN")),
+                    data={"chat_id": os.getenv("TELEGRAM_CHAT_ID"), "text": _msg, "parse_mode": "HTML"},
+                    timeout=10
+                )
             except: pass
         print("Goodbye.")

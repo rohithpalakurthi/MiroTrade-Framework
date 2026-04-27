@@ -53,6 +53,7 @@ FILES = {
     "strategy_portfolio": "backtesting/reports/strategy_portfolio.json",
     "strategy_lifecycle": "backtesting/reports/strategy_lifecycle.json",
     "survival_state": "agents/orchestrator/survival_state.json",
+    "setup_supervisor": "agents/orchestrator/setup_supervisor.json",
     "patterns"       : "agents/master_trader/patterns.json",
     "cot"            : "agents/master_trader/cot_data.json",
     "sentiment"      : "agents/master_trader/sentiment.json",
@@ -324,6 +325,7 @@ def _agent_health():
         "Breakeven"  : ("agents/master_trader/breakeven_state.json",        86400),   # same
         "Price Feed" : ("dashboard/frontend/live_price.json",                  60),   # should update every 5s
         "Multi Brain": ("agents/master_trader/multi_brain.json",              600),
+        "Setup Sup"  : ("agents/orchestrator/setup_supervisor.json",          180),
     }
     result = []
     for name, (path, threshold) in checks.items():
@@ -387,6 +389,7 @@ def api_miro():
         "strategy_portfolio": _load("strategy_portfolio"),
         "strategy_lifecycle": _load_strategy_lifecycle(),
         "survival_state": _load("survival_state"),
+        "setup_supervisor": _load("setup_supervisor"),
         "journal_last5" : (_load("journal") or [])[-5:],
         "agent_health"  : _agent_health(),
         "agents_legacy" : agents_legacy,
@@ -473,6 +476,15 @@ def api_autonomy():
 @app.route("/api/readiness", methods=["GET"])
 def api_readiness():
     return jsonify(_build_autonomy_readiness(request.args.get("strategy", "v15f")))
+
+
+@app.route("/api/setup-supervisor", methods=["GET"])
+def api_setup_supervisor():
+    refresh = request.args.get("refresh", "").lower() in {"1", "true", "yes"}
+    if refresh:
+        from agents.orchestrator.setup_supervisor import evaluate_setup
+        return jsonify(evaluate_setup())
+    return jsonify(_load("setup_supervisor"))
 
 
 @app.route("/api/live-safety", methods=["GET"])
@@ -2049,10 +2061,814 @@ setInterval(refreshAll, 3000);
 </body>
 </html>"""
 
+PRO_DASHBOARD_HTML = r"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MIRO Control Center</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#0b0d10;--panel:#11161b;--panel2:#151b22;--line:#27313b;--line2:#344250;
+  --text:#e9edf1;--muted:#8b98a6;--soft:#b5c0cc;--green:#2fd17c;--red:#f05252;
+  --amber:#e6ad32;--cyan:#42c6ff;--blue:#6ea8fe;--ink:#050607;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}
+body{background:
+  linear-gradient(180deg,rgba(66,198,255,.08),transparent 260px),
+  radial-gradient(circle at 70% 0%,rgba(47,209,124,.08),transparent 360px),
+  var(--bg)}
+button,input,select{font:inherit}
+.shell{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
+.side{border-right:1px solid var(--line);background:rgba(8,10,12,.88);padding:18px 14px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.mark{width:34px;height:34px;border:1px solid var(--line2);display:grid;place-items:center;background:#10171d;color:var(--green);font-weight:700}
+.brand h1{font-size:15px;margin:0;letter-spacing:.08em}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:11px}
+.nav{display:flex;flex-direction:column;gap:6px;margin-top:18px}
+.nav a{color:var(--soft);text-decoration:none;padding:9px 10px;border:1px solid transparent;border-radius:6px}
+.nav a.active,.nav a:hover{background:var(--panel2);border-color:var(--line);color:var(--text)}
+.side-foot{position:absolute;left:14px;right:14px;bottom:14px;color:var(--muted);font-family:var(--mono);font-size:11px;line-height:1.6}
+.main{padding:18px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px}
+.eyebrow{color:var(--muted);font-family:var(--mono);font-size:11px;text-transform:uppercase}
+.title{font-size:28px;font-weight:700;margin:2px 0 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.btn{background:var(--panel2);border:1px solid var(--line2);color:var(--text);border-radius:6px;padding:8px 11px;cursor:pointer;min-width:80px}
+.btn:hover{border-color:var(--cyan)}
+.btn.danger{color:#ffd4d4;border-color:rgba(240,82,82,.45)}
+.btn.good{color:#d7ffe7;border-color:rgba(47,209,124,.45)}
+.status-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:10px 11px;min-height:70px}
+.label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.value{font-size:20px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{color:var(--muted);font-family:var(--mono);font-size:11px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(330px,.8fr);gap:12px}
+.section{background:rgba(17,22,27,.94);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;border-bottom:1px solid var(--line);background:rgba(21,27,34,.8)}
+.section-title{font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.08em}
+.section-body{padding:12px 13px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric-row{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(39,49,59,.72);padding:8px 0;gap:12px}
+.metric-row:last-child{border-bottom:none}
+.metric-row span:first-child{color:var(--muted)}
+.metric-row b{font-family:var(--mono);font-weight:600;text-align:right}
+.pill{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line2);border-radius:999px;padding:3px 8px;font-size:11px;font-family:var(--mono);color:var(--soft);white-space:nowrap}
+.pill.green{color:var(--green);border-color:rgba(47,209,124,.38);background:rgba(47,209,124,.08)}
+.pill.red{color:var(--red);border-color:rgba(240,82,82,.42);background:rgba(240,82,82,.08)}
+.pill.amber{color:var(--amber);border-color:rgba(230,173,50,.42);background:rgba(230,173,50,.08)}
+.table{width:100%;border-collapse:collapse;font-size:12px}
+.table th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+.table td{padding:8px 6px;border-bottom:1px solid rgba(39,49,59,.7);vertical-align:top}
+.mono{font-family:var(--mono)}
+.green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}.muted{color:var(--muted)}
+.stack{display:grid;gap:12px}
+.bar{height:7px;background:#0d1216;border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));width:0%}
+.log{font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.6;max-height:140px;overflow:auto;background:#0d1115;border:1px solid var(--line);border-radius:6px;padding:9px}
+.checklist{display:grid;gap:7px}
+.check{display:grid;grid-template-columns:auto minmax(0,1fr);gap:9px;align-items:start;border:1px solid rgba(39,49,59,.72);background:#0d1115;border-radius:7px;padding:8px}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:4px;background:var(--line2);box-shadow:0 0 0 3px rgba(52,66,80,.18)}
+.dot.green{background:var(--green);box-shadow:0 0 0 3px rgba(47,209,124,.14)}
+.dot.red{background:var(--red);box-shadow:0 0 0 3px rgba(240,82,82,.14)}
+.dot.amber{background:var(--amber);box-shadow:0 0 0 3px rgba(230,173,50,.14)}
+.check strong{display:block;font-size:12px}
+.check small{display:block;color:var(--muted);font-family:var(--mono);font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.mini{background:#0d1115;border:1px solid rgba(39,49,59,.8);border-radius:7px;padding:9px}
+.mini b{display:block;font-size:17px;margin-top:4px}
+.note{color:var(--muted);font-size:11px;line-height:1.5}
+.scroll-table{max-height:230px;overflow:auto;border:1px solid rgba(39,49,59,.65);border-radius:7px}
+.scroll-table .table th{position:sticky;top:0;background:#11161b;z-index:1}
+.footer{margin-top:12px;color:var(--muted);font-size:11px;font-family:var(--mono);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:1100px){.shell{grid-template-columns:1fr}.side{position:relative;height:auto}.side-foot{position:static;margin-top:20px}.status-strip{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.top{flex-direction:column}.actions{justify-content:flex-start}.mini-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.main{padding:12px}.status-strip,.split,.mini-grid{grid-template-columns:1fr}.title{font-size:22px}.value{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">
+      <div class="mark">M</div>
+      <div><h1>MIRO CONTROL</h1><p>Autonomous trading operations</p></div>
+    </div>
+    <nav class="nav">
+      <a class="active" href="/">Command Center</a>
+      <a href="/pipeline">Pipeline Flow</a>
+      <a href="/rules">Rules Control</a>
+      <a href="/legacy">Legacy Dashboard</a>
+      <a href="/api/miro">API State</a>
+      <a href="/api/autonomy">Autonomy API</a>
+    </nav>
+    <div class="side-foot">
+      <div>Mode: <span id="side-mode">loading</span></div>
+      <div>Refresh: 3s</div>
+      <div id="side-time">--</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <div>
+        <div class="eyebrow">XAUUSD Operations</div>
+        <div class="title">Autonomous Trading Control Center</div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="refreshAll()">Refresh</button>
+        <button class="btn danger" onclick="pauseMiro()">Pause</button>
+        <button class="btn good" onclick="resumeMiro()">Resume</button>
+        <button class="btn danger" onclick="closeAllPositions()">Close All</button>
+      </div>
+    </div>
+
+    <div class="status-strip">
+      <div class="stat"><div class="label">System</div><div class="value" id="system-status">--</div><div class="sub" id="system-reason">loading</div></div>
+      <div class="stat"><div class="label">Gold Bid</div><div class="value mono" id="gold-bid">--</div><div class="sub" id="gold-spread">spread --</div></div>
+      <div class="stat"><div class="label">Paper Balance</div><div class="value mono" id="balance">--</div><div class="sub" id="equity">paper equity --</div></div>
+      <div class="stat"><div class="label">MT5 Balance</div><div class="value mono" id="mt5-balance">--</div><div class="sub" id="mt5-equity">mt5 equity --</div></div>
+      <div class="stat"><div class="label">Paper P&L</div><div class="value mono" id="paper-pnl">--</div><div class="sub" id="paper-wr">WR --</div></div>
+      <div class="stat"><div class="label">Promotion</div><div class="value" id="promotion">--</div><div class="sub" id="promotion-for">--</div></div>
+      <div class="stat"><div class="label">Live Safety</div><div class="value" id="live-safety">--</div><div class="sub" id="live-target">--</div></div>
+    </div>
+
+    <div class="grid">
+      <div class="stack">
+        <section class="section">
+          <div class="section-head"><div class="section-title">Trading State</div><span class="pill" id="orch-pill">ORCH --</span></div>
+          <div class="section-body split">
+            <div>
+              <div class="metric-row"><span>Open paper trades</span><b id="open-paper">--</b></div>
+              <div class="metric-row"><span>Closed paper trades</span><b id="closed-paper">--</b></div>
+              <div class="metric-row"><span>Profit factor</span><b id="profit-factor">--</b></div>
+              <div class="metric-row"><span>Drawdown</span><b id="drawdown">--</b></div>
+              <div class="metric-row"><span>Today P&L</span><b id="today-pnl">--</b></div>
+            </div>
+            <div>
+              <div class="metric-row"><span>Signal</span><b id="signal">--</b></div>
+              <div class="metric-row"><span>Score</span><b id="signal-score">--</b></div>
+              <div class="bar"><span id="signal-bar"></span></div>
+              <div class="metric-row"><span>MTF bias</span><b id="mtf">--</b></div>
+              <div class="metric-row"><span>Regime</span><b id="regime">--</b></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Strategy Research Pipeline</div><span class="pill" id="research-pill">--</span></div>
+          <div class="section-body">
+            <div class="mini-grid">
+              <div class="mini"><div class="label">Experiments</div><b id="research-experiments">--</b></div>
+              <div class="mini"><div class="label">Best PF</div><b id="research-pf">--</b></div>
+              <div class="mini"><div class="label">Best WR</div><b id="research-wr">--</b></div>
+              <div class="mini"><div class="label">Return</div><b id="research-return">--</b></div>
+            </div>
+            <div class="scroll-table">
+              <table class="table">
+                <thead><tr><th>Candidate</th><th>Status</th><th>WR</th><th>PF</th><th>Return</th><th>Reason</th></tr></thead>
+                <tbody id="candidates-body"><tr><td colspan="6" class="muted">Waiting for discovery output</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Positions</div><span class="pill" id="live-count">0 live</span></div>
+          <div class="section-body">
+            <table class="table">
+              <thead><tr><th>Type</th><th>Size</th><th>Entry</th><th>SL</th><th>TP</th><th>P&L</th></tr></thead>
+              <tbody id="positions-body"><tr><td colspan="6" class="muted">No live positions</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Recent Paper Trades</div><span class="pill" id="trade-count">0 trades</span></div>
+          <div class="section-body">
+            <table class="table">
+              <thead><tr><th>Strategy</th><th>Side</th><th>Entry</th><th>Exit</th><th>Result</th><th>P&L</th></tr></thead>
+              <tbody id="trades-body"><tr><td colspan="6" class="muted">No paper trades yet</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="section">
+          <div class="section-head"><div class="section-title">Autonomy Readiness</div><span class="pill" id="ready-pill">--</span></div>
+          <div class="section-body">
+            <div class="metric-row"><span>Mode</span><b id="ready-mode">--</b></div>
+            <div class="metric-row"><span>Blockers</span><b id="ready-blockers">--</b></div>
+            <div class="metric-row"><span>Next action</span><b id="ready-next">--</b></div>
+            <div class="checklist" id="readiness-list"></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Setup Supervisor</div><span class="pill" id="setup-pill">--</span></div>
+          <div class="section-body">
+            <div class="metric-row"><span>Setup score</span><b id="setup-score">--</b></div>
+            <div class="metric-row"><span>Blockers</span><b id="setup-blockers">--</b></div>
+            <div class="metric-row"><span>Pause active</span><b id="setup-pause">--</b></div>
+            <div class="log" id="setup-actions">Waiting for setup supervisor...</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Autonomy Lifecycle</div><span class="pill" id="life-stage">--</span></div>
+          <div class="section-body">
+            <div class="metric-row"><span>Discovery accepted</span><b id="disc-accepted">--</b></div>
+            <div class="metric-row"><span>Active candidates</span><b id="active-candidates">--</b></div>
+            <div class="metric-row"><span>Lifecycle candidates</span><b id="life-candidates">--</b></div>
+            <div class="metric-row"><span>Survival state</span><b id="survival">--</b></div>
+            <div class="log" id="autonomy-log">Waiting for autonomy state...</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Risk & Protection</div><span class="pill" id="risk-pill">RISK --</span></div>
+          <div class="section-body">
+            <div class="metric-row"><span>News</span><b id="news">--</b></div>
+            <div class="metric-row"><span>Circuit breaker</span><b id="circuit">--</b></div>
+            <div class="metric-row"><span>Daily loss</span><b id="daily-loss">--</b></div>
+            <div class="metric-row"><span>Required approval</span><b id="required-approval">--</b></div>
+            <div class="log" id="safety-log">Waiting for safety state...</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Market Intelligence</div><span class="pill" id="intel-pill">--</span></div>
+          <div class="section-body">
+            <div class="metric-row"><span>Multi-brain</span><b id="brain">--</b></div>
+            <div class="metric-row"><span>Narrative</span><b id="narrative">--</b></div>
+            <div class="metric-row"><span>DXY / Yields</span><b id="macro">--</b></div>
+            <div class="metric-row"><span>Zones</span><b id="zones">--</b></div>
+            <div class="log" id="intel-log">Waiting for market intelligence...</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Agent Health</div><span class="pill" id="agent-count">--</span></div>
+          <div class="section-body">
+            <table class="table">
+              <thead><tr><th>Agent</th><th>Status</th><th>Age</th></tr></thead>
+              <tbody id="agents-body"><tr><td colspan="3" class="muted">Loading agents</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span id="last-update">Last update --</span>
+      <span>No profit guarantee. Live execution remains gated.</span>
+    </div>
+  </main>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const money=v=>Number(v||0).toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2});
+const num=(v,d=2)=>Number(v||0).toFixed(d);
+const cls=(el,kind)=>{el.className='pill '+(kind||'');};
+const esc=v=>String(v==null?'--':v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function setText(id,val){const el=$(id);if(el)el.textContent=val;}
+function paintMoney(id,val){const el=$(id);if(!el)return;el.textContent=(Number(val||0)>=0?'+':'')+money(val);el.className=Number(val||0)>=0?'value mono green':'value mono red';}
+function paintStatus(id,text,kind){const el=$(id);if(!el)return;el.textContent=text;el.className=kind||'';}
+function statusKind(ok,warn){return ok?'green':warn?'amber':'red';}
+
+async function pauseMiro(){await fetch('/api/pause',{method:'POST'});refreshAll();}
+async function resumeMiro(){await fetch('/api/resume',{method:'POST'});refreshAll();}
+async function closeAllPositions(){
+  if(!confirm('Close all open XAUUSD live positions now?'))return;
+  const r=await fetch('/api/close-all',{method:'POST'});const d=await r.json();
+  alert(d.status==='ok'?'Closed '+(d.closed||[]).length+' position(s).':'Error: '+(d.message||'unknown'));
+  refreshAll();
+}
+
+function renderPositions(positions){
+  const body=$('positions-body');
+  setText('live-count',(positions||[]).length+' live');
+  if(!positions||!positions.length){body.innerHTML='<tr><td colspan="6" class="muted">No live positions</td></tr>';return;}
+  body.innerHTML=positions.map(p=>`<tr>
+    <td><span class="pill ${p.type==='BUY'?'green':'red'}">${p.type||'--'}</span></td>
+    <td class="mono">${num(p.volume,2)}</td>
+    <td class="mono">${num(p.entry||p.open_price,2)}</td>
+    <td class="mono red">${num(p.sl,2)}</td>
+    <td class="mono green">${num(p.tp,2)}</td>
+    <td class="mono ${Number(p.profit||0)>=0?'green':'red'}">${money(p.profit)}</td>
+  </tr>`).join('');
+}
+
+function renderTrades(closed){
+  const body=$('trades-body');
+  setText('trade-count',(closed||[]).length+' trades');
+  if(!closed||!closed.length){body.innerHTML='<tr><td colspan="6" class="muted">No paper trades yet</td></tr>';return;}
+  body.innerHTML=closed.slice(-8).reverse().map(t=>`<tr>
+    <td>${t.strategy||'--'}</td>
+    <td><span class="pill ${(t.signal||t.direction)==='BUY'?'green':'red'}">${t.signal||t.direction||'--'}</span></td>
+    <td class="mono">${num(t.entry_price,2)}</td>
+    <td class="mono">${t.exit_price==null?'--':num(t.exit_price,2)}</td>
+    <td>${(t.result||'').toUpperCase()}</td>
+    <td class="mono ${Number(t.pnl||0)>=0?'green':'red'}">${money(t.pnl)}</td>
+  </tr>`).join('');
+}
+
+function renderAgents(agents){
+  const body=$('agents-body');
+  if(!agents||!agents.length){body.innerHTML='<tr><td colspan="3" class="muted">No agent data</td></tr>';return;}
+  const active=agents.filter(a=>a.status==='active').length;
+  setText('agent-count',active+'/'+agents.length);
+  body.innerHTML=agents.slice(0,12).map(a=>`<tr>
+    <td>${a.name}</td>
+    <td><span class="pill ${a.status==='active'?'green':a.status==='stale'?'amber':'red'}">${(a.status||'--').toUpperCase()}</span></td>
+    <td class="mono">${a.age<0?'--':a.age<60?a.age+'s':Math.floor(a.age/60)+'m'}</td>
+  </tr>`).join('');
+}
+
+function renderReadiness(readiness){
+  const checks=(readiness&&readiness.checks)||[];
+  const ready=!!(readiness&&readiness.ready);
+  const mode=(readiness&&readiness.mode)||'unknown';
+  setText('ready-mode',mode.replace(/_/g,' ').toUpperCase());
+  setText('ready-blockers',(readiness&&readiness.blocker_count||0)+' blockers / '+(readiness&&readiness.warning_count||0)+' warnings');
+  setText('ready-next',(readiness&&readiness.next_action)||'Continue validation');
+  setText('ready-pill',ready?'READY':'BLOCKED');
+  cls($('ready-pill'),ready?'green':((readiness&&readiness.blocker_count)||0)?'red':'amber');
+  const body=$('readiness-list');
+  if(!checks.length){body.innerHTML='<div class="note">No readiness checklist available.</div>';return;}
+  body.innerHTML=checks.map(c=>{
+    const kind=c.passed?'green':c.severity==='warning'?'amber':'red';
+    return `<div class="check"><span class="dot ${kind}"></span><div><strong>${esc(c.name)}</strong><small>${esc(c.detail)}</small></div></div>`;
+  }).join('');
+}
+
+function renderResearch(summary, discovery){
+  const best=(summary&&summary.latest_optimization&&summary.latest_optimization.best_result)||{};
+  const candidates=(discovery&&discovery.best)||[];
+  setText('research-experiments',(summary&&summary.total_experiments)||0);
+  setText('research-pf',best.profit_factor==null?'--':num(best.profit_factor,2));
+  setText('research-wr',best.win_rate==null?'--':num(best.win_rate,1)+'%');
+  setText('research-return',best.return_pct==null?'--':num(best.return_pct,2)+'%');
+  setText('research-pill',((discovery&&discovery.accepted)||0)+' accepted / '+((discovery&&discovery.shortlisted)||0)+' shortlisted');
+  cls($('research-pill'),(discovery&&discovery.accepted)>0?'green':(candidates.length?'amber':'red'));
+  const body=$('candidates-body');
+  if(!candidates.length){body.innerHTML='<tr><td colspan="6" class="muted">No discovered candidates yet</td></tr>';return;}
+  body.innerHTML=candidates.slice(0,8).map(c=>{
+    const r=c.result||{}, wf=c.walk_forward||{}, reason=(c.reasons||[])[0]||('WF profitable '+num((wf.profitable_window_ratio||0)*100,0)+'%');
+    const kind=c.status==='accepted'?'green':c.status==='rejected'?'red':'amber';
+    return `<tr>
+      <td>${esc(c.name)}</td>
+      <td><span class="pill ${kind}">${esc((c.status||'candidate').toUpperCase())}</span></td>
+      <td class="mono">${r.win_rate==null?'--':num(r.win_rate,1)+'%'}</td>
+      <td class="mono">${r.profit_factor==null?'--':num(r.profit_factor,2)}</td>
+      <td class="mono ${Number(r.return_pct||0)>=0?'green':'red'}">${r.return_pct==null?'--':num(r.return_pct,2)+'%'}</td>
+      <td class="muted">${esc(reason)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderIntel(data){
+  const brain=data.multi_brain||{}, narrative=data.narrative||{}, macro=data.dxy_yields||{}, zones=data.supply_demand||{};
+  const verdict=brain.verdict||brain.decision||brain.signal||'neutral';
+  setText('brain',String(verdict).toUpperCase());
+  setText('narrative',String(narrative.bias||narrative.direction||narrative.summary||'neutral').slice(0,42));
+  setText('macro',String(macro.bias||macro.signal||macro.status||'neutral').toUpperCase());
+  const zoneCount=(zones.zones||zones.supply_zones||[]).length+(zones.demand_zones||[]).length;
+  setText('zones',zoneCount||'--');
+  setText('intel-pill',String(verdict).toUpperCase());
+  cls($('intel-pill'),String(verdict).toUpperCase().includes('BUY')||String(verdict).toUpperCase().includes('GO')?'green':String(verdict).toUpperCase().includes('SELL')?'red':'amber');
+  $('intel-log').textContent=[
+    'Narrative: '+(narrative.summary||narrative.note||narrative.bias||'no narrative yet'),
+    'Macro: '+(macro.comment||macro.reason||macro.bias||'no macro note yet'),
+    'Risk guard: '+((data.risk_guard||{}).reason||(data.risk_guard||{}).status||'no risk guard note')
+  ].join('\n');
+}
+
+function renderSetupSupervisor(report){
+  report=report||{};
+  const status=String(report.status||'unknown').toUpperCase();
+  setText('setup-pill',status);
+  cls($('setup-pill'),status==='OK'?'green':status==='WARN'?'amber':'red');
+  setText('setup-score',(report.setup_score==null?'--':num(report.setup_score,1)+'%'));
+  setText('setup-blockers',(report.blocker_count||0)+' blockers / '+(report.warning_count||0)+' warnings');
+  setText('setup-pause',report.pause_active?'YES':'NO');
+  $('setup-pause').className=report.pause_active?'amber':'green';
+  const actions=(report.next_actions||['Setup supervisor has not reported yet']).slice(0,6);
+  $('setup-actions').textContent=actions.join('\n');
+}
+
+function render(data){
+  const paper=data.paper_state||{}, acc=paper.account||{}, metrics=paper.metrics||{}, signal=paper.signal||paper.signal_score||{};
+  const mt5=data.mt5||{}, mt5Acc=mt5.account||{}, price=data.price||{}, promo=data.promotion_status||{}, live=data.live_safety||{};
+  const risk=data.risk_state||{}, cb=data.circuit_breaker||{}, news=data.news_sentinel||{}, orch=data.orchestrator||{};
+  const auto=data.autonomous_discovery||{}, portfolio=data.strategy_portfolio||{}, lifecycle=data.strategy_lifecycle||{}, survival=data.survival_state||{};
+  const closed=paper.closed_trades||(paper.trades||{}).closed||[], open=paper.open_trades||(paper.positions||{}).open||[];
+
+  const paused=!!data.is_paused;
+  setText('system-status',paused?'PAUSED':'RUNNING');
+  $('system-status').className=paused?'value amber':'value green';
+  setText('system-reason',paused?'Safety pause active':'Agents operating');
+  setText('side-mode',paused?'paused':'running');
+
+  setText('gold-bid',num(price.bid||price.price||0,2));
+  setText('gold-spread','spread '+num(price.spread||0,2));
+  setText('balance',money(acc.balance||paper.balance||0));
+  setText('equity','paper equity '+money(acc.equity||paper.equity||acc.balance||paper.balance||0));
+  setText('mt5-balance',mt5.connected?money(mt5Acc.balance||0):'OFFLINE');
+  $('mt5-balance').className=mt5.connected?'value mono green':'value mono red';
+  setText('mt5-equity',mt5.connected?'mt5 equity '+money(mt5Acc.equity||0):'MT5 not connected');
+  paintMoney('paper-pnl',metrics.realized_pnl||0);
+  setText('paper-wr','WR '+num(metrics.win_rate,1)+'%');
+  setText('promotion',(promo.status||'candidate').toUpperCase());
+  $('promotion').className=(promo.approved_for==='research_only')?'value amber':'value green';
+  setText('promotion-for',promo.approved_for||'research_only');
+  setText('live-safety',live.allowed?'ALLOW':'BLOCK');
+  $('live-safety').className=live.allowed?'value green':'value red';
+  setText('live-target',(live.execution_target||'demo')+' target');
+
+  setText('open-paper',open.length);
+  setText('closed-paper',closed.length);
+  setText('profit-factor',num(metrics.profit_factor,2));
+  setText('drawdown',num(acc.drawdown_pct,2)+'%');
+  setText('today-pnl',money(acc.today_pnl||paper.today_pnl||0));
+  $('today-pnl').className=Number(acc.today_pnl||paper.today_pnl||0)>=0?'green':'red';
+  setText('signal',(signal.direction||'NONE').toUpperCase());
+  setText('signal-score',(signal.score||0)+'/'+(signal.max_score||20));
+  $('signal-bar').style.width=Math.max(0,Math.min(100,(Number(signal.score||0)/Number(signal.max_score||20))*100))+'%';
+  setText('mtf',((data.mtf_bias||{}).direction||'neutral').toUpperCase());
+  setText('regime',((data.regime||{}).regime||'unknown').replace(/_/g,' ').toUpperCase());
+  setText('orch-pill','ORCH '+(orch.verdict||'NO-GO'));
+  cls($('orch-pill'),orch.verdict==='GO'?'green':'red');
+
+  renderPositions(mt5.positions||[]);
+  renderTrades(closed);
+  renderResearch(data.research_summary||{}, auto);
+  renderReadiness(data.autonomy_readiness||{});
+  renderIntel(data);
+  renderSetupSupervisor(data.setup_supervisor||{});
+
+  setText('disc-accepted',(auto.accepted==null?'--':auto.accepted)+' / '+(auto.shortlisted==null?'--':auto.shortlisted));
+  setText('active-candidates',(portfolio.active||[]).length);
+  setText('life-candidates',((lifecycle.counts||{}).candidates||0));
+  const lifeStage=(lifecycle.stage||'NO REPORT').toUpperCase();
+  setText('life-stage',lifeStage);
+  cls($('life-stage'),lifeStage.includes('NO')?'amber':lifeStage.includes('DEMOT')||lifeStage.includes('QUAR')?'red':'green');
+  setText('survival',(survival.status||'unknown').toUpperCase());
+  $('survival').className=survival.status==='quarantine'?'red':'green';
+  $('autonomy-log').textContent=[
+    'Lifecycle: '+lifeStage,
+    'Next: '+(lifecycle.next_action||'monitor'),
+    'Discovery gates accepted '+(auto.accepted||0)+' candidate(s).',
+    'Survival: '+((survival.reasons||[]).join(' | ')||'no survival report')
+  ].join('\n');
+
+  setText('risk-pill','RISK '+(risk.score==null?'--':risk.score+'/10'));
+  cls($('risk-pill'),risk.approved!==false?'green':'red');
+  setText('news',news.block_trading?'BLOCK':'OK');
+  $('news').className=news.block_trading?'red':'green';
+  setText('circuit',cb.status||'OK');
+  $('circuit').className=cb.status==='PAUSED'?'red':'green';
+  setText('daily-loss',num(Math.abs(cb.daily_loss_pct||0)*100,2)+'%');
+  setText('required-approval',live.required_approval||'demo');
+  $('safety-log').textContent=(live.reasons||promo.reasons||['Safety state loading']).slice(0,4).join('\n');
+
+  renderAgents(data.agent_health||[]);
+  setText('last-update','Last update '+new Date().toLocaleTimeString());
+  setText('side-time',new Date().toLocaleString());
+}
+
+async function refreshAll(){
+  try{
+    const r=await fetch('/api/miro?t='+Date.now());
+    if(!r.ok)throw new Error('api '+r.status);
+    render(await r.json());
+  }catch(e){
+    setText('system-status','OFFLINE');
+    $('system-status').className='value red';
+    setText('system-reason',e.message);
+  }
+}
+refreshAll();
+setInterval(refreshAll,3000);
+</script>
+</body>
+</html>"""
+
+RULES_CONTROL_HTML = r"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MIRO Rules Control</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}:root{--bg:#0b0d10;--panel:#11161b;--panel2:#151b22;--line:#27313b;--line2:#344250;--text:#e9edf1;--muted:#8b98a6;--soft:#b5c0cc;--green:#2fd17c;--red:#f05252;--amber:#e6ad32;--cyan:#42c6ff;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}body{background:linear-gradient(180deg,rgba(66,198,255,.08),transparent 260px),radial-gradient(circle at 72% 0%,rgba(47,209,124,.08),transparent 360px),var(--bg)}
+.shell{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}.side{border-right:1px solid var(--line);background:rgba(8,10,12,.9);padding:18px 14px;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px}.mark{width:34px;height:34px;border:1px solid var(--line2);display:grid;place-items:center;background:#10171d;color:var(--green);font-weight:700}.brand h1{font-size:15px;margin:0;letter-spacing:.08em}.brand p{margin:2px 0 0;color:var(--muted);font-size:11px}.nav{display:flex;flex-direction:column;gap:6px;margin-top:18px}.nav a{color:var(--soft);text-decoration:none;padding:9px 10px;border:1px solid transparent;border-radius:6px}.nav a.active,.nav a:hover{background:var(--panel2);border-color:var(--line);color:var(--text)}.side-foot{position:absolute;left:14px;right:14px;bottom:14px;color:var(--muted);font-family:var(--mono);font-size:11px;line-height:1.6}
+.main{padding:18px;min-width:0}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px}.eyebrow{color:var(--muted);font-family:var(--mono);font-size:11px;text-transform:uppercase}.title{font-size:28px;font-weight:700;margin:2px 0 0}.subtitle{color:var(--muted);margin-top:6px;max-width:820px;line-height:1.45}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{background:var(--panel2);border:1px solid var(--line2);color:var(--text);border-radius:6px;padding:8px 11px;cursor:pointer;min-width:88px}.btn:hover{border-color:var(--cyan)}.btn.good{color:#d7ffe7;border-color:rgba(47,209,124,.45)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;max-width:1180px}.section{background:rgba(17,22,27,.96);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 14px 42px rgba(0,0,0,.16)}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(26,34,42,.96),rgba(18,24,30,.96))}.section-title{font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.09em}.section-body{padding:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.control{border:1px solid rgba(52,66,80,.9);background:linear-gradient(180deg,#10171e,#0c1116);border-radius:10px;padding:11px;display:grid;gap:9px;min-height:176px}.control-top{display:grid;grid-template-columns:minmax(0,1fr) 118px;gap:10px;align-items:start}.control label{display:block;font-weight:700;font-size:14px;color:#f4f7fa;line-height:1.25}.hint{color:#95a6b8;font-size:10px;margin-top:4px;line-height:1.35;font-family:var(--mono)}.copy{display:grid;gap:7px}.copy-box{border:1px solid rgba(39,49,59,.85);background:#091016;border-radius:8px;padding:8px}.copy-title{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#9fb1c2;margin-bottom:4px;font-family:var(--mono)}.impact{color:#d8e1ea;font-size:12px;line-height:1.42}.example{color:#c3cfda;font-family:var(--mono);font-size:11px;line-height:1.35}.field-wrap{display:grid;gap:5px}.field-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9fb1c2;font-family:var(--mono)}input,select{width:100%;background:#070b0f;border:1px solid #415161;color:#f6f9fc;border-radius:7px;padding:8px 9px;font-size:13px;min-height:34px}input:focus,select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(66,198,255,.14)}.control label.graphic-toggle{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#070b0f;border:1px solid #415161;border-radius:8px;padding:3px;min-height:30px;max-height:30px;max-width:118px;overflow:hidden;cursor:pointer;user-select:none;font-size:9px;font-weight:800;line-height:1;color:inherit}.graphic-toggle input{position:absolute;opacity:0;pointer-events:none}.graphic-toggle:before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 4px);height:22px;border-radius:5px;background:#2d3742;box-shadow:none;transform:translateX(0);transition:transform .16s ease,background-color .16s ease}.graphic-toggle.is-on:before{left:3px;transform:translateX(calc(100% + 2px));background:#2fd17c}.seg{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:3px;border-radius:5px;font-family:var(--mono);font-weight:800;font-size:9px;letter-spacing:.03em;color:#90a0b0;height:22px;min-height:22px;line-height:22px;transform:none}.seg .icon{font-size:9px;line-height:1}.graphic-toggle.is-on .seg-on{color:#06120b}.graphic-toggle:not(.is-on) .seg-off{color:#f4f8fc}.graphic-toggle:hover{border-color:var(--cyan)}.graphic-toggle:focus-within{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(66,198,255,.14)}.pill{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line2);border-radius:999px;padding:3px 8px;font-size:11px;font-family:var(--mono);color:var(--soft);white-space:nowrap}.pill.green{color:var(--green);border-color:rgba(47,209,124,.38);background:rgba(47,209,124,.08)}.pill.red{color:var(--red);border-color:rgba(240,82,82,.42);background:rgba(240,82,82,.08)}.pill.amber{color:var(--amber);border-color:rgba(230,173,50,.42);background:rgba(230,173,50,.08)}.status{margin-top:10px;font-family:var(--mono);font-size:12px;color:#c3cfda;white-space:pre-wrap;line-height:1.5}.footer{margin-top:12px;color:var(--muted);font-size:11px;font-family:var(--mono);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:1280px){.section-body{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:900px){.section-body{grid-template-columns:1fr}.control{min-height:0}}@media(max-width:760px){.shell{grid-template-columns:1fr}.side{position:relative;height:auto}.side-foot{position:static;margin-top:20px}.main{padding:12px}.title{font-size:22px}.control-top{grid-template-columns:1fr}.section-body{padding:10px}.control{padding:10px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><div class="mark">M</div><div><h1>MIRO CONTROL</h1><p>Autonomous trading operations</p></div></div>
+    <nav class="nav">
+      <a href="/">Command Center</a>
+      <a href="/pipeline">Pipeline Flow</a>
+      <a class="active" href="/rules">Rules Control</a>
+      <a href="/legacy">Legacy Dashboard</a>
+      <a href="/api/miro">API State</a>
+      <a href="/api/autonomy">Autonomy API</a>
+    </nav>
+    <div class="side-foot"><div>Mode: <span id="side-mode">loading</span></div><div>Rules are local JSON config</div><div id="side-time">--</div></div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <div><div class="eyebrow">Manual Governance</div><div class="title">Rules Control Center</div><div class="subtitle">Tune risk, trading gates, circuit breakers, and demo/live safety rules. Every control explains its impact and gives an example so future operators understand the consequence before saving.</div></div>
+      <div class="actions"><button class="btn" onclick="loadAll()">Reload</button><button class="btn good" onclick="saveAll()">Save Rules</button></div>
+    </div>
+    <div class="grid">
+      <section class="section"><div class="section-head"><div class="section-title">Trading Rules</div><span class="pill amber">paper/live logic</span></div><div class="section-body" id="trading-controls"></div></section>
+      <section class="section"><div class="section-head"><div class="section-title">Circuit Breaker</div><span class="pill red">loss limits</span></div><div class="section-body" id="cb-controls"></div></section>
+      <section class="section"><div class="section-head"><div class="section-title">Live Safety Gates</div><span class="pill red">execution guard</span></div><div class="section-body" id="safety-controls"></div></section>
+      <section class="section"><div class="section-head"><div class="section-title">Current Impact</div><span class="pill" id="impact-pill">loading</span></div><div class="section-body"><div class="impact" id="impact-summary">Loading current rules...</div><div class="status" id="save-status"></div></div></section>
+    </div>
+    <div class="footer"><span id="last-update">Last update --</span><span>Changing these rules can affect future paper/demo/live decisions. Keep safety gates enabled unless deliberately testing.</span></div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fields={
+ trading:[
+  ['risk_pct','number','Risk per trade','Fraction of account risked per trade. Lower values reduce drawdown speed; higher values increase loss and profit swings.','0.01 means 1% risk per trade.'],
+  ['max_lots','number','Maximum lots','Caps order size even if risk calculation asks for more.','2.0 prevents position size above 2 lots.'],
+  ['min_rr','number','Minimum reward:risk','Blocks trades where target is too small compared with stop loss.','1.5 means target must be at least 1.5R.'],
+  ['min_confidence','number','Minimum confidence','Requires stronger signal score before the system can consider a setup.','7 means ignore setups below 7/10 confidence.'],
+  ['max_open_positions','number','Max open positions','Limits simultaneous exposure.','3 means the system stops adding trades once 3 are open.'],
+  ['max_same_direction','number','Max same direction','Limits correlated BUY-only or SELL-only stacking.','2 means no more than 2 BUYs or 2 SELLs together.'],
+  ['news_block_enabled','checkbox','News block enabled','When on, high-impact news can block trading. Turning it off may allow trades during volatile events.','Enabled avoids CPI/FOMC/NFP shock entries.'],
+  ['orchestrator_gate_enabled','checkbox','Require orchestrator GO','When on, final GO/NO-GO agent must approve. Turning it off weakens governance.','Enabled means risk/news/portfolio checks must align.'],
+  ['session_filter_enabled','checkbox','Session filter','When on, trades can be restricted to preferred market sessions.','Enabled can avoid low-liquidity dead zones.'],
+  ['tp1_cooldown_enabled','checkbox','TP1 cooldown','When on, prevents immediate re-entry after partial profit logic.','Enabled reduces revenge/re-chase entries.']
+ ],
+ cb:[
+  ['daily_loss_pct','number','Daily loss limit','Pauses trading after this daily loss fraction. Lower is safer but may stop trading earlier.','0.01 means pause at 1% daily loss.'],
+  ['weekly_loss_pct','number','Weekly loss limit','Controls total weekly damage before pause.','0.05 means pause after 5% weekly loss.'],
+  ['drawdown_pct','number','Max drawdown limit','Stops trading when account drawdown exceeds this threshold.','0.08 means pause after 8% drawdown.']
+ ],
+ safety:[
+  ['execution_target','select','Execution target','Chooses demo or live safety policy. Live remains gated by approval and manual override rules.','demo keeps checks in demo mode; live requires stronger approvals.'],
+  ['max_risk_pct','number','Live max risk cap','Maximum allowed risk fraction for demo/live execution.','0.005 means 0.5% max risk.'],
+  ['max_open_positions','number','Live max open positions','Caps live/demo positions regardless of paper settings.','3 means live safety blocks the fourth position.'],
+  ['min_free_margin_pct','number','Minimum free margin','Blocks execution if free margin is too low.','0.25 means free margin must be at least 25% of equity.'],
+  ['require_mt5_account','checkbox','Require MT5 account','Blocks execution when MT5 account data is unavailable.','Enabled prevents blind trading when terminal is disconnected.'],
+  ['require_promotion','checkbox','Require promotion','Blocks strategies below required paper/demo/live approval.','Enabled prevents unproven strategies from trading.'],
+  ['require_risk_approved','checkbox','Require risk approval','Requires risk manager approval before execution.','Enabled blocks trades during drawdown or bad portfolio heat.'],
+  ['require_circuit_breaker_ok','checkbox','Require circuit OK','Requires circuit breaker not paused.','Enabled respects daily/weekly/drawdown stops.'],
+  ['require_orchestrator_go','checkbox','Require orchestrator GO','Requires final decision engine to say GO.','Enabled blocks trades when any major gate disagrees.'],
+  ['require_manual_live_approval','checkbox','Manual live approval','Requires explicit manual override before live execution.','Enabled prevents accidental live activation.']
+ ]
+};
+let current={trading:{},cb:{},safety:{}};
+function controlHtml(group,[key,type,label,impact,example]){
+ const value=current[group][key];
+ let input='';
+ if(type==='checkbox')input=`<label class="graphic-toggle ${value?'is-on':'is-off'}" for="${group}-${key}"><input id="${group}-${key}" type="checkbox" ${value?'checked':''} onchange="syncToggle(this)"><span class="seg seg-off"><span class="icon">X</span> OFF</span><span class="seg seg-on"><span class="icon">✓</span> ON</span></label>`;
+ else if(type==='select')input=`<select id="${group}-${key}"><option value="demo" ${value==='demo'?'selected':''}>demo</option><option value="live" ${value==='live'?'selected':''}>live</option></select>`;
+ else input=`<input id="${group}-${key}" type="number" step="0.001" value="${value??''}">`;
+ return `<div class="control">
+   <div class="control-top">
+     <div><label for="${group}-${key}">${label}</label><div class="hint">${key}</div></div>
+     <div class="field-wrap"><div class="field-label">Current value</div>${input}</div>
+   </div>
+   <div class="copy">
+     <div class="copy-box"><div class="copy-title">Impact</div><div class="impact">${impact}</div></div>
+     <div class="copy-box"><div class="copy-title">Example</div><div class="example">${example}</div></div>
+   </div>
+ </div>`;
+}
+function renderControls(){
+ $('trading-controls').innerHTML=fields.trading.map(f=>controlHtml('trading',f)).join('');
+ $('cb-controls').innerHTML=fields.cb.map(f=>controlHtml('cb',f)).join('');
+ $('safety-controls').innerHTML=fields.safety.map(f=>controlHtml('safety',f)).join('');
+ renderImpact();
+}
+function syncToggle(input){
+ const wrap=input.closest('.graphic-toggle');
+ if(!wrap)return;
+ wrap.classList.toggle('is-on',input.checked);
+ wrap.classList.toggle('is-off',!input.checked);
+}
+function readGroup(group){
+ const out={};
+ for(const [key,type] of fields[group]){
+  const el=$(`${group}-${key}`); if(!el)continue;
+  out[key]=type==='checkbox'?el.checked:type==='number'?Number(el.value):el.value;
+ }
+ return out;
+}
+function renderImpact(){
+ const t=current.trading,c=current.cb,s=current.safety;
+ const strict=(t.orchestrator_gate_enabled&&t.news_block_enabled&&s.require_promotion&&s.require_orchestrator_go&&s.require_circuit_breaker_ok);
+ $('impact-pill').textContent=strict?'STRICT':'CUSTOM';
+ $('impact-pill').className=strict?'pill green':'pill amber';
+ $('impact-summary').innerHTML=[
+  `Risk per trade is <b>${t.risk_pct??'--'}</b>, max lots <b>${t.max_lots??'--'}</b>, min RR <b>${t.min_rr??'--'}</b>.`,
+  `Circuit breaker pauses around daily <b>${Number((c.daily_loss_pct||0)*100).toFixed(2)}%</b>, weekly <b>${Number((c.weekly_loss_pct||0)*100).toFixed(2)}%</b>, drawdown <b>${Number((c.drawdown_pct||0)*100).toFixed(2)}%</b>.`,
+  `Execution target is <b>${s.execution_target||'demo'}</b>; live safety requires promotion=${!!s.require_promotion}, orchestrator=${!!s.require_orchestrator_go}, circuit=${!!s.require_circuit_breaker_ok}.`
+ ].join('<br>');
+}
+async function loadAll(){
+ const [trading,cb,safety,miro]=await Promise.all([
+  fetch('/api/trading-config').then(r=>r.json()),
+  fetch('/api/cb-config').then(r=>r.json()),
+  fetch('/api/live-safety').then(r=>r.json()),
+  fetch('/api/miro?t='+Date.now()).then(r=>r.json())
+ ]);
+ current={trading,cb,safety:safety.config||{}};
+ setText('side-mode',miro.is_paused?'paused':'running');
+ setText('side-time',new Date().toLocaleString());
+ setText('last-update','Last update '+new Date().toLocaleTimeString());
+ renderControls();
+}
+function setText(id,val){const el=$(id);if(el)el.textContent=val;}
+async function postJson(url,payload){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok)throw new Error(d.error||d.message||url+' failed');return d;}
+async function saveAll(){
+ $('save-status').textContent='Saving rules...';
+ try{
+  const trading=readGroup('trading'), cb=readGroup('cb'), safety=readGroup('safety');
+  const results=await Promise.all([postJson('/api/trading-config',trading),postJson('/api/cb-config',cb),postJson('/api/live-safety',safety)]);
+  current={trading:results[0].config,cb:results[1].config,safety:results[2].config};
+  renderControls();
+  $('save-status').textContent='Saved. Safety status: '+((results[2].live_safety||{}).allowed?'ALLOW':'BLOCK')+' | '+(((results[2].live_safety||{}).reasons||[]).join(' | '));
+ }catch(e){$('save-status').textContent='Save failed: '+e.message;}
+}
+loadAll();
+</script>
+</body>
+</html>"""
+
+PIPELINE_DASHBOARD_HTML = r"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MIRO Pipeline Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0b0d10;--panel:#11161b;--panel2:#151b22;--line:#27313b;--line2:#344250;--text:#e9edf1;--muted:#8b98a6;--soft:#b5c0cc;--green:#2fd17c;--red:#f05252;--amber:#e6ad32;--cyan:#42c6ff;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}
+body{background:linear-gradient(180deg,rgba(66,198,255,.08),transparent 260px),radial-gradient(circle at 72% 0%,rgba(47,209,124,.08),transparent 360px),var(--bg)}
+.shell{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
+.side{border-right:1px solid var(--line);background:rgba(8,10,12,.9);padding:18px 14px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px}.mark{width:34px;height:34px;border:1px solid var(--line2);display:grid;place-items:center;background:#10171d;color:var(--green);font-weight:700}.brand h1{font-size:15px;margin:0;letter-spacing:.08em}.brand p{margin:2px 0 0;color:var(--muted);font-size:11px}
+.nav{display:flex;flex-direction:column;gap:6px;margin-top:18px}.nav a{color:var(--soft);text-decoration:none;padding:9px 10px;border:1px solid transparent;border-radius:6px}.nav a.active,.nav a:hover{background:var(--panel2);border-color:var(--line);color:var(--text)}
+.side-foot{position:absolute;left:14px;right:14px;bottom:14px;color:var(--muted);font-family:var(--mono);font-size:11px;line-height:1.6}
+.main{padding:18px;min-width:0}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px}.eyebrow{color:var(--muted);font-family:var(--mono);font-size:11px;text-transform:uppercase}.title{font-size:28px;font-weight:700;margin:2px 0 0}.subtitle{color:var(--muted);margin-top:6px;max-width:760px;line-height:1.45}
+.btn{background:var(--panel2);border:1px solid var(--line2);color:var(--text);border-radius:6px;padding:8px 11px;cursor:pointer;min-width:80px}.btn:hover{border-color:var(--cyan)}
+.overview{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:12px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:10px 11px;min-height:70px}.label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}.value{font-size:20px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sub{color:var(--muted);font-family:var(--mono);font-size:11px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pipeline{display:grid;gap:12px}.lane{background:rgba(17,22,27,.94);border:1px solid var(--line);border-radius:9px;overflow:hidden}.lane-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;border-bottom:1px solid var(--line);background:rgba(21,27,34,.8)}.lane-title{font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.08em}.lane-note{color:var(--muted);font-family:var(--mono);font-size:11px}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:12px}.node{position:relative;min-height:118px;background:#0d1115;border:1px solid var(--line);border-radius:8px;padding:10px}.node:after{content:"";position:absolute;right:-10px;top:50%;width:10px;height:1px;background:var(--line2)}.node:last-child:after{display:none}.node h3{margin:0 0 7px;font-size:14px}.node p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}.meta{margin-top:8px;color:var(--soft);font-family:var(--mono);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line2);border-radius:999px;padding:3px 8px;font-size:11px;font-family:var(--mono);color:var(--soft);white-space:nowrap}.green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}.pill.green{color:var(--green);border-color:rgba(47,209,124,.38);background:rgba(47,209,124,.08)}.pill.red{color:var(--red);border-color:rgba(240,82,82,.42);background:rgba(240,82,82,.08)}.pill.amber{color:var(--amber);border-color:rgba(230,173,50,.42);background:rgba(230,173,50,.08)}
+.node.ok{border-color:rgba(47,209,124,.35);box-shadow:inset 0 0 0 1px rgba(47,209,124,.05)}.node.warn{border-color:rgba(230,173,50,.38)}.node.block{border-color:rgba(240,82,82,.4)}.node.idle{opacity:.82}
+.footer{margin-top:12px;color:var(--muted);font-size:11px;font-family:var(--mono);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:1200px){.overview{grid-template-columns:repeat(2,1fr)}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}.node:after{display:none}}
+@media(max-width:760px){.shell{grid-template-columns:1fr}.side{position:relative;height:auto}.side-foot{position:static;margin-top:20px}.main{padding:12px}.overview,.flow{grid-template-columns:1fr}.title{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><div class="mark">M</div><div><h1>MIRO CONTROL</h1><p>Autonomous trading operations</p></div></div>
+    <nav class="nav">
+      <a href="/">Command Center</a>
+      <a class="active" href="/pipeline">Pipeline Flow</a>
+      <a href="/rules">Rules Control</a>
+      <a href="/legacy">Legacy Dashboard</a>
+      <a href="/api/miro">API State</a>
+      <a href="/api/autonomy">Autonomy API</a>
+    </nav>
+    <div class="side-foot">
+      <div>Mode: <span id="side-mode">loading</span></div>
+      <div>Refresh: 3s</div>
+      <div id="side-time">--</div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <div>
+        <div class="eyebrow">System Blueprint</div>
+        <div class="title">Feature Pipeline Flow</div>
+        <div class="subtitle">A live map of how data, research, risk, execution, and supervision move through the autonomous trading system. Each node is colored from the current API state.</div>
+      </div>
+      <button class="btn" onclick="refreshAll()">Refresh</button>
+    </div>
+    <div class="overview">
+      <div class="stat"><div class="label">Overall</div><div class="value" id="overall">--</div><div class="sub" id="overall-sub">loading</div></div>
+      <div class="stat"><div class="label">MT5</div><div class="value" id="mt5">--</div><div class="sub" id="mt5-sub">--</div></div>
+      <div class="stat"><div class="label">Orchestrator</div><div class="value" id="orch">--</div><div class="sub" id="orch-sub">--</div></div>
+      <div class="stat"><div class="label">Promotion</div><div class="value" id="promo">--</div><div class="sub" id="promo-sub">--</div></div>
+      <div class="stat"><div class="label">Setup Score</div><div class="value" id="setup">--</div><div class="sub" id="setup-sub">--</div></div>
+    </div>
+    <div class="pipeline" id="pipeline"></div>
+    <div class="footer"><span id="last-update">Last update --</span><span>Live execution remains gated; this page is observability only.</span></div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=v=>String(v==null?'--':v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const money=v=>Number(v||0).toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2});
+function setText(id,val){const el=$(id);if(el)el.textContent=val;}
+function kind(ok,warn){return ok?'ok':warn?'warn':'block'}
+function pill(status){const cls=status==='ok'?'green':status==='warn'?'amber':'red';const txt=status==='ok'?'ACTIVE':status==='warn'?'WATCH':'BLOCKED';return `<span class="pill ${cls}">${txt}</span>`}
+function node(n){return `<article class="node ${n.status}"><div>${pill(n.status)}</div><h3>${esc(n.name)}</h3><p>${esc(n.detail)}</p><div class="meta">${esc(n.meta||'')}</div></article>`}
+function lane(title,note,nodes){const worst=nodes.some(n=>n.status==='block')?'BLOCKED':nodes.some(n=>n.status==='warn')?'WATCH':'ACTIVE';const cls=worst==='ACTIVE'?'green':worst==='WATCH'?'amber':'red';return `<section class="lane"><div class="lane-head"><div><div class="lane-title">${esc(title)}</div><div class="lane-note">${esc(note)}</div></div><span class="pill ${cls}">${worst}</span></div><div class="flow">${nodes.map(node).join('')}</div></section>`}
+function activeAgent(data,name){const legacy=data.agents_legacy||[];return legacy.find(a=>a.name===name&&a.status==='running')}
+function fileHealth(data,label){const item=(data.agent_health||[]).find(a=>a.name===label);return item?item.status:null}
+function render(data){
+  const mt5=data.mt5||{}, paper=data.paper_state||{}, metrics=paper.metrics||{}, promo=data.promotion_status||{}, live=data.live_safety||{}, orch=data.orchestrator||{}, ready=data.autonomy_readiness||{}, setup=data.setup_supervisor||{};
+  const auto=data.autonomous_discovery||{}, lifecycle=data.strategy_lifecycle||{}, risk=data.risk_state||{}, news=data.news_sentinel||{}, cb=data.circuit_breaker||{};
+  const setupStatus=setup.status==='ok'?'ok':setup.status==='warn'?'warn':'block';
+  setText('overall',ready.mode?ready.mode.replace(/_/g,' ').toUpperCase():'UNKNOWN');
+  $('overall').className=ready.ready?'value green':ready.blocker_count?'value red':'value amber';
+  setText('overall-sub',(ready.blocker_count||0)+' blockers / '+(ready.warning_count||0)+' warnings');
+  setText('mt5',mt5.connected?'CONNECTED':'OFFLINE');$('mt5').className=mt5.connected?'value green':'value red';setText('mt5-sub',mt5.connected?money((mt5.account||{}).balance):'terminal unavailable');
+  setText('orch',(orch.verdict||'NO-GO').toUpperCase());$('orch').className=(orch.verdict||'')==='GO'?'value green':'value red';setText('orch-sub',(orch.reasons||['no reason'])[0]);
+  setText('promo',(promo.status||'candidate').toUpperCase());$('promo').className=promo.approved_for==='research_only'?'value amber':'value green';setText('promo-sub',promo.approved_for||'research_only');
+  setText('setup',setup.setup_score==null?'--':Number(setup.setup_score).toFixed(1)+'%');$('setup').className=setupStatus==='ok'?'value green':setupStatus==='warn'?'value amber':'value red';setText('setup-sub',(setup.blocker_count||0)+' blockers');
+  const lanes=[
+    lane('1. Market Data Intake','Raw prices and external context feeding the system',[
+      {name:'MT5 Terminal',status:mt5.connected?'ok':'block',detail:mt5.connected?'Connected to MT5 account':'MT5 initialize/account read failed',meta:mt5.connected?money((mt5.account||{}).equity)+' equity':'check terminal login'},
+      {name:'Gold Price Feed',status:fileHealth(data,'Price Feed')==='active'?'ok':'warn',detail:'Dashboard live price JSON freshness',meta:'bid '+(((data.price||{}).bid)||'--')},
+      {name:'News Sentinel',status:news.block_trading?'block':'ok',detail:news.reason||'Clear',meta:news.block_trading?'trading blocked':'news clear'},
+      {name:'Macro / Multi-symbol',status:fileHealth(data,'DXY/Yields')==='active'?'ok':'warn',detail:((data.dxy_yields||{}).summary)||'DXY/yields context',meta:((data.multi_symbol||{}).updated)||'waiting'}
+    ]),
+    lane('2. Signal Intelligence','Specialist agents convert market state into trade context',[
+      {name:'Regime Detector',status:fileHealth(data,'Regime')==='active'?'ok':'warn',detail:((data.regime||{}).regime)||'regime unavailable',meta:((data.regime||{}).updated)||'stale or waiting'},
+      {name:'MTF Bias',status:(data.mtf_bias||{}).aligned?'ok':'warn',detail:((data.mtf_bias||{}).direction||'neutral').toUpperCase(),meta:'confidence '+(((data.mtf_bias||{}).confidence)||'--')},
+      {name:'Fib / Supply Demand',status:fileHealth(data,'Fibonacci')==='active'||fileHealth(data,'S&D Zones')==='active'?'ok':'warn',detail:'Key levels and order-block zones',meta:'fib '+(fileHealth(data,'Fibonacci')||'unknown')+' / zones '+(fileHealth(data,'S&D Zones')||'unknown')},
+      {name:'Multi Brain Consensus',status:((data.multi_brain||{}).consensus||{}).action?'ok':'warn',detail:(((data.multi_brain||{}).consensus||{}).action||'neutral'),meta:'agreement '+((((data.multi_brain||{}).consensus||{}).agreement)||'--')+'%'}
+    ]),
+    lane('3. Research And Strategy Lifecycle','New strategies are discovered, tested, and staged before promotion',[
+      {name:'Discovery Engine',status:(auto.accepted||0)>0?'ok':(auto.shortlisted||0)>0?'warn':'block',detail:(auto.accepted||0)+' accepted / '+(auto.shortlisted||0)+' shortlisted',meta:(auto.generated_at||'no report')},
+      {name:'Backtest Registry',status:((data.research_summary||{}).total_experiments||0)>0?'ok':'warn',detail:((data.research_summary||{}).total_experiments||0)+' experiments recorded',meta:'latest '+(((data.research_summary||{}).latest_walk_forward_id)||'none')},
+      {name:'Lifecycle Manager',status:(lifecycle.counts||{}).active>0?'ok':'warn',detail:(lifecycle.stage||'no active candidates'),meta:(lifecycle.next_action||'run discovery or wait')},
+      {name:'Promotion Gate',status:promo.approved_for==='research_only'?'block':'ok',detail:(promo.status||'candidate')+' / '+(promo.approved_for||'research_only'),meta:(promo.resolved_by||'rules')}
+    ]),
+    lane('4. Decision And Safety Gates','Hard gates decide whether the system may act',[
+      {name:'Risk Manager',status:risk.approved?'ok':'block',detail:risk.reason||'risk state unavailable',meta:'score '+(risk.score==null?'--':risk.score)},
+      {name:'Circuit Breaker',status:(cb.status||'OK')==='OK'?'ok':'block',detail:'daily loss '+Number(Math.abs(cb.daily_loss_pct||0)*100).toFixed(2)+'%',meta:'status '+(cb.status||'OK')},
+      {name:'Orchestrator',status:(orch.verdict||'NO-GO')==='GO'?'ok':'block',detail:(orch.reasons||['No GO decision'])[0],meta:'confidence '+(orch.confidence||0)},
+      {name:'Live Safety',status:live.allowed?'ok':'block',detail:(live.reasons||['Allowed'])[0],meta:'target '+(live.execution_target||'demo')}
+    ]),
+    lane('5. Execution And Management','Paper/live execution plus position protection',[
+      {name:'Paper Trader',status:activeAgent(data,'Paper Trader')?'ok':'warn',detail:'Paper simulation account and trade state',meta:'balance '+money(((paper.account||{}).balance)||paper.balance||0)},
+      {name:'MT5 Bridge',status:activeAgent(data,'MT5 Bridge')?'ok':'warn',detail:'Bridge health for MT5 order sync',meta:(mt5.positions||[]).length+' live positions'},
+      {name:'Position Manager',status:activeAgent(data,'PositionMgr')||activeAgent(data,'Position Manager')?'ok':'warn',detail:'SL/TP/target management loop',meta:'open paper '+(metrics.open_trades||0)},
+      {name:'Scale / Breakeven',status:fileHealth(data,'Scale Out')==='active'||fileHealth(data,'Breakeven')==='active'?'ok':'warn',detail:'Trade protection state files',meta:'scale '+(fileHealth(data,'Scale Out')||'unknown')+' / BE '+(fileHealth(data,'Breakeven')||'unknown')}
+    ]),
+    lane('6. Oversight And Recovery','Supervisors keep the setup understandable and safe',[
+      {name:'Setup Supervisor',status:setupStatus,detail:(setup.next_actions||['No setup report'])[0],meta:'score '+(setup.setup_score==null?'--':Number(setup.setup_score).toFixed(1)+'%')},
+      {name:'Survival Manager',status:(data.survival_state||{}).status==='quarantine'?'block':(data.survival_state||{}).status?'ok':'warn',detail:((data.survival_state||{}).reasons||['No survival report'])[0],meta:'pause '+(data.is_paused?'active':'off')},
+      {name:'Dashboard API',status:'ok',detail:'API loaded and page refreshed',meta:'localhost:5055/api/miro'},
+      {name:'Human Approval',status:live.required_approval==='live'?'warn':'ok',detail:'Live trading remains gated',meta:'required '+(live.required_approval||'demo')}
+    ])
+  ];
+  $('pipeline').innerHTML=lanes.join('');
+  setText('side-mode',data.is_paused?'paused':'running');setText('side-time',new Date().toLocaleString());setText('last-update','Last update '+new Date().toLocaleTimeString());
+}
+async function refreshAll(){try{const r=await fetch('/api/miro?t='+Date.now());if(!r.ok)throw new Error('api '+r.status);render(await r.json())}catch(e){setText('overall','OFFLINE');$('overall').className='value red';setText('overall-sub',e.message)}}
+refreshAll();setInterval(refreshAll,3000);
+</script>
+</body>
+</html>"""
+
 
 @app.route("/")
 @app.route("/miro")
 def dashboard():
+    return PRO_DASHBOARD_HTML
+
+
+@app.route("/pipeline")
+def pipeline_dashboard():
+    return PIPELINE_DASHBOARD_HTML
+
+
+@app.route("/rules")
+def rules_dashboard():
+    return RULES_CONTROL_HTML
+
+
+@app.route("/legacy")
+def legacy_dashboard():
     return DASHBOARD_HTML
 
 

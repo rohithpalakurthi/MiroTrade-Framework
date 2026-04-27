@@ -17,11 +17,23 @@ backtesting/data/*.csv
 backtesting/data/*.parquet
 logs/*.log
 logs/*.json
+ngrok.exe
+dashboard_debug.png
 
 # Reports (generated files)
+backtesting/reports/*.json
+backtesting/reports/*.csv
 backtesting/reports/*.html
 backtesting/reports/*.pdf
 paper_trading/logs/*.json
+
+# Runtime state / private execution traces
+agents/*/*.json
+agents/*/*_log.json
+tradingview/*.json
+live_execution/live_safety_status.json
+live_execution/bridge/*.json
+backups/
 
 # Node
 node_modules/
