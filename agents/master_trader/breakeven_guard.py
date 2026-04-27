@@ -51,7 +51,8 @@ def run():
             if not mt5.initialize():
                 time.sleep(10); continue
 
-            positions = list(mt5.positions_get(symbol="XAUUSD") or [])
+            # All symbols — not just XAUUSD
+            positions = list(mt5.positions_get() or [])
 
             # Load scale_out state to avoid double-modifying SL at tier 1
             scale_state = {}
@@ -83,42 +84,40 @@ def run():
                 already_done = state.get(ticket, {}).get("be_done", False) or scale_tier1_done
 
                 if r_now >= BE_TRIGGER_R and not already_done:
-                    # Move SL to entry + small buffer
                     be_sl = (
                         round(entry + BE_BUFFER_PTS, 2) if direction == "BUY"
                         else round(entry - BE_BUFFER_PTS, 2)
                     )
-                    # Only move if better than current SL
                     should_move = (
                         (direction == "BUY"  and be_sl > sl) or
                         (direction == "SELL" and be_sl < sl)
                     )
                     if should_move:
-                        req = {"action": mt5.TRADE_ACTION_SLTP, "symbol": "XAUUSD",
+                        req = {"action": mt5.TRADE_ACTION_SLTP, "symbol": p.symbol,
                                "position": p.ticket, "sl": be_sl, "tp": round(tp, 2)}
                         result = mt5.order_send(req)
                         if result.retcode == mt5.TRADE_RETCODE_DONE:
                             state[ticket] = {"be_done": True, "be_sl": be_sl,
                                              "time": str(datetime.now())}
                             save_state(state)
-                            print("[BEGuard] Breakeven set ticket {} {} | SL {} → {} | R:{:.2f}".format(
-                                ticket, direction, round(sl,2), be_sl, r_now))
+                            print("[BEGuard] Breakeven set ticket {} {} {} | SL {} → {} | R:{:.2f}".format(
+                                ticket, p.symbol, direction, round(sl,2), be_sl, r_now))
                             send_telegram(
                                 "<b>🛡️ MIRO — BREAKEVEN SET</b>\n"
-                                "Ticket {} {}\n"
+                                "Ticket {} {} {}\n"
                                 "R reached: {:.2f}R\n"
                                 "SL moved to: {} (entry)\n"
                                 "<i>This trade cannot close at a loss</i>".format(
-                                    ticket, direction, r_now, be_sl)
+                                    ticket, p.symbol, direction, r_now, be_sl)
                             )
 
-            # Clean up closed positions
+            # Clean up closed positions — no separate MT5 call needed, reuse positions list
             open_tickets = {str(p.ticket) for p in positions}
             for t in list(state.keys()):
                 if t not in open_tickets:
                     del state[t]
             save_state(state)
-            mt5.shutdown()
+            # MT5 stays initialized — shared singleton, do not shutdown
 
         except Exception as e:
             print("[BEGuard] Error: {}".format(e))

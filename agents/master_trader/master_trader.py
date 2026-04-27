@@ -53,6 +53,8 @@ _TRADING_DEFAULTS = {
     "orchestrator_gate_enabled": True,
     "session_filter_enabled"   : True,
     "tp1_cooldown_enabled"     : True,
+    "mtf_filter_enabled"       : True,
+    "force_tradeable_enabled"  : False,
     "max_daily_trades"         : 5,
     "min_sl_pts"               : 10.0,
 }
@@ -648,21 +650,28 @@ class MasterTraderAgent:
         now = datetime.utcnow()
         h   = now.hour
         m   = now.minute
-        if   7 <= h < 9:   session, quality = "LONDON PRIME",  "EXCELLENT"
-        elif 9 <= h < 13:  session, quality = "LONDON",        "GOOD"
-        elif 13 <= h < 16: session, quality = "OVERLAP",       "BEST"
-        elif 16 <= h < 21: session, quality = "NEW YORK",      "GOOD"
-        elif 0 <= h < 7:   session, quality = "ASIAN",         "LOW"
+        # Session windows calibrated from 14-day live performance data:
+        # 06h=100% WR, 07h=100% WR, 13h=100% WR, 21h=66% WR
+        # 08-10h=0% WR, 14-20h=0% WR, 22-23h=0% WR
+        if   6 <= h < 8:   session, quality = "LONDON PRIME",  "EXCELLENT"
+        elif 8 <= h < 13:  session, quality = "LONDON",        "LOW"
+        elif h == 13:       session, quality = "OVERLAP",       "EXCELLENT"
+        elif 14 <= h < 16: session, quality = "OVERLAP LATE",  "LOW"
+        elif 16 <= h < 21: session, quality = "NEW YORK",      "LOW"
+        elif h == 21:       session, quality = "NY CLOSE",      "GOOD"
+        elif 0 <= h < 6:   session, quality = "ASIAN",         "LOW"
         else:              session, quality = "DEAD ZONE",     "AVOID"
 
         # Next session
         next_sessions = {
-            "LONDON PRIME": "LONDON 09:00 UTC",
+            "LONDON PRIME": "LONDON 08:00 UTC",
             "LONDON"      : "OVERLAP 13:00 UTC",
-            "OVERLAP"     : "NEW YORK 16:00 UTC",
-            "NEW YORK"    : "ASIAN 21:00 UTC",
-            "ASIAN"       : "LONDON PRIME 07:00 UTC",
-            "DEAD ZONE"   : "LONDON PRIME 07:00 UTC",
+            "OVERLAP"     : "OVERLAP LATE 14:00 UTC",
+            "OVERLAP LATE": "NEW YORK 16:00 UTC",
+            "NEW YORK"    : "NY CLOSE 21:00 UTC",
+            "NY CLOSE"    : "ASIAN 22:00 UTC",
+            "ASIAN"       : "LONDON PRIME 06:00 UTC",
+            "DEAD ZONE"   : "LONDON PRIME 06:00 UTC",
         }
         return {
             "session"     : session,
@@ -1326,10 +1335,14 @@ RULES:
                 print("[MasterTrader] ticket {} in cooldown".format(ticket))
 
         # ── 2. New entries — only if conditions permit ───────────────────
-        if not tradeable:
+        _force_tradeable = cfg.get("force_tradeable_enabled", False)
+        if not tradeable and not _force_tradeable:
             print("[MasterTrader] MIRO says not tradeable: {}".format(
                 result.get("tradeable_reason", "")))
             return
+        if _force_tradeable and not tradeable:
+            print("[MasterTrader] FORCE TRADEABLE — overriding LLM block: {}".format(
+                result.get("tradeable_reason", "")))
 
         if self.is_paused():
             print("[MasterTrader] Paused — skipping new entries")
@@ -1393,15 +1406,20 @@ RULES:
         sells = sum(1 for p in positions_info if p["direction"] == "SELL")
 
         # MTF direction hard-block: if H1+H4 both agree, only allow that direction
+        # Toggle via dashboard "MTF H1+H4 FILTER" — turn OFF to rely on TradingView signals
+        _mtf_filter_on = cfg.get("mtf_filter_enabled", True)
         mtf_h1 = intel.get("mtf_h1_bias", "neutral").lower()
         mtf_h4 = intel.get("mtf_h4_bias", "neutral").lower()
         mtf_blocked_dir = None
-        if mtf_h1 == "bullish" and mtf_h4 == "bullish":
-            mtf_blocked_dir = "SELL"
-            print("[MasterTrader] MTF H1+H4 both BULLISH — blocking all SELL entries")
-        elif mtf_h1 == "bearish" and mtf_h4 == "bearish":
-            mtf_blocked_dir = "BUY"
-            print("[MasterTrader] MTF H1+H4 both BEARISH — blocking all BUY entries")
+        if _mtf_filter_on:
+            if mtf_h1 == "bullish" and mtf_h4 == "bullish":
+                mtf_blocked_dir = "SELL"
+                print("[MasterTrader] MTF H1+H4 both BULLISH — blocking all SELL entries")
+            elif mtf_h1 == "bearish" and mtf_h4 == "bearish":
+                mtf_blocked_dir = "BUY"
+                print("[MasterTrader] MTF H1+H4 both BEARISH — blocking all BUY entries")
+        else:
+            print("[MasterTrader] MTF filter OFF — accepting all directions (TV signal mode)")
 
         for entry in result.get("new_entries", []):
             if entry.get("confidence", 0) < min_conf:

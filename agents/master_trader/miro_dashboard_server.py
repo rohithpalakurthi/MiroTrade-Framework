@@ -60,6 +60,8 @@ _TRADING_DEFAULTS = {
     "orchestrator_gate_enabled": True,
     "session_filter_enabled"   : True,
     "tp1_cooldown_enabled"     : True,
+    "mtf_filter_enabled"       : True,
+    "force_tradeable_enabled"  : False,
 }
 app = Flask(__name__)
 CORS(app)
@@ -373,7 +375,7 @@ def api_trading_config_post():
                 return jsonify({"error": "{} must be between {} and {}".format(key, lo, hi)}), 400
             cfg[key] = round(val, 4) if key in ("risk_pct","max_lots","min_rr","min_sl_pts") else int(val)
     # Boolean toggles
-    for key in ("news_block_enabled", "orchestrator_gate_enabled", "session_filter_enabled", "tp1_cooldown_enabled"):
+    for key in ("news_block_enabled", "orchestrator_gate_enabled", "session_filter_enabled", "tp1_cooldown_enabled", "mtf_filter_enabled", "force_tradeable_enabled"):
         if key in body:
             cfg[key] = bool(body[key])
     os.makedirs("agents/master_trader", exist_ok=True)
@@ -856,6 +858,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
       <div class="tg-btn" id="tg-tp1-off" onclick="setToggle('tp1_cooldown_enabled',false)">OFF</div>
     </div>
   </div>
+  <div class="tc-row" style="margin-bottom:5px">
+    <span class="tc-l" style="font-size:9px">MTF H1+H4 FILTER</span>
+    <div style="display:flex;gap:3px">
+      <div class="tg-btn" id="tg-mtf-on"  onclick="setToggle('mtf_filter_enabled',true)">ON</div>
+      <div class="tg-btn" id="tg-mtf-off" onclick="setToggle('mtf_filter_enabled',false)">OFF</div>
+    </div>
+  </div>
+  <div class="tc-row" style="margin-bottom:5px">
+    <span class="tc-l" style="font-size:9px;color:#f59e0b">FORCE ENTRY</span>
+    <div style="display:flex;gap:3px">
+      <div class="tg-btn" id="tg-force-on"  onclick="setToggle('force_tradeable_enabled',true)">ON</div>
+      <div class="tg-btn" id="tg-force-off" onclick="setToggle('force_tradeable_enabled',false)">OFF</div>
+    </div>
+  </div>
 
   <div class="sec">framework agents</div>
   <div id="agents-list"></div>
@@ -1085,12 +1101,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:12
     <div class="chart-title">multi-symbol paper trading</div>
     <!-- Backtest validation badges -->
     <div id="ms-validation" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px"></div>
-    <div id="ms-open-positions" style="font-size:9px;margin-bottom:6px"></div>
+    <!-- Active open positions -->
+    <div id="ms-open-positions" style="margin-bottom:8px"></div>
     <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px">
-      <span>Closed trades</span><span id="ms-closed-count">0</span>
+      <span>Capital</span><span id="ms-capital">$10,000</span>
     </div>
     <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px">
-      <span>Capital</span><span id="ms-capital">$30,000</span>
+      <span>Closed trades</span><span id="ms-closed-count">0</span>
     </div>
     <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted)">
       <span>Win rate</span><span id="ms-wr">—</span>
@@ -1231,100 +1248,19 @@ function render(d){
   if(mb.consensus){const c=mb.consensus;const e=document.getElementById('b-brain');e.textContent=c.action+' '+c.confidence+'%';e.className='hbadge '+(c.action==='BUY'?'green':c.action==='SELL'?'red':'blue');}
   document.getElementById('b-paused').style.display=d.is_paused?'':'none';
 
-  // ── Paper account ──
+  // ── Paper account + open trades — populated by _renderMultiSymState ──
+  // (metrics, stats bar, open trades, equity curve all driven from multi_sym_state with $10K baseline)
+
   if(pp&&Object.keys(pp).length){
     const closed=pp.closed_trades||[];
-    const open=pp.open_trades||[];
     const bal=parseFloat(pp.balance||10000);
     const peak=parseFloat(pp.peak_balance||bal);
     const wins=closed.filter(t=>parseFloat(t.pnl||0)>0).length;
-    const losses=closed.length-wins;
     const wr=closed.length>0?((wins/closed.length)*100).toFixed(1):0;
-    const netPnl=closed.reduce((a,t)=>a+parseFloat(t.pnl||0),0);
     const grossP=closed.filter(t=>parseFloat(t.pnl||0)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
     const grossL=Math.abs(closed.filter(t=>parseFloat(t.pnl||0)<=0).reduce((a,t)=>a+parseFloat(t.pnl||0),0));
     const pf=grossL>0?(grossP/grossL):0;
     const dd=peak>0?((peak-bal)/peak*100):0;
-    const ret=((bal-10000)/10000*100).toFixed(1);
-    const prof=parseFloat(pp.today_pnl||0);
-
-    document.getElementById('pp-bal').textContent='$'+bal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    const pde=document.getElementById('pp-today');pde.textContent=(prof>=0?'+':'')+prof.toFixed(2)+' today';pde.style.cssText=fc(prof);
-    document.getElementById('pp-wr').textContent=wr+'%';
-    document.getElementById('pp-wr-bar').style.width=Math.min(wr,100)+'%';
-    document.getElementById('pp-pf').textContent=pf>0?pf.toFixed(2):'--';
-    const dde=document.getElementById('pp-dd');dde.textContent=f(dd,2)+'%';dde.style.color=dd>5?'var(--red)':'var(--green)';
-    document.getElementById('pp-dd-bar').style.width=Math.min(parseFloat(dd),100)+'%';
-    const rte=document.getElementById('pp-ret');rte.textContent=(ret>=0?'+':'')+ret+'%';rte.style.color=parseFloat(ret)>=0?'var(--accent)':'var(--red)';
-
-    // stats bar
-    document.getElementById('st-trades').textContent=closed.length;
-    document.getElementById('st-wins').textContent=wins;
-    document.getElementById('st-losses').textContent=losses;
-    document.getElementById('st-open').textContent=open.length;
-    const pnlE=document.getElementById('st-pnl');pnlE.textContent=(netPnl>=0?'+$':'-$')+Math.abs(netPnl).toFixed(0);pnlE.style.cssText=fc(netPnl);
-
-    // open paper trades
-    const otw=document.getElementById('open-trades');
-    if(open.length>0){
-      otw.innerHTML=open.map(t=>{
-        const sig=t.signal||t.type||'BUY';
-        const ep=parseFloat(t.entry_price||t.open_price||0).toFixed(2);
-        const sl=parseFloat(t.sl||0).toFixed(2);
-        const tp1=parseFloat(t.tp1||0);
-        const tp=parseFloat(t.tp2||t.tp||t.tp1||0).toFixed(2);
-        const phase=t.phase||0;
-        const et=(t.entry_time||t.time||'').slice(11,16);
-        const phaseTag=phase===2?'<span style="font-size:8px;color:var(--warn);margin-left:3px">TP1✓</span>':'';
-        return`<div class="ot-card${sig==='SELL'?' sell':''}">
-          <span class="tag ${sig==='BUY'?'tag-buy':'tag-sell'}">${sig}${phaseTag}</span>
-          <span class="mu">Entry<br><b style="color:var(--text)">${ep}</b></span>
-          <span class="mu">SL<br><b class="r">${sl}</b></span>
-          <span class="mu">${tp1>0&&phase<2?'TP1':'TP2'}<br><b class="g">${tp1>0&&phase<2?tp1.toFixed(2):tp}</b></span>
-          <span class="mu">Time<br><b style="color:var(--muted)">${et}</b></span>
-        </div>`;
-      }).join('');
-    } else otw.innerHTML='<div class="empty">No open trades — waiting for signals</div>';
-
-    // equity chart
-    if(closed.length>0&&eqChart){
-      const eq=[10000];
-      closed.forEach(t=>eq.push(Math.max(100,eq[eq.length-1]+parseFloat(t.pnl||0))));
-      eqChart.data.labels=eq.map((_,i)=>i===0?'Start':i===eq.length-1?'Now':'');
-      eqChart.data.datasets[0].data=eq;
-      eqChart.update('none');
-      document.getElementById('chart-title').textContent='equity curve — paper trading ('+closed.length+' trades)';
-    }
-
-    // trade history table (XAUUSD)
-    const trows=document.getElementById('trade-rows');
-    const thSummary=document.getElementById('th-summary');
-    if(closed.length>0){
-      const allWins=closed.filter(t=>t.result==='win').length;
-      const totalPnl=closed.reduce((s,t)=>s+parseFloat(t.pnl||0),0);
-      if(thSummary) thSummary.textContent=closed.length+'t | WR:'+(allWins/closed.length*100).toFixed(0)+'% | P&L:$'+(totalPnl>=0?'+':'')+totalPnl.toFixed(0);
-      trows.innerHTML=[...closed].reverse().map(t=>{
-        const sig=t.signal||'--';
-        const stype=(t.signal_type||'').replace('BUY_','').replace('SELL_','');
-        const pnl=parseFloat(t.pnl||0);
-        const balA=parseFloat(t.balance_after||0);
-        const dt=(t.entry_time||'').substring(5,16);
-        const pnlCls=pnl>0?'pnl-pos':pnl<0?'pnl-neg':'pnl-be';
-        const reason=(t.reason||t.exit_reason||'').toUpperCase();
-        return`<div class="tr">
-          <span class="tag ${sig==='BUY'?'tag-buy':'tag-sell'}">${sig}</span>
-          <span class="exit-reason" style="color:var(--text2)">${stype}</span>
-          <span class="mu">${parseFloat(t.entry_price||0).toFixed(1)}</span>
-          <span class="mu">${parseFloat(t.exit_price||0).toFixed(1)}</span>
-          <span class="exit-reason">${reason}</span>
-          <span class="${pnlCls}">${pnl>=0?'+':'-'}$${Math.abs(pnl).toFixed(0)}</span>
-          <span>$${balA>0?(balA/1000).toFixed(1)+'K':'--'}</span>
-          <span style="font-size:8px;color:var(--muted)">${dt}</span>
-        </div>`;
-      }).join('');
-    } else {
-      trows.innerHTML='<div class="empty">No closed trades yet</div>';
-    }
 
     // checklist
     const checks=[
@@ -1659,25 +1595,97 @@ function _renderMultiSymState(state){
   const cnt=document.getElementById('ms-closed-count');
   const pos=document.getElementById('ms-open-positions');
   const rec=document.getElementById('ms-recent');
-  if(cap) cap.textContent='$'+(state.capital||30000).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
+  const PAPER_START=10000;
+  const bal=parseFloat(state.capital||PAPER_START);
+  const peak=parseFloat(state.peak_capital||PAPER_START);
+  if(cap) cap.textContent='$'+bal.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
   const closed=state.closed_trades||[];
   if(cnt) cnt.textContent=closed.length;
-  if(wr&&closed.length>0){
-    const wins=closed.filter(t=>t.result==='win').length;
-    wr.textContent=Math.round(wins/closed.length*100)+'% ('+wins+'/'+closed.length+')';
+  const wins=closed.filter(t=>t.result==='win').length;
+  const losses=closed.length-wins;
+  if(wr&&closed.length>0) wr.textContent=Math.round(wins/closed.length*100)+'% ('+wins+'/'+closed.length+')';
+
+  // ── Left column: paper account metrics (all from multi-sym $10K baseline) ──
+  const netPnl=closed.reduce((a,t)=>a+parseFloat(t.pnl||0),0);
+  const grossP=closed.filter(t=>parseFloat(t.pnl||0)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
+  const grossL=Math.abs(closed.filter(t=>parseFloat(t.pnl||0)<=0).reduce((a,t)=>a+parseFloat(t.pnl||0),0));
+  const pf=grossL>0?(grossP/grossL):0;
+  const dd=peak>0?((peak-bal)/peak*100):0;
+  const wrPct=closed.length>0?((wins/closed.length)*100).toFixed(1):0;
+  const ret=((bal-PAPER_START)/PAPER_START*100).toFixed(1);
+  const today=new Date().toISOString().substring(0,10);
+  const todayPnl=closed.filter(t=>(t.exit_time||'').startsWith(today)).reduce((a,t)=>a+parseFloat(t.pnl||0),0);
+
+  const ppBal=document.getElementById('pp-bal');
+  if(ppBal) ppBal.textContent='$'+bal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const pde=document.getElementById('pp-today');
+  if(pde){pde.textContent=(todayPnl>=0?'+':'')+todayPnl.toFixed(2)+' today';pde.style.color=todayPnl>0?'var(--green)':todayPnl<0?'var(--red)':'';}
+  const ppWr=document.getElementById('pp-wr');if(ppWr) ppWr.textContent=wrPct+'%';
+  const ppWrBar=document.getElementById('pp-wr-bar');if(ppWrBar) ppWrBar.style.width=Math.min(parseFloat(wrPct),100)+'%';
+  const ppPf=document.getElementById('pp-pf');if(ppPf) ppPf.textContent=pf>0?pf.toFixed(2):'--';
+  const dde=document.getElementById('pp-dd');if(dde){dde.textContent=dd.toFixed(2)+'%';dde.style.color=dd>5?'var(--red)':'var(--green)';}
+  const ppDdBar=document.getElementById('pp-dd-bar');if(ppDdBar) ppDdBar.style.width=Math.min(dd,100)+'%';
+  const rte=document.getElementById('pp-ret');if(rte){rte.textContent=(parseFloat(ret)>=0?'+':'')+ret+'%';rte.style.color=parseFloat(ret)>=0?'var(--accent)':'var(--red)';}
+
+  // Stats bar
+  const openCount=Object.keys(state.open_positions||{}).length;
+  const stT=document.getElementById('st-trades');if(stT) stT.textContent=closed.length;
+  const stW=document.getElementById('st-wins');if(stW) stW.textContent=wins;
+  const stL=document.getElementById('st-losses');if(stL) stL.textContent=losses;
+  const stO=document.getElementById('st-open');if(stO) stO.textContent=openCount;
+  const pnlE=document.getElementById('st-pnl');
+  if(pnlE){pnlE.textContent=(netPnl>=0?'+$':'-$')+Math.abs(netPnl).toFixed(0);pnlE.style.color=netPnl>0?'var(--green)':netPnl<0?'var(--red)':'';}
+
+  // Open trades (center column) — mirror from open_positions
+  const otw=document.getElementById('open-trades');
+  if(otw){
+    const openSyms=Object.entries(state.open_positions||{});
+    if(openSyms.length>0){
+      otw.innerHTML=openSyms.map(([sym,p])=>{
+        const isBuy=p.direction==='BUY';
+        const phase=p.phase||1;
+        const dec=parseFloat(p.entry||0)>10?3:5;
+        const phaseTag=phase===2?'<span style="font-size:8px;color:var(--warn);margin-left:3px">TP1✓</span>':'';
+        return`<div class="ot-card${isBuy?'':' sell'}">
+          <span class="tag ${isBuy?'tag-buy':'tag-sell'}">${p.direction}${phaseTag}</span>
+          <span class="mu"><b style="color:var(--muted)">${sym}</b></span>
+          <span class="mu">Entry<br><b style="color:var(--text)">${parseFloat(p.entry||0).toFixed(dec)}</b></span>
+          <span class="mu">SL<br><b class="r">${parseFloat(p.trail_sl||p.sl||0).toFixed(dec)}</b></span>
+          <span class="mu">${phase<2?'TP1':'TP2'}<br><b class="g">${phase<2?parseFloat(p.tp1||0).toFixed(dec):parseFloat(p.tp2||0).toFixed(dec)}</b></span>
+        </div>`;
+      }).join('');
+    } else {
+      otw.innerHTML='<div class="empty">No open trades — waiting for signals</div>';
+    }
   }
-  // Open positions
+
+  // Open positions — full detail cards (right column)
   const open=state.open_positions||{};
   if(pos){
     const syms=Object.entries(open);
-    if(syms.length===0){pos.innerHTML='<span style="color:var(--muted)">No open positions</span>';}
-    else{
+    if(syms.length===0){
+      pos.innerHTML='<div style="font-size:9px;color:var(--muted);padding:4px 0">No open positions</div>';
+    } else {
       pos.innerHTML=syms.map(([sym,p])=>{
-        const col=p.direction==='BUY'?'var(--green)':'var(--red)';
-        return '<div style="display:flex;justify-content:space-between;margin-bottom:2px">'+
-          '<span style="color:'+col+'">'+sym+' '+p.direction+'</span>'+
-          '<span style="color:var(--muted)">'+p.sig_type+'</span>'+
-          '<span>'+p.entry+'</span></div>';
+        const isBuy=p.direction==='BUY';
+        const col=isBuy?'var(--green)':'var(--red)';
+        const ph=p.phase===2?'<span style="background:#2a1f00;color:#f5a623;border-radius:3px;padding:1px 4px;font-size:8px">PH2 trailing</span>':'<span style="background:#1a2a1a;color:var(--muted);border-radius:3px;padding:1px 4px;font-size:8px">PH1</span>';
+        const sigClass=(p.sig_type||'').split('_').slice(1).join(' ');
+        return `<div style="border:1px solid var(--border);border-radius:4px;padding:5px 7px;margin-bottom:5px;background:#0f1318">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+            <span style="font-weight:700;font-size:10px;color:${col}">${sym} ${p.direction}</span>
+            <span style="font-size:8px;color:var(--muted)">${sigClass}</span>
+            ${ph}
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;font-size:8px;color:var(--text2)">
+            <span>Entry <b style="color:var(--text)">${parseFloat(p.entry||0).toFixed(p.entry>10?3:5)}</b></span>
+            <span>Trail SL <b style="color:var(--red)">${parseFloat(p.trail_sl||0).toFixed(p.trail_sl>10?3:5)}</b></span>
+            <span>TP1 <b style="color:var(--green)">${parseFloat(p.tp1||0).toFixed(p.tp1>10?3:5)}</b></span>
+            <span>TP2 <b style="color:var(--green)">${parseFloat(p.tp2||0).toFixed(p.tp2>10?3:5)}</b></span>
+            <span>Risk <b style="color:var(--text)">$${parseFloat(p.risk_amt||0).toFixed(0)}</b></span>
+            <span style="color:${p.tp1_hit?'var(--green)':'var(--muted)'}">${p.tp1_hit?'✓ TP1 hit':''}</span>
+          </div>
+        </div>`;
       }).join('');
     }
   }
@@ -1717,6 +1725,22 @@ function _renderMultiSymState(state){
       }).join('');
     } else {
       msTrows.innerHTML='<div class="empty">No multi-symbol trades yet — starts Monday</div>';
+    }
+  }
+  // ── Equity curve: multi-symbol starting at $10,000 ──
+  if(eqChart){
+    if(closed.length>0){
+      const eq=[10000];
+      closed.forEach(t=>eq.push(Math.max(10,eq[eq.length-1]+parseFloat(t.pnl||0))));
+      eqChart.data.labels=eq.map((_,i)=>i===0?'Start':i===eq.length-1?'Now':'');
+      eqChart.data.datasets[0].data=eq;
+      eqChart.update('none');
+      const curBal=bal.toFixed(0);
+      const retPct=((bal-PAPER_START)/PAPER_START*100).toFixed(1);
+      document.getElementById('chart-title').textContent=
+        'equity curve — multi-symbol | $'+Number(curBal).toLocaleString()+' ('+retPct+'%) | '+closed.length+' trades';
+    } else {
+      document.getElementById('chart-title').textContent='equity curve — waiting for multi-symbol trades';
     }
   }
 }
@@ -1769,6 +1793,8 @@ function _renderToggles(cfg){
   _setToggleUI('tg-orch', cfg.orchestrator_gate_enabled);
   _setToggleUI('tg-sess', cfg.session_filter_enabled);
   _setToggleUI('tg-tp1',  cfg.tp1_cooldown_enabled!==false);
+  _setToggleUI('tg-mtf',   cfg.mtf_filter_enabled!==false);
+  _setToggleUI('tg-force', cfg.force_tradeable_enabled===true);
 }
 function _setToggleUI(prefix,val){
   const on=document.getElementById(prefix+'-on');
@@ -1839,6 +1865,25 @@ setInterval(refreshAll, 3000);
 </script>
 </body>
 </html>"""
+
+
+@app.route("/webhook", methods=["POST", "GET"])
+def webhook_proxy():
+    import requests as _req
+    from flask import request, Response
+    try:
+        resp = _req.request(
+            method=request.method,
+            url="http://localhost:5000/webhook",
+            headers={k: v for k, v in request.headers if k.lower() != "host"},
+            data=request.get_data(),
+            params=request.args,
+            timeout=10,
+        )
+        return Response(resp.content, status=resp.status_code,
+                        content_type=resp.headers.get("Content-Type", "application/json"))
+    except Exception as e:
+        return jsonify({"status": "error", "reason": "webhook server unreachable: {}".format(e)}), 502
 
 
 @app.route("/")

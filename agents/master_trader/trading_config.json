@@ -1,12 +1,16 @@
 {
-  "risk_pct": 0.01,
-  "max_lots": 2.0,
+  "risk_pct": 0.005,
+  "max_lots": 0.51,
   "min_rr": 1.5,
   "min_confidence": 7,
   "max_open_positions": 3,
-  "max_same_direction": 2,
+  "max_same_direction": 1,
   "news_block_enabled": true,
   "orchestrator_gate_enabled": true,
   "session_filter_enabled": true,
-  "tp1_cooldown_enabled": true
+  "tp1_cooldown_enabled": true,
+  "mtf_filter_enabled": true,
+  "force_tradeable_enabled": false,
+  "max_daily_trades": 3,
+  "min_sl_pts": 10.0
 }

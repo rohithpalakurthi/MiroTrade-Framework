@@ -52,13 +52,12 @@ def save_seen(seen):
 
 
 def write_journal_entry(trade):
-    """Ask GPT-4o to write a journal entry for a closed trade."""
-    key = os.getenv("OPENAI_API_KEY","")
-    if not key or key == "your_openai_api_key":
+    """Write a journal entry for a closed trade. Uses Claude Haiku (cheap) with GPT-4o-mini fallback."""
+    openai_key     = os.getenv("OPENAI_API_KEY", "")
+    anthropic_key  = os.getenv("ANTHROPIC_API_KEY", "")
+    if not anthropic_key and (not openai_key or openai_key == "your_openai_api_key"):
         return None
     try:
-        from openai import OpenAI
-        client = OpenAI(api_key=key)
 
         direction = trade.get("action", trade.get("direction", "?"))
         entry_px  = trade.get("entry", "?")
@@ -88,11 +87,28 @@ Write a concise journal entry as JSON:
   "grade": "A | B | C | D"
 }}""".format(direction, setup, entry_px, float(profit), float(r), outcome, reasoning[:200])
 
-        resp = client.chat.completions.create(
-            model="gpt-4o", messages=[{"role":"user","content":prompt}],
-            temperature=0.3, max_tokens=400
-        )
-        raw = resp.choices[0].message.content.strip()
+        # Primary: Claude Haiku — journaling doesn't need GPT-4o reasoning power
+        raw = None
+        if anthropic_key:
+            try:
+                import anthropic
+                msg = anthropic.Anthropic(api_key=anthropic_key).messages.create(
+                    model="claude-haiku-4-5-20251001", max_tokens=400,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                raw = msg.content[0].text.strip()
+            except Exception as he:
+                print("[Journal] Haiku error: {}".format(he))
+        # Fallback: GPT-4o-mini
+        if raw is None and openai_key and openai_key != "your_openai_api_key":
+            from openai import OpenAI
+            resp = OpenAI(api_key=openai_key).chat.completions.create(
+                model="gpt-4o-mini", messages=[{"role": "user", "content": prompt}],
+                temperature=0.3, max_tokens=400
+            )
+            raw = resp.choices[0].message.content.strip()
+        if raw is None:
+            return None
         if "```" in raw:
             raw = raw.split("```")[1]
             if raw.startswith("json"): raw = raw[4:].strip()

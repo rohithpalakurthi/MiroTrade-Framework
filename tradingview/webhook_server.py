@@ -292,8 +292,11 @@ def home():
     })
 
 
-@app.route("/webhook", methods=["POST"])
+@app.route("/webhook", methods=["POST", "GET"])
 def webhook():
+    if request.method == "GET":
+        return jsonify({"status": "ok", "endpoint": "/webhook", "ready": True})
+
     """Main webhook endpoint - receives TradingView alerts."""
     try:
         # Parse incoming data
@@ -535,7 +538,7 @@ def test():
 
     send_telegram(
         "<b>TEST SIGNAL (no trade placed)</b>\n"
-        "{} @ ${}\nSL:{} TP:{}".format(action, price, sl, tp)
+        "{} @ ${}\nSL:{} TP:{}".format(action, price, sl, tp2)
     )
     return jsonify({"status": "test_only — EA not triggered", "signal": signal})
 

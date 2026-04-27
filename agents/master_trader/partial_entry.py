@@ -128,13 +128,12 @@ def check_add_tranches():
         import MetaTrader5 as mt5
         if not mt5.initialize():
             return
-        tick = mt5.symbol_info_tick("XAUUSD")
-        if not tick:
-            mt5.shutdown()
-            return
-        current_price = (tick.bid + tick.ask) / 2
 
-        # Current EMA8 / EMA21 from H1
+        # Get current price and EMA context per active position's symbol
+        # We'll resolve per-position below; pre-fetch XAUUSD as default reference
+        tick = mt5.symbol_info_tick("XAUUSD")
+        current_price = (tick.bid + tick.ask) / 2 if tick else 0
+
         ema8 = ema21 = None
         try:
             import pandas as pd
@@ -144,8 +143,7 @@ def check_add_tranches():
                 ema8  = float(df["close"].ewm(span=8,  adjust=False).mean().iloc[-1])
                 ema21 = float(df["close"].ewm(span=21, adjust=False).mean().iloc[-1])
         except: pass
-
-        mt5.shutdown()
+        # No shutdown — MT5 stays initialized for order execution below
 
         state = _load_state()
         changed = False
@@ -170,12 +168,17 @@ def check_add_tranches():
 
             # ── Tranche 2: confirm on retracement ──
             if not pos["t2_filled"]:
-                if dirn == "BUY":
-                    retrace_pct = (entry - current_price) / sl_dist if sl_dist > 0 else 0
-                else:
-                    retrace_pct = (current_price - entry) / sl_dist if sl_dist > 0 else 0
+                # Track peak floating profit to detect true retracement
+                peak_r = pos.get("peak_r", 0.0)
+                if float_r > peak_r:
+                    pos["peak_r"] = float_r
+                    peak_r = float_r
+                    changed = True
 
-                # Trigger: price retraced 30-60% toward SL
+                # Retrace = how much of the peak profit has been given back
+                retrace_from_peak = (peak_r - float_r) / peak_r if peak_r > 0.05 else 0
+
+                # EMA proximity check (price pulled back to EMA zone)
                 at_ema = False
                 if ema8 and ema21:
                     if dirn == "BUY" and abs(current_price - ema21) < sl_dist * 0.3:
@@ -183,9 +186,16 @@ def check_add_tranches():
                     elif dirn == "SELL" and abs(current_price - ema21) < sl_dist * 0.3:
                         at_ema = True
 
-                t2_trigger = (T2_RETRACE_MIN <= retrace_pct <= T2_RETRACE_MAX) or at_ema
+                # T2 only triggers when:
+                #   1. Trade was profitable first (peak_r >= 0.2R)
+                #   2. Price pulled back 30-60% of that profit (retrace from peak)
+                #      OR price is touching EMA while still in profit
+                t2_trigger = peak_r >= 0.2 and (
+                    (T2_RETRACE_MIN <= retrace_from_peak <= T2_RETRACE_MAX) or
+                    (at_ema and float_r > 0)
+                )
 
-                if t2_trigger and float_r > -0.3:  # not too much against us
+                if t2_trigger and float_r > 0:  # must still be in profit when adding
                     lots = pos["t2_lots"]
                     if lots >= 0.01:
                         success = _place_add(pos, lots, dirn, "T2_CONFIRM", current_price)
@@ -235,10 +245,10 @@ def _place_add(pos, lots, dirn, label, price):
         if not mt5.initialize():
             return False
 
+        symbol = pos.get("symbol", "XAUUSD")
         order_type = mt5.ORDER_TYPE_BUY if dirn == "BUY" else mt5.ORDER_TYPE_SELL
-        tick = mt5.symbol_info_tick("XAUUSD")
+        tick = mt5.symbol_info_tick(symbol)
         if not tick:
-            mt5.shutdown()
             return False
 
         exec_price = tick.ask if dirn == "BUY" else tick.bid
@@ -247,7 +257,7 @@ def _place_add(pos, lots, dirn, label, price):
 
         request = {
             "action"   : mt5.TRADE_ACTION_DEAL,
-            "symbol"   : "XAUUSD",
+            "symbol"   : symbol,
             "volume"   : float(lots),
             "type"     : order_type,
             "price"    : exec_price,
@@ -261,7 +271,7 @@ def _place_add(pos, lots, dirn, label, price):
         }
 
         result = mt5.order_send(request)
-        mt5.shutdown()
+        # No shutdown — MT5 is a shared singleton
 
         if result and result.retcode == mt5.TRADE_RETCODE_DONE:
             _log({
@@ -305,9 +315,9 @@ def run():
             try:
                 import MetaTrader5 as mt5
                 if mt5.initialize():
-                    positions = mt5.positions_get(symbol="XAUUSD") or []
+                    positions = mt5.positions_get() or []   # all symbols
                     open_tickets = {p.ticket for p in positions}
-                    mt5.shutdown()
+                    # No shutdown — shared singleton
                     cleanup_closed(open_tickets)
             except: pass
 

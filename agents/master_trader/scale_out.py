@@ -64,25 +64,37 @@ def save_scale_state(state):
         json.dump(state, f, indent=2)
 
 
-def get_atr_h1():
+# ATR cache — H1 ATR changes slowly, no need to fetch every 15s
+_atr_cache = {}   # symbol -> (atr_value, timestamp)
+ATR_CACHE_TTL = 300   # refresh every 5 minutes
+
+
+def get_atr_h1(symbol="XAUUSD"):
+    """Return H1 ATR(14) for symbol. Cached for 5 minutes to avoid MT5 hammering."""
+    import time as _time
+    cached = _atr_cache.get(symbol)
+    if cached and (_time.time() - cached[1]) < ATR_CACHE_TTL:
+        return cached[0]
     try:
         import MetaTrader5 as mt5
         import pandas as pd
         if not mt5.initialize():
-            return 10.0
-        rates = mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_H1, 0, 20)
-        mt5.shutdown()
+            return cached[0] if cached else 10.0
+        rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_H1, 0, 20)
+        # No shutdown — MT5 is a shared singleton
         if rates is None:
-            return 10.0
+            return cached[0] if cached else 10.0
         df = pd.DataFrame(rates)
         tr = pd.concat([
             df["high"] - df["low"],
             (df["high"] - df["close"].shift()).abs(),
             (df["low"]  - df["close"].shift()).abs()
         ], axis=1).max(axis=1)
-        return round(float(tr.rolling(14).mean().iloc[-1]), 2)
+        atr = round(float(tr.rolling(14).mean().iloc[-1]), 2)
+        _atr_cache[symbol] = (atr, _time.time())
+        return atr
     except:
-        return 10.0
+        return cached[0] if cached else 10.0
 
 
 def load_tp_targets():
@@ -130,17 +142,19 @@ def is_trend_favorable(direction):
     return False  # default: unfavorable → take profit safely
 
 
-def close_partial(ticket, volume, direction):
+def close_partial(ticket, volume, direction, symbol="XAUUSD"):
     try:
         import MetaTrader5 as mt5
         if not mt5.initialize():
             return False, 0
-        tick  = mt5.symbol_info_tick("XAUUSD")
+        tick  = mt5.symbol_info_tick(symbol)
+        if not tick:
+            return False, 0
         otype = mt5.ORDER_TYPE_SELL if direction == "BUY" else mt5.ORDER_TYPE_BUY
         price = tick.bid if direction == "BUY" else tick.ask
         req   = {
             "action"      : mt5.TRADE_ACTION_DEAL,
-            "symbol"      : "XAUUSD",
+            "symbol"      : symbol,
             "volume"      : round(volume, 2),
             "type"        : otype,
             "position"    : ticket,
@@ -152,28 +166,28 @@ def close_partial(ticket, volume, direction):
             "type_filling": mt5.ORDER_FILLING_IOC,
         }
         result = mt5.order_send(req)
-        mt5.shutdown()
+        # No shutdown — MT5 is a shared singleton
         if result.retcode == mt5.TRADE_RETCODE_DONE:
-            return True, round(price, 2)
+            return True, round(price, 5)
         return False, 0
     except:
         return False, 0
 
 
-def modify_sl(ticket, new_sl, tp):
+def modify_sl(ticket, new_sl, tp, symbol="XAUUSD"):
     try:
         import MetaTrader5 as mt5
         if not mt5.initialize():
             return False
         req = {
             "action"  : mt5.TRADE_ACTION_SLTP,
-            "symbol"  : "XAUUSD",
+            "symbol"  : symbol,
             "position": ticket,
-            "sl"      : round(new_sl, 2),
-            "tp"      : round(tp, 2),
+            "sl"      : round(new_sl, 5),
+            "tp"      : round(tp, 5),
         }
         result = mt5.order_send(req)
-        mt5.shutdown()
+        # No shutdown — MT5 is a shared singleton
         return result.retcode == mt5.TRADE_RETCODE_DONE
     except:
         return False
@@ -185,8 +199,8 @@ def check_scale_out():
         import MetaTrader5 as mt5
         if not mt5.initialize():
             return
-        positions = list(mt5.positions_get(symbol="XAUUSD") or [])
-        mt5.shutdown()
+        positions = list(mt5.positions_get() or [])   # all symbols
+        # No shutdown — MT5 stays initialized across helpers this cycle
     except:
         return
 
@@ -195,17 +209,18 @@ def check_scale_out():
 
     state      = load_scale_state()
     tp_targets = load_tp_targets()
-    atr        = get_atr_h1()
     changed    = False
 
     for p in positions:
         ticket    = str(p.ticket)
+        symbol    = p.symbol
         direction = "BUY" if p.type == 0 else "SELL"
         entry     = p.price_open
         current   = p.price_current
         sl        = p.sl
         tp        = p.tp
         lots      = p.volume
+        atr       = get_atr_h1(symbol)   # cached per symbol, refreshes every 5min
 
         sl_dist = abs(entry - sl) if sl > 0 else atr * 1.5
         if sl_dist <= 0:
@@ -245,10 +260,10 @@ def check_scale_out():
                 if favorable and tp2_price > 0:
                     # Close 50% and trail remainder toward TP2
                     close_lots = max(0.01, round(lots * 0.50, 2))
-                    ok, fill_px = close_partial(ticket, close_lots, direction)
+                    ok, fill_px = close_partial(ticket, close_lots, direction, symbol)
                     if ok:
                         be_sl = round(entry + 0.5, 2) if direction == "BUY" else round(entry - 0.5, 2)
-                        modify_sl(ticket, be_sl, tp2_price)
+                        modify_sl(ticket, be_sl, tp2_price, symbol)
                         s["tp1_done"]   = True
                         s["tier1_done"] = True   # prevent double-fire at +1R
                         changed = True
@@ -269,7 +284,7 @@ def check_scale_out():
                 else:
                     # Close 100% — conditions not favorable or no TP2
                     reason = "no TP2" if tp2_price <= 0 else "trend unfavorable"
-                    ok, fill_px = close_partial(ticket, lots, direction)
+                    ok, fill_px = close_partial(ticket, lots, direction, symbol)
                     if ok:
                         s["tp1_done"]   = True
                         s["tier1_done"] = True
@@ -286,15 +301,14 @@ def check_scale_out():
                                 ticket, direction, lots, fill_px, pts_gain, reason
                             )
                         )
-            continue  # skip R-based tiers this cycle while TP1 not done
+                continue  # TP1 fired this cycle — skip R-tiers to avoid double-action
 
         # ── TIER 1: +1R → close 30% + SL to breakeven ────────────
         if r_now >= TIER1_R and not s["tier1_done"]:
             close_lots = max(0.01, round(lots * 0.30, 2))
-            ok, fill_px = close_partial(ticket, close_lots, direction)
+            ok, fill_px = close_partial(ticket, close_lots, direction, symbol)
             if ok:
-                # SL to breakeven (entry price)
-                modify_sl(ticket, entry, tp)
+                modify_sl(ticket, entry, tp, symbol)
                 s["tier1_done"] = True
                 changed = True
                 print("[ScaleOut] TIER1 ticket {} | closed {}L @ {} | SL → breakeven {}".format(
@@ -314,14 +328,13 @@ def check_scale_out():
         # ── TIER 2: +2R → close 30% + SL to +0.5R ───────────────
         elif r_now >= TIER2_R and s["tier1_done"] and not s["tier2_done"]:
             close_lots = max(0.01, round(lots * 0.30, 2))
-            ok, fill_px = close_partial(ticket, close_lots, direction)
+            ok, fill_px = close_partial(ticket, close_lots, direction, symbol)
             if ok:
-                # SL to +0.5R
                 half_r_sl = (
                     round(entry + sl_dist * 0.5, 2) if direction == "BUY"
                     else round(entry - sl_dist * 0.5, 2)
                 )
-                modify_sl(ticket, half_r_sl, tp)
+                modify_sl(ticket, half_r_sl, tp, symbol)
                 s["tier2_done"] = True
                 changed = True
                 print("[ScaleOut] TIER2 ticket {} | closed {}L @ {} | SL → +0.5R {}".format(
@@ -352,7 +365,7 @@ def check_scale_out():
                 should_update = True
 
             if should_update:
-                ok = modify_sl(ticket, trail_sl, tp)
+                ok = modify_sl(ticket, trail_sl, tp, symbol)
                 if ok:
                     prev_sl = s["tier3_sl"]
                     s["tier3_sl"]      = trail_sl

@@ -99,18 +99,11 @@ def score_headline(title_lower):
 
 
 def analyse_with_llm(headlines):
-    """Ask GPT-4o to analyse headlines and give trading intelligence."""
-    if not OPENAI_KEY or OPENAI_KEY == "your_openai_api_key":
-        return None
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=OPENAI_KEY)
-
-        headlines_text = "\n".join(
-            "- [{}] {}".format(h["source"], h["title"]) for h in headlines[:10]
-        )
-
-        prompt = """You are an expert gold (XAUUSD) market analyst.
+    """Analyse headlines for trading intelligence. Uses Claude Haiku (cheap/fast) with GPT-4o-mini fallback."""
+    headlines_text = "\n".join(
+        "- [{}] {}".format(h["source"], h["title"]) for h in headlines[:10]
+    )
+    prompt = """You are an expert gold (XAUUSD) market analyst.
 Analyse these recent headlines and give me a trading intelligence brief.
 
 HEADLINES:
@@ -128,20 +121,40 @@ Respond with JSON only:
   "summary": "<2 sentence market summary for trader>"
 }}""".format(headlines_text)
 
-        resp = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.1, max_tokens=400
-        )
-        raw = resp.choices[0].message.content.strip()
-        if "```" in raw:
-            raw = raw.split("```")[1]
-            if raw.startswith("json"):
-                raw = raw[4:].strip()
-        return json.loads(raw)
-    except Exception as e:
-        print("[NewsBrain] LLM error: {}".format(e))
-        return None
+    # Primary: Claude Haiku — sufficient for news sentiment, 40x cheaper than GPT-4o
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
+    if anthropic_key:
+        try:
+            import anthropic
+            msg = anthropic.Anthropic(api_key=anthropic_key).messages.create(
+                model="claude-haiku-4-5-20251001", max_tokens=400,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = msg.content[0].text.strip()
+            if "```" in raw:
+                raw = raw.split("```")[1]
+                if raw.startswith("json"): raw = raw[4:].strip()
+            return json.loads(raw)
+        except Exception as e:
+            print("[NewsBrain] Haiku error: {}".format(e))
+
+    # Fallback: GPT-4o-mini
+    if OPENAI_KEY and OPENAI_KEY != "your_openai_api_key":
+        try:
+            from openai import OpenAI
+            resp = OpenAI(api_key=OPENAI_KEY).chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1, max_tokens=400
+            )
+            raw = resp.choices[0].message.content.strip()
+            if "```" in raw:
+                raw = raw.split("```")[1]
+                if raw.startswith("json"): raw = raw[4:].strip()
+            return json.loads(raw)
+        except Exception as e:
+            print("[NewsBrain] LLM error: {}".format(e))
+    return None
 
 
 POLL_INTERVAL = 1800   # 30 minutes — keeps daily usage under 48 req (free tier: 100/day)

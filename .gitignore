@@ -51,6 +51,16 @@ ruvector.db
 # Runtime state (not code)
 agents/master_trader/tunnel_url.json
 agents/orchestrator/pattern_memory.json
+agents/master_trader/calendar_state.json
+agents/master_trader/multi_symbol_state.json
+agents/master_trader/scale_out_state.json
+agents/master_trader/breakeven_state.json
+agents/master_trader/last_brief.json
+agents/master_trader/miro_pause.json
+agents/master_trader/recovery_mode.json
+agents/master_trader/cot_data.json
+live_execution/bridge/signal.json
+tradingview/webhook_log.json
 
 # Live agent outputs — change every run, not meaningful in git history
 agents/market_analyst/market_narrative.json

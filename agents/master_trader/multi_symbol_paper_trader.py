@@ -34,23 +34,23 @@ SCAN_INTERVAL = 60
 TG_TOKEN   = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TG_CHAT    = os.getenv("TELEGRAM_CHAT_ID", "")
 
-INITIAL_CAPITAL = 30000.0
+INITIAL_CAPITAL = 10000.0
 RISK_PCT        = 0.005   # 0.5% per trade
 MAX_CONCURRENT  = 2       # total open across all symbols
 
 SYMBOLS = {
     "EURUSD": {
-        "params" : {**PARAMS, "require_volume": False, "min_score": 4},
+        "params" : {**PARAMS, "require_volume": False, "min_score": 4, "allow_asian": True},
         "label"  : "EUR/USD",
         "emoji"  : "🇪🇺",
     },
     "GBPUSD": {
-        "params" : {**PARAMS, "require_volume": False, "min_score": 4},
+        "params" : {**PARAMS, "require_volume": False, "min_score": 4, "allow_asian": True},
         "label"  : "GBP/USD",
         "emoji"  : "🇬🇧",
     },
     "CL-OIL": {
-        "params" : {**PARAMS, "require_volume": True, "min_score": 5, "sl_mult": 1.8},
+        "params" : {**PARAMS, "require_volume": False, "min_score": 4, "sl_mult": 1.8, "allow_asian": True},
         "label"  : "WTI Crude",
         "emoji"  : "🛢",
     },
@@ -93,15 +93,31 @@ def _save_state(state):
         json.dump(state, f, indent=2, default=str)
 
 
+def _broker_utc_offset(mt5_mod):
+    """Detect broker UTC offset by comparing last tick time to system UTC."""
+    import datetime
+    tick = mt5_mod.symbol_info_tick("EURUSD")
+    if tick is None:
+        return 0
+    broker_dt = datetime.datetime.utcfromtimestamp(tick.time)
+    utc_now   = datetime.datetime.utcnow()
+    offset_h  = round((broker_dt - utc_now).total_seconds() / 3600)
+    return offset_h
+
+
 def _fetch_bars(mt5_mod, symbol, n=250):
     import pandas as pd
-    rates = mt5_mod.copy_rates_from_pos(symbol, mt5_mod.TIMEFRAME_H1, 0, n)
+    rates = mt5_mod.copy_rates_from_pos(symbol, mt5_mod.TIMEFRAME_M5, 0, n)
     if rates is None or len(rates) < 50:
         return None
     df = pd.DataFrame(rates)
     df["time"] = pd.to_datetime(df["time"], unit="s")
     df.set_index("time", inplace=True)
     df.rename(columns={"tick_volume": "volume"}, inplace=True)
+    # Convert broker time to UTC so session filters work correctly
+    offset = _broker_utc_offset(mt5_mod)
+    if offset != 0:
+        df.index = df.index - pd.Timedelta(hours=offset)
     return df
 
 
@@ -113,7 +129,7 @@ def _get_price(mt5_mod, symbol):
 
 
 def _open_position(state, symbol, direction, entry, sl, tp1, tp2, atr, sig_type):
-    risk_amt  = state["capital"] * RISK_PCT
+    risk_amt  = state["capital"] * RISK_PCT * state.get("_size_mult", 1.0)
     risk_pts  = abs(entry - sl)
     lot_proxy = risk_amt / risk_pts if risk_pts > 0 else 0.01
 
@@ -212,6 +228,7 @@ def _manage_position(state, symbol, pos, high, low, close, atr):
             pos["trail_sl"] = round(
                 (pos["entry"] - be_buffer) if is_long else (pos["entry"] + be_buffer), 5)
             state["open_positions"][symbol] = pos
+            _save_state(state)
             cfg = SYMBOLS[symbol]
             _tg("<b>{} {} TP1 HIT</b> — SL moved to breakeven".format(
                 cfg["emoji"], cfg["label"]))
@@ -242,6 +259,77 @@ def _manage_position(state, symbol, pos, high, low, close, atr):
     return False
 
 
+REGIME_FILE   = "agents/master_trader/regime.json"
+CB_FILE       = "agents/master_trader/circuit_breaker_state.json"
+CALENDAR_FILE = "agents/master_trader/calendar_state.json"
+DAILY_LOSS_LIMIT_PCT = 0.03   # halt new entries if paper capital drops >3% today
+
+
+def _check_gates(state):
+    """Return (allow: bool, reason: str). Gates mirror the main trader."""
+    # 1. Circuit breaker daily pause
+    try:
+        cb = json.load(open(CB_FILE))
+        if cb.get("daily_paused") or cb.get("status") not in ("OK", None, ""):
+            return False, "circuit_breaker:" + cb.get("status", "paused")
+    except Exception:
+        pass
+
+    # 2. Calendar / news pause
+    try:
+        cal = json.load(open(CALENDAR_FILE))
+        paused_for = cal.get("paused_for", "")
+        if paused_for:
+            # paused_for = "EVENT@ISO_TIME" — still active within 30 min window
+            try:
+                event_time_str = paused_for.split("@", 1)[1]
+                from datetime import timezone
+                event_dt = datetime.fromisoformat(event_time_str)
+                now_utc  = datetime.utcnow()
+                diff_min = (now_utc - event_dt).total_seconds() / 60
+                if -15 <= diff_min <= 30:
+                    return False, "news_block:" + paused_for
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    # 3. Regime filter — block signal types that aren't in allowed_setups
+    # (enforced per-signal below, but we block TREND entirely in RANGING)
+    # Handled per-signal in scan_all_symbols.
+
+    # 4. Paper daily loss limit
+    today = datetime.utcnow().date().isoformat()
+    today_trades = [t for t in state.get("closed_trades", [])
+                    if t.get("exit_time", "").startswith(today)]
+    today_loss = sum(t["pnl"] for t in today_trades if t["pnl"] < 0)
+    if state["capital"] > 0:
+        loss_pct = abs(today_loss) / state["capital"]
+        if loss_pct >= DAILY_LOSS_LIMIT_PCT:
+            return False, "daily_loss_limit:{:.1f}%".format(loss_pct * 100)
+
+    return True, "ok"
+
+
+def _regime_allows(sig_type):
+    """Check regime.json allowed_setups against the signal type."""
+    try:
+        reg = json.load(open(REGIME_FILE))
+        allowed = reg.get("allowed_setups", [])
+        if not allowed:
+            return True, 1.0
+        # sig_type is like BUY_TREND, SELL_REVERSAL, BUY_REENTRY
+        sig_class = sig_type.split("_", 1)[1]  # TREND, REVERSAL, REENTRY
+        # Map REENTRY → SCALP (treated similarly)
+        check = "SCALP" if sig_class == "REENTRY" else sig_class
+        allowed_upper = [s.upper() for s in allowed]
+        if check not in allowed_upper:
+            return False, 1.0
+        return True, float(reg.get("size_mult", 1.0))
+    except Exception:
+        return True, 1.0
+
+
 def scan_all_symbols():
     try:
         import MetaTrader5 as mt5
@@ -250,12 +338,9 @@ def scan_all_symbols():
         return
 
     if not mt5.initialize():
+        print("[MultiSym] MT5 not initialized")
         return
     try:
-        login = int(os.getenv("MT5_LOGIN", 0))
-        if login:
-            mt5.login(login, password=os.getenv("MT5_PASSWORD", ""),
-                      server=os.getenv("MT5_SERVER", ""))
 
         # Ensure all symbols are visible in Market Watch — required for bar data
         for sym in SYMBOLS:
@@ -273,7 +358,7 @@ def scan_all_symbols():
                 # Manage existing position first
                 if symbol in state["open_positions"]:
                     pos  = state["open_positions"][symbol]
-                    df   = _fetch_bars(mt5, symbol, 50)
+                    df   = _fetch_bars(mt5, symbol, 100)
                     if df is None:
                         continue
                     from strategies.scalper_v15.scalper_v15 import calc_atr
@@ -293,6 +378,12 @@ def scan_all_symbols():
                 n_open = len(state["open_positions"])
                 if n_open >= MAX_CONCURRENT:
                     continue
+
+                # Gate check — circuit breaker, news, daily loss
+                gate_ok, gate_reason = _check_gates(state)
+                if not gate_ok:
+                    print("[MultiSym] Gates BLOCKED: {}".format(gate_reason))
+                    break  # gates apply to all symbols, no point continuing loop
 
                 # Signal scan
                 df = _fetch_bars(mt5, symbol, 250)
@@ -332,6 +423,12 @@ def scan_all_symbols():
                 if direction is None:
                     continue
 
+                # Regime filter — skip setup types not allowed in current regime
+                regime_ok, size_mult = _regime_allows(sig_type)
+                if not regime_ok:
+                    print("[MultiSym] {} {} blocked by regime".format(symbol, sig_type))
+                    continue
+
                 entry     = ask if direction == "BUY" else bid
                 sl_mult   = params["sl_mult"]
                 tp1_mult  = sl_mult * params["rr_tp1"]
@@ -347,8 +444,11 @@ def scan_all_symbols():
                     tp1 = entry - atr * tp1_mult
                     tp2 = entry - atr * tp2_mult
 
+                # Apply regime size multiplier to risk
+                state["_size_mult"] = size_mult  # picked up by _open_position via RISK_PCT
                 _open_position(state, symbol, direction,
                                entry, sl, tp1, tp2, atr, sig_type)
+                state.pop("_size_mult", None)
                 print("[MultiSym] {} {} {} entry:{:.5f}".format(
                     symbol, direction, sig_type, entry))
 
@@ -356,7 +456,7 @@ def scan_all_symbols():
                 print("[MultiSym] {} error: {}".format(symbol, e))
 
     finally:
-        mt5.shutdown()
+        pass  # do not shutdown — MT5 is a singleton shared with the bridge
 
 
 def run():

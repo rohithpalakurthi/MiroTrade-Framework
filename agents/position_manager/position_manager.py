@@ -24,8 +24,14 @@ load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 # ── Config ──────────────────────────────────────────────────────────────
-CHECK_INTERVAL   = 30        # seconds between position checks
-MIN_DECISION_GAP = 300       # seconds before re-deciding on same position (5 min)
+CHECK_INTERVAL        = 30    # seconds between position checks
+MIN_DECISION_GAP      = 600   # seconds before re-deciding on same position (10 min)
+RULE_DECISION_GAP     = 120   # shorter cooldown for rule-based fallback (2 min)
+
+# Tiered LLM routing — use Haiku for routine, escalate to GPT-4o only at extremes
+R_CRITICAL_HIGH  =  2.5   # R-multiple above this → use GPT-4o (protect big profit)
+R_CRITICAL_LOW   = -1.5   # R-multiple below this → use GPT-4o (approaching hard cut)
+R_SKIP_THRESHOLD =  0.2   # skip LLM entirely if R hasn't moved this much since last call
 LOG_DIR          = "agents/position_manager"
 LOG_FILE         = "agents/position_manager/decisions_log.json"  # legacy — kept for Telegram cmd compat
 STATE_FILE       = "agents/position_manager/pm_state.json"
@@ -45,8 +51,9 @@ class PositionManagerAgent:
     def __init__(self):
         os.makedirs("agents/position_manager", exist_ok=True)
         self._last_decision = {}   # ticket -> last decision timestamp
-        self._llm_fallback_alerted_at = None   # rate-limit Telegram alert to once/hour
-        self._last_llm_errors = {}             # store actual errors for Telegram
+        self._last_r = {}          # ticket -> R-multiple at last LLM call (skip if unchanged)
+        self._llm_fallback_alerted_at = None
+        self._last_llm_errors = {}
         self._load_state()
         print("[PosMgr] Position Manager Agent initialized")
         print("[PosMgr] Hard rules: cut >{:.1f}R loss | take >{:.1f}R profit | stale >{}min".format(
@@ -70,13 +77,12 @@ class PositionManagerAgent:
     # ── MT5 helpers ──────────────────────────────────────────────────────
 
     def get_positions(self):
-        """Fetch all open XAUUSD positions from MT5."""
+        """Fetch all open positions from MT5 (all symbols)."""
         try:
             import MetaTrader5 as mt5
             if not mt5.initialize():
                 return []
-            positions = mt5.positions_get(symbol="XAUUSD") or []
-            mt5.shutdown()
+            positions = mt5.positions_get() or []
             return list(positions)
         except Exception as e:
             print("[PosMgr] get_positions error: {}".format(e))
@@ -91,11 +97,10 @@ class PositionManagerAgent:
             if not mt5.initialize():
                 return None
 
-            # Get H1 candles for indicators
+            # Get H1 candles for indicators (use XAUUSD as the primary reference instrument)
             rates_h1 = mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_H1, 0, 200)
             rates_m5  = mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_M5,  0, 20)
             tick       = mt5.symbol_info_tick("XAUUSD")
-            mt5.shutdown()
 
             if rates_h1 is None or tick is None:
                 return None
@@ -173,20 +178,22 @@ class PositionManagerAgent:
             print("[PosMgr] get_market_context error: {}".format(e))
             return None
 
-    def close_position(self, ticket, volume, direction, reason):
+    def close_position(self, ticket, volume, direction, reason, symbol="XAUUSD"):
         """Close a position (full or partial) via MT5."""
         try:
             import MetaTrader5 as mt5
             if not mt5.initialize():
                 return False, "MT5 init failed"
 
-            tick = mt5.symbol_info_tick("XAUUSD")
+            tick = mt5.symbol_info_tick(symbol)
+            if tick is None:
+                return False, "no tick for {}".format(symbol)
             order_type = mt5.ORDER_TYPE_SELL if direction == "BUY" else mt5.ORDER_TYPE_BUY
             price      = tick.bid if direction == "BUY" else tick.ask
 
             request = {
                 "action"      : mt5.TRADE_ACTION_DEAL,
-                "symbol"      : "XAUUSD",
+                "symbol"      : symbol,
                 "volume"      : round(volume, 2),
                 "type"        : order_type,
                 "position"    : ticket,
@@ -198,16 +205,15 @@ class PositionManagerAgent:
                 "type_filling": mt5.ORDER_FILLING_IOC,
             }
             result = mt5.order_send(request)
-            mt5.shutdown()
 
             if result.retcode == mt5.TRADE_RETCODE_DONE:
-                return True, "Closed at {}".format(round(price, 2))
+                return True, "Closed at {}".format(round(price, 5))
             else:
                 return False, "retcode={} {}".format(result.retcode, result.comment)
         except Exception as e:
             return False, str(e)
 
-    def modify_sl(self, ticket, new_sl, tp):
+    def modify_sl(self, ticket, new_sl, tp, symbol="XAUUSD"):
         """Move SL of a position via MT5."""
         try:
             import MetaTrader5 as mt5
@@ -216,13 +222,12 @@ class PositionManagerAgent:
 
             request = {
                 "action"  : mt5.TRADE_ACTION_SLTP,
-                "symbol"  : "XAUUSD",
+                "symbol"  : symbol,
                 "position": ticket,
-                "sl"      : round(new_sl, 2),
-                "tp"      : round(tp, 2),
+                "sl"      : round(new_sl, 5),
+                "tp"      : round(tp, 5),
             }
             result = mt5.order_send(request)
-            mt5.shutdown()
             return result.retcode == mt5.TRADE_RETCODE_DONE
         except Exception as e:
             print("[PosMgr] modify_sl error: {}".format(e))
@@ -376,56 +381,119 @@ RESPOND with JSON only — no explanation outside the JSON:
 
     def ask_llm(self, positions_info, market_ctx, agent_ctx):
         """
-        Ask GPT-4o (with Claude Haiku fallback) to evaluate positions.
-        Falls back to Claude Haiku when OpenAI quota is exhausted (429).
+        Tiered LLM routing to minimise API spend:
+          - R > 2.5 or R < -1.5 (critical zone) → GPT-4o then Claude Sonnet fallback
+          - Routine zone                          → Claude Haiku (40x cheaper)
+          - R unchanged by < 0.2 since last call  → skip entirely (rule-based fallback)
         """
-        prompt = self._build_prompt(positions_info, market_ctx, agent_ctx)
+        # ── Skip filter: R hasn't moved enough to warrant a new LLM call ──
+        stable_tickets = []
+        active_positions = []
+        for p in positions_info:
+            ticket = str(p["ticket"])
+            r_now  = p["r_multiple"]
+            r_last = self._last_r.get(ticket)
+            if r_last is not None and abs(r_now - r_last) < R_SKIP_THRESHOLD:
+                stable_tickets.append(ticket)
+            else:
+                active_positions.append(p)
 
-        # ── Primary: GPT-4o ──────────────────────────────────────────────
-        openai_key = os.getenv("OPENAI_API_KEY", "")
-        if openai_key:
-            try:
-                from openai import OpenAI
-                client = OpenAI(api_key=openai_key)
-                response = client.chat.completions.create(
-                    model       = "gpt-4o",
-                    messages    = [{"role": "user", "content": prompt}],
-                    temperature = 0.2,
-                    max_tokens  = 800,
-                )
-                self._last_llm_errors = {}   # clear on success
-                return self._parse_llm_response(response.choices[0].message.content)
-            except Exception as e:
-                err_str = str(e)
-                short = "quota/rate-limit" if ("429" in err_str or "insufficient_quota" in err_str or "rate_limit" in err_str) else err_str[:80]
-                self._last_llm_errors["gpt4o"] = short
+        if stable_tickets:
+            print("[PosMgr] Skipping LLM for {} stable position(s) (R unchanged)".format(
+                len(stable_tickets)))
 
-        # ── Fallback: Claude Sonnet ──────────────────────────────────────
-        anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
-        if not anthropic_key:
-            self._last_llm_errors["claude"] = "ANTHROPIC_API_KEY not set in .env"
+        if not active_positions:
+            return None  # nothing needs LLM this cycle
+
+        prompt = self._build_prompt(active_positions, market_ctx, agent_ctx)
+
+        # Determine tier: any position in critical zone → escalate to GPT-4o
+        critical = any(
+            p["r_multiple"] > R_CRITICAL_HIGH or p["r_multiple"] < R_CRITICAL_LOW
+            for p in active_positions
+        )
+        tier = "critical" if critical else "routine"
+        print("[PosMgr] LLM tier: {} ({} position(s))".format(tier, len(active_positions)))
+
+        result = None
+
+        if critical:
+            # ── Critical: GPT-4o first ───────────────────────────────────
+            openai_key = os.getenv("OPENAI_API_KEY", "")
+            if openai_key:
+                try:
+                    from openai import OpenAI
+                    response = OpenAI(api_key=openai_key).chat.completions.create(
+                        model="gpt-4o", messages=[{"role": "user", "content": prompt}],
+                        temperature=0.2, max_tokens=800,
+                    )
+                    self._last_llm_errors = {}
+                    result = self._parse_llm_response(response.choices[0].message.content)
+                except Exception as e:
+                    err = str(e)
+                    self._last_llm_errors["gpt4o"] = "quota/rate-limit" if "429" in err else err[:80]
+
+            # ── Critical fallback: Claude Sonnet ─────────────────────────
+            if result is None:
+                anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
+                if anthropic_key:
+                    try:
+                        import anthropic
+                        msg = anthropic.Anthropic(api_key=anthropic_key).messages.create(
+                            model="claude-sonnet-4-6", max_tokens=800,
+                            messages=[{"role": "user", "content": prompt}],
+                        )
+                        self._last_llm_errors = {}
+                        result = self._parse_llm_response(msg.content[0].text)
+                    except Exception as e:
+                        self._last_llm_errors["claude-sonnet"] = str(e)[:80]
         else:
-            try:
-                import anthropic
-                client = anthropic.Anthropic(api_key=anthropic_key)
-                msg = client.messages.create(
-                    model      = "claude-sonnet-4-6",
-                    max_tokens = 800,
-                    messages   = [{"role": "user", "content": prompt}],
-                )
-                self._last_llm_errors = {}   # clear on success
-                return self._parse_llm_response(msg.content[0].text)
-            except Exception as e:
-                self._last_llm_errors["claude"] = str(e)[:80]
+            # ── Routine: Claude Haiku (40x cheaper, fast enough for HOLD checks) ──
+            anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
+            if anthropic_key:
+                try:
+                    import anthropic
+                    msg = anthropic.Anthropic(api_key=anthropic_key).messages.create(
+                        model="claude-haiku-4-5-20251001", max_tokens=600,
+                        messages=[{"role": "user", "content": prompt}],
+                    )
+                    self._last_llm_errors = {}
+                    result = self._parse_llm_response(msg.content[0].text)
+                except Exception as e:
+                    self._last_llm_errors["claude-haiku"] = str(e)[:80]
+                    # Haiku failed — try GPT-4o as fallback
+                    openai_key = os.getenv("OPENAI_API_KEY", "")
+                    if openai_key and result is None:
+                        try:
+                            from openai import OpenAI
+                            response = OpenAI(api_key=openai_key).chat.completions.create(
+                                model="gpt-4o-mini", messages=[{"role": "user", "content": prompt}],
+                                temperature=0.2, max_tokens=600,
+                            )
+                            self._last_llm_errors = {}
+                            result = self._parse_llm_response(response.choices[0].message.content)
+                        except Exception as e2:
+                            self._last_llm_errors["gpt4o-mini"] = str(e2)[:80]
 
-        return None
+        # Record R-multiple for skip filter on next cycle
+        if result is not None:
+            for p in active_positions:
+                self._last_r[str(p["ticket"])] = p["r_multiple"]
+
+        return result
 
     # ── Main evaluation loop ─────────────────────────────────────────────
 
     def build_position_info(self, p, market_ctx):
         """Enrich a raw MT5 position with derived metrics."""
         direction   = "BUY" if p.type == 0 else "SELL"
-        current_px  = market_ctx["price"]
+        # Use live tick price for the position's own symbol if available
+        try:
+            import MetaTrader5 as mt5
+            tick = mt5.symbol_info_tick(p.symbol)
+            current_px = float(tick.bid) if tick else market_ctx["price"]
+        except Exception:
+            current_px = market_ctx["price"]
         atr         = market_ctx["atr"]
         sl_distance = abs(p.price_open - p.sl) if p.sl > 0 else atr * 1.5
         r_multiple  = (
@@ -440,18 +508,19 @@ RESPOND with JSON only — no explanation outside the JSON:
 
         return {
             "ticket"     : p.ticket,
+            "symbol"     : p.symbol,
             "direction"  : direction,
             "lots"       : p.volume,
-            "entry"      : round(p.price_open, 2),
-            "current"    : round(current_px, 2),
+            "entry"      : round(p.price_open, 5),
+            "current"    : round(current_px, 5),
             "profit"     : round(p.profit, 2),
             "r_multiple" : round(r_multiple, 2),
-            "sl"         : round(p.sl, 2),
-            "tp"         : round(p.tp, 2),
-            "dist_sl"    : round(dist_sl, 2),
-            "dist_tp"    : round(dist_tp, 2),
+            "sl"         : round(p.sl, 5),
+            "tp"         : round(p.tp, 5),
+            "dist_sl"    : round(dist_sl, 5),
+            "dist_tp"    : round(dist_tp, 5),
             "age_minutes": int(age_seconds / 60),
-            "sl_distance": round(sl_distance, 2),
+            "sl_distance": round(sl_distance, 5),
         }
 
     def _cooldown_ok(self, ticket):
@@ -527,12 +596,13 @@ RESPOND with JSON only — no explanation outside the JSON:
             pos     = pos_map[ticket]
             direction = pos["direction"]
             lots      = pos["lots"]
+            symbol    = pos.get("symbol", "XAUUSD")
 
             if action == "HOLD":
                 continue  # don't log HOLDs — keeps decisions_log clean
 
             if action == "CLOSE_FULL":
-                ok, msg = self.close_position(ticket, lots, direction, "ai_full")
+                ok, msg = self.close_position(ticket, lots, direction, "ai_full", symbol)
                 status  = "OK" if ok else "FAIL"
                 print("[PosMgr] CLOSE_FULL  ticket {} | {} | {} | {}".format(
                     ticket, reason, msg, status))
@@ -553,7 +623,7 @@ RESPOND with JSON only — no explanation outside the JSON:
 
             elif action == "CLOSE_PARTIAL":
                 half = max(0.01, round(lots / 2, 2))
-                ok, msg = self.close_position(ticket, half, direction, "ai_partial")
+                ok, msg = self.close_position(ticket, half, direction, "ai_partial", symbol)
                 status  = "OK" if ok else "FAIL"
                 print("[PosMgr] CLOSE_PARTIAL  ticket {} | {} lots | {} | {}".format(
                     ticket, half, reason, status))
@@ -571,7 +641,7 @@ RESPOND with JSON only — no explanation outside the JSON:
                     )
 
             elif action == "TIGHTEN_SL" and new_sl:
-                ok = self.modify_sl(ticket, float(new_sl), pos["tp"])
+                ok = self.modify_sl(ticket, float(new_sl), pos["tp"], symbol)
                 status = "OK" if ok else "FAIL"
                 print("[PosMgr] TIGHTEN_SL  ticket {} | new SL:{} | {} | {}".format(
                     ticket, new_sl, reason, status))
@@ -598,7 +668,7 @@ RESPOND with JSON only — no explanation outside the JSON:
     def apply_soft_rules(self, positions_info, market_ctx):
         """
         Rule-based fallback when all LLMs are unavailable.
-        Applies conservative protection rules without AI reasoning.
+        Progressive SL ratchet — tightens as profit grows, protects near TP.
         Returns list of decisions in same format as LLM output.
         """
         decisions = []
@@ -611,13 +681,43 @@ RESPOND with JSON only — no explanation outside the JSON:
             age       = p["age_minutes"]
             sl        = p["sl"]
             entry     = p["entry"]
+            current   = p["current"]
+            sl_dist   = p["sl_distance"]   # 1R in price units
             tp        = p["tp"]
+            dist_tp   = p["dist_tp"]
 
-            # Rule 1: trend strongly against position at any loss → close
             bull_trend = trend in ("BULL", "STRONG BULL")
             bear_trend = trend in ("BEAR", "STRONG BEAR")
             trend_against = (direction == "BUY" and bear_trend) or (direction == "SELL" and bull_trend)
 
+            # ── Rule 0: near TP — aggressive trail ──────────────────────────
+            # When price is within 30% of entry→TP distance from TP, lock in most of the profit
+            near_tp = False
+            if tp > 0 and sl_dist > 0:
+                tp_dist_total = abs(entry - tp)
+                if tp_dist_total > 0 and dist_tp < tp_dist_total * 0.30 and r >= 1.0:
+                    near_tp = True
+                    # Trail SL at current ± 40% of 1R (tight, lets small wick through)
+                    if direction == "BUY":
+                        new_sl = round(current - sl_dist * 0.40, 2)
+                        if new_sl > sl:
+                            decisions.append({
+                                "ticket": ticket, "action": "TIGHTEN_SL", "new_sl": new_sl,
+                                "reasoning": "Rule-based: near TP ({:.1f}pts away, {:.1f}R) — trail tight @ {}".format(
+                                    dist_tp, r, new_sl)
+                            })
+                            continue
+                    else:
+                        new_sl = round(current + sl_dist * 0.40, 2)
+                        if new_sl < sl:
+                            decisions.append({
+                                "ticket": ticket, "action": "TIGHTEN_SL", "new_sl": new_sl,
+                                "reasoning": "Rule-based: near TP ({:.1f}pts away, {:.1f}R) — trail tight @ {}".format(
+                                    dist_tp, r, new_sl)
+                            })
+                            continue
+
+            # ── Rule 1: trend against at -1R → close ────────────────────────
             if r <= -1.0 and trend_against:
                 decisions.append({
                     "ticket": ticket, "action": "CLOSE_FULL", "new_sl": None,
@@ -625,24 +725,43 @@ RESPOND with JSON only — no explanation outside the JSON:
                 })
                 continue
 
-            # Rule 2: tighten SL at +1R if not already protected
-            if r >= 1.0 and sl > 0:
-                if direction == "BUY" and sl < entry:
-                    new_sl = round(entry + 0.5, 2)
-                    decisions.append({
-                        "ticket": ticket, "action": "TIGHTEN_SL", "new_sl": new_sl,
-                        "reasoning": "Rule-based: at +{:.1f}R — moving SL to breakeven".format(r)
-                    })
-                    continue
-                elif direction == "SELL" and sl > entry:
-                    new_sl = round(entry - 0.5, 2)
-                    decisions.append({
-                        "ticket": ticket, "action": "TIGHTEN_SL", "new_sl": new_sl,
-                        "reasoning": "Rule-based: at +{:.1f}R — moving SL to breakeven".format(r)
-                    })
-                    continue
+            # ── Rule 2: progressive SL ratchet ──────────────────────────────
+            # Determines target SL floor based on R level — only moves SL in profit direction
+            new_sl = None
+            reason_tag = ""
+            if r >= 2.5 and sl_dist > 0:
+                # +2.5R → lock in +1.5R floor
+                floor = round(entry + 1.5 * sl_dist, 2) if direction == "BUY" else round(entry - 1.5 * sl_dist, 2)
+                if (direction == "BUY" and floor > sl) or (direction == "SELL" and floor < sl):
+                    new_sl = floor
+                    reason_tag = "+2.5R → SL ratchet to +1.5R floor @ {}".format(new_sl)
+            elif r >= 2.0 and sl_dist > 0:
+                # +2.0R → lock in +1.0R floor
+                floor = round(entry + 1.0 * sl_dist, 2) if direction == "BUY" else round(entry - 1.0 * sl_dist, 2)
+                if (direction == "BUY" and floor > sl) or (direction == "SELL" and floor < sl):
+                    new_sl = floor
+                    reason_tag = "+2.0R → SL ratchet to +1.0R floor @ {}".format(new_sl)
+            elif r >= 1.5 and sl_dist > 0:
+                # +1.5R → lock in +0.5R floor
+                floor = round(entry + 0.5 * sl_dist, 2) if direction == "BUY" else round(entry - 0.5 * sl_dist, 2)
+                if (direction == "BUY" and floor > sl) or (direction == "SELL" and floor < sl):
+                    new_sl = floor
+                    reason_tag = "+1.5R → SL ratchet to +0.5R floor @ {}".format(new_sl)
+            elif r >= 1.0:
+                # +1.0R → breakeven + small spread buffer
+                be = round(entry + 0.5, 2) if direction == "BUY" else round(entry - 0.5, 2)
+                if (direction == "BUY" and be > sl) or (direction == "SELL" and be < sl):
+                    new_sl = be
+                    reason_tag = "+1.0R → SL to breakeven @ {}".format(new_sl)
 
-            # Rule 3: stale at 120min flat — warn via Telegram, close if trend against
+            if new_sl is not None:
+                decisions.append({
+                    "ticket": ticket, "action": "TIGHTEN_SL", "new_sl": new_sl,
+                    "reasoning": "Rule-based: " + reason_tag
+                })
+                continue
+
+            # ── Rule 3: stale flat trade with trend against ──────────────────
             if age >= 120 and abs(r) < 0.3 and trend_against:
                 decisions.append({
                     "ticket": ticket, "action": "CLOSE_FULL", "new_sl": None,
@@ -653,7 +772,7 @@ RESPOND with JSON only — no explanation outside the JSON:
             # Default: hold
             decisions.append({
                 "ticket": ticket, "action": "HOLD", "new_sl": None,
-                "reasoning": "Rule-based fallback: no action criteria met at {:.1f}R".format(r)
+                "reasoning": "Rule-based fallback: holding at {:.1f}R".format(r)
             })
 
         return decisions
@@ -732,7 +851,14 @@ RESPOND with JSON only — no explanation outside the JSON:
                         "<b>Fix:</b> Check API keys in .env and restart launch.py".format(
                             gpt_err, cld_err)
                     )
-                soft_decisions = self.apply_soft_rules(llm_positions, market_ctx)
+                # Re-include positions that were in LLM cooldown but eligible for fast rule check
+                rule_positions = []
+                for p in positions_info:
+                    tid = str(p["ticket"])
+                    last = self._last_decision.get(tid)
+                    if last is None or (datetime.now() - datetime.fromisoformat(last)).total_seconds() >= RULE_DECISION_GAP:
+                        rule_positions.append(p)
+                soft_decisions = self.apply_soft_rules(rule_positions, market_ctx)
                 self.execute_decisions({"decisions": soft_decisions}, positions_info, market_ctx)
 
     def run(self, interval_seconds=CHECK_INTERVAL):
